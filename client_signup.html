@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jisajili kama Mteja - Duka Mkondoni</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group label.required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+        
+        .input-field:focus {
+            border-color: #3498db;
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .input-field::placeholder {
+            color: #999;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #1f639e 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-loading {
+            position: relative;
+            color: transparent;
+        }
+        
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            top: 50%;
+            left: 50%;
+            margin-top: -12px;
+            margin-left: -12px;
+            border: 3px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .alert {
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .alert-error {
+            background: #fee;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 15px;
+        }
+        
+        .form-footer a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .form-footer a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+            font-size: 14px;
+        }
+        
+        .info-box strong {
+            color: #2c3e50;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                border-radius: 15px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 25px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .btn {
+                padding: 14px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Jisajili kama Mteja</h1>
+            <p>Jiunge na mfumo wa Duka Mkondoni</p>
+        </div>
+        
+        <div class="form-container">
+            <div class="info-box">
+                <strong>ⓘ Maelezo ya Mteja:</strong><br>
+                Kama mteja, utaweza:
+                • Kutazama bidhaa za biashara mbalimbali<br>
+                • Kufanya manunuzi<br>
+                • Kutazama matangazo<br>
+                • Kufuatilia historia ya manunuzi yako
+            </div>
+            
+            <div id="error-alert" class="alert alert-error"></div>
+            <div id="success-alert" class="alert alert-success"></div>
+            
+            <form id="client-signup-form">
+                <div class="form-group">
+                    <label for="fullName" class="required">Jina Kamili</label>
+                    <input type="text" id="fullName" class="input-field" placeholder="Weka jina lako kamili" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="required">Barua Pepe</label>
+                    <input type="email" id="email" class="input-field" placeholder="example@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Namba ya Simu</label>
+                    <input type="tel" id="phone" class="input-field" placeholder="07XXXXXXXX" pattern="[0-9]{10}" maxlength="10">
+                    <small style="color: #666; font-size: 12px; display: block; margin-top: 5px;">Ya hiari - ingiza bila namba 0 ya mbele</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="required">Nenosiri</label>
+                    <input type="password" id="password" class="input-field" placeholder="Nenosiri la angalau herufi 6" required minlength="6">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword" class="required">Thibitisha Nenosiri</label>
+                    <input type="password" id="confirmPassword" class="input-field" placeholder="Rudia nenosiri" required minlength="6">
+                </div>
+                
+                <!-- VIUNGO VYA KUFICHA AMBAVYO SERVER INAVITAKIA -->
+                <input type="hidden" id="role" value="seller">
+                <input type="hidden" id="business_name" value="Mteja Mkondoni">
+                <input type="hidden" id="business_location" value="Mteja Mkondoni">
+                
+                <button type="submit" id="signup-btn" class="btn">
+                    <span id="btn-text">Jisajili kama Mteja</span>
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Tayari una akaunti? <a href="login.html">Ingia hapa</a></p>
+                <p>Au <a href="index.html">Rudi kwenye ukurasa mkuu</a></p>
+                <p style="font-size: 12px; color: #777; margin-top: 10px;">
+                    <strong>Kumbuka:</strong> Kama mteja, utaweza kuingia mara moja baada ya kujiandikisha.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // MAVAZO YA MSINGI
+        const API_BASE_URL = window.location.origin; // Tumia origin sawa na server
+        const form = document.getElementById('client-signup-form');
+        const signupBtn = document.getElementById('signup-btn');
+        const btnText = document.getElementById('btn-text');
+        const errorAlert = document.getElementById('error-alert');
+        const successAlert = document.getElementById('success-alert');
+        
+        // HUDUMA ZA KUSANITISHA
+        const sanitizeInput = (input) => {
+            return input.trim().replace(/[<>'"&]/g, '');
+        };
+        
+        const validateEmail = (email) => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        };
+        
+        const validatePhone = (phone) => {
+            if (!phone) return true;
+            const phoneRegex = /^[0-9]{9,10}$/;
+            return phoneRegex.test(phone);
+        };
+        
+        // ONYESHA/AFICHE UJUMBE
+        const showAlert = (element, message, type = 'error') => {
+            element.textContent = message;
+            element.style.display = 'block';
+            element.className = 'alert';
+            
+            if (type === 'error') {
+                element.classList.add('alert-error');
+            } else if (type === 'success') {
+                element.classList.add('alert-success');
+            }
+            
+            if (type === 'error') {
+                element.classList.add('shake');
+                setTimeout(() => element.classList.remove('shake'), 500);
+            }
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        };
+        
+        // HUDUMA YA KUWEKA LOADING
+        const setLoading = (isLoading) => {
+            signupBtn.disabled = isLoading;
+            if (isLoading) {
+                signupBtn.classList.add('btn-loading');
+                btnText.style.visibility = 'hidden';
+            } else {
+                signupBtn.classList.remove('btn-loading');
+                btnText.style.visibility = 'visible';
+            }
+        };
+        
+        // UTENDAKAZI MZIMA WA USAJILI WA MTEJA
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // ANZISHA
+            setLoading(true);
+            errorAlert.style.display = 'none';
+            successAlert.style.display = 'none';
+            
+            // PATA THAMANI ZA FORMU
+            const fullName = sanitizeInput(document.getElementById('fullName').value);
+            const email = sanitizeInput(document.getElementById('email').value);
+            const phone = sanitizeInput(document.getElementById('phone').value);
+            const password = sanitizeInput(document.getElementById('password').value);
+            const confirmPassword = sanitizeInput(document.getElementById('confirmPassword').value);
+            
+            // TATHMINI
+            if (!fullName || !email || !password || !confirmPassword) {
+                showAlert(errorAlert, 'Tafadhali jaza sehemu zote muhimu.');
+                setLoading(false);
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showAlert(errorAlert, 'Tafadhali weka barua pepe sahihi.');
+                setLoading(false);
+                return;
+            }
+            
+            if (!validatePhone(phone)) {
+                showAlert(errorAlert, 'Tafadhali weka namba ya simu sahihi (namba 9-10).');
+                setLoading(false);
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAlert(errorAlert, 'Nenosiri lazima liwe na herufi 6 au zaidi.');
+                setLoading(false);
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showAlert(errorAlert, 'Nenosiri halifanani. Tafadhali hakikisha unaziandika sawa.');
+                setLoading(false);
+                return;
+            }
+            
+            // UNDA DATA YA MTEJA (KAMA SELLER)
+            const userData = {
+                email: email,
+                password: password,
+                role: 'seller', // ⚠️ TUMIA 'seller' BADALA YA 'mteja'
+                full_name: fullName,
+                phone: phone || null,
+                business_name: 'Mteja Mkondoni', // Biashara maalum ya wateja
+                business_location: 'Mteja Mkondoni'
+            };
+            
+            // TUMIA API YA USAJILI
+            try {
+                console.log('📨 Inatuma ombi la usajili la mteja...', userData);
+                
+                const response = await fetch(`${API_BASE_URL}/api/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert(successAlert, 
+                        '✅ Hongera! Usajili wa mteja umekamilika kikamilifu. ' +
+                        'Sasa unaweza kuingia na kuanza kutazama bidhaa za biashara mbalimbali.', 
+                        'success');
+                    
+                    // Safisha fomu
+                    form.reset();
+                    
+                    // Elekeza kwa ukurasa wa kuingia baada ya muda
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 3000);
+                } else {
+                    // ONYESHA MAKOSA
+                    const errorMessage = data.error || data.message || 'Hitilafu katika usajili';
+                    
+                    // Kurekebisha ujumbe wa kosa kwa mteja
+                    let displayError = errorMessage;
+                    if (errorMessage.includes('seller') || errorMessage.includes('muuzaji')) {
+                        displayError = 'Hitilafu katika usajili. Tafadhali jaribu tena au wasiliana na msimamizi.';
+                    } else if (errorMessage.includes('tayari')) {
+                        displayError = 'Barua pepe hii tayari imesajiliwa. Tafadhali tumia barua pepe nyingine.';
+                    }
+                    
+                    showAlert(errorAlert, `❌ ${displayError}`);
+                }
+            } catch (error) {
+                console.error('❌ Hitilafu ya mtandao:', error);
+                showAlert(errorAlert, '❌ Hitilafu ya mtandao. Tafadhali angalia muunganisho wako na jaribu tena.');
+            } finally {
+                setLoading(false);
+            }
+        });
+        
+        // HUDUMA ZA UKURASA
+        document.addEventListener('DOMContentLoaded', () => {
+            // Weka kiangazi kwenye sehemu ya kwanza
+            document.getElementById('fullName').focus();
+            
+            // Hakikisha URL ya API inafanya kazi
+            console.log('🔧 API Base URL:', API_BASE_URL);
+            
+            // Angalia kama server inafanya kazi
+            fetch(`${API_BASE_URL}/api/test`)
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn('⚠️ Server haijalijibu vizuri. Inaweza kuwa na shida.');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Server haipatikani:', error);
+                });
+        });
+    </script>
+</body>
+</html>

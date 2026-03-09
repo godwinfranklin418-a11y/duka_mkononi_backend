@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tangaza - Dukamkononi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles to match React Native design */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding-bottom: 100px; /* Space for fixed buttons */
+            min-height: 100vh;
+        }
+        
+        /* Tab styles */
+        .tab {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab-active {
+            border-bottom: 3px solid #FF6B35;
+            color: #FF6B35;
+        }
+        
+        /* File upload area */
+        .file-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            background-color: white;
+            transition: all 0.3s;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #28a745;
+            background-color: #f8fafc;
+        }
+        
+        .file-upload-area.dragover {
+            border-color: #28a745;
+            background-color: #e8f5e8;
+        }
+        
+        /* Media preview */
+        .media-preview {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #FF6B35;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Fixed button group */
+        .fixed-button-group {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+        }
+        
+        .action-button {
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s, transform 0.1s;
+            text-decoration: none; 
+        }
+        
+        .action-button:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-rejea {
+            background-color: #f39c12; /* Machungwa kwa Rejea - Kushoto */
+        }
+        
+        .btn-badilisha {
+            background-color: #34495e; /* Kijivu/Bluu kwa Badilisha - Kulia */
+        }
+        
+        .btn-rejea:hover { background-color: #d35400; }
+        .btn-badilisha:hover { background-color: #2c3e50; }
+        
+        /* Card shadow matching React Native */
+        .card-shadow {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .container {
+                padding: 0;
+            }
+            
+            .fixed-button-group {
+                left: 15px;
+                right: 15px;
+            }
+            
+            .action-button {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+        
+        /* Hide elements */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Flex utilities */
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Tab Navigation -->
+        <div class="flex bg-white border-b border-gray-200">
+            <div class="tab flex-1 text-center py-4 font-bold text-gray-600" data-tab="post">
+                📢 TENGENEZA
+            </div>
+            <div class="tab flex-1 text-center py-4 font-bold text-gray-600" data-tab="myPosts">
+                📋 MATANGAZO YANGU
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div id="contentArea" class="p-4">
+            <!-- POST NEW ADVERTISEMENT TAB -->
+            <div id="postTab" class="tab-content">
+                <div class="bg-white rounded-xl p-4 mb-4 card-shadow">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Tengeneza Matangazo</h1>
+                    <p class="text-gray-600 mb-4">Weka maelezo na media ya matangazo yako</p>
+                    
+                    <!-- Free Banner -->
+                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500 mb-4">
+                        <p class="font-bold text-green-800 text-lg">🆓 Bila Malipo</p>
+                        <div class="text-green-700 mt-2">
+                            <p class="text-sm">• Bila malipo kwa sasa</p>
+                            <p class="text-sm">• Mudumu: Siku 30</p>
+                            <p class="text-sm">• Fungua soko lako kwa urahisi</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Network Warning -->
+                    <div id="networkWarning" class="bg-yellow-50 p-3 rounded-lg mb-4 hidden">
+                        <p class="text-yellow-800">⚠️ Hakuna muunganiko wa intaneti</p>
+                    </div>
+                </div>
+                
+                <!-- Media Section -->
+                <div class="bg-white rounded-xl p-4 mb-4 card-shadow">
+                    <h2 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                        <span id="mediaIcon">🖼️</span>
+                        <span class="ml-2" id="mediaTypeLabel">Picha</span>
+                    </h2>
+                    
+                    <!-- Media Preview -->
+                    <div id="mediaPreview" class="hidden mb-4">
+                        <div class="media-preview">
+                            <img id="imagePreview" class="w-full h-64 object-cover hidden" alt="Image preview">
+                            <video id="videoPreview" class="w-full h-64 hidden" controls></video>
+                        </div>
+                        <button id="clearMediaButton" class="mt-3 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg text-sm">
+                            Futa Media
+                        </button>
+                    </div>
+                    
+                    <!-- File Upload Area -->
+                    <div id="fileUploadArea" class="file-upload-area p-8 text-center cursor-pointer">
+                        <div class="text-4xl mb-2" id="uploadIcon">📁</div>
+                        <p class="font-bold text-green-600 mb-1">Chagua Picha au Video</p>
+                        <p class="text-gray-500 text-sm mb-2">Ukubwa wa juu: <span id="fileSizeHint">5MB</span></p>
+                        <p class="text-gray-400 text-xs">Au vuta na kuacha faili hapa</p>
+                        <input type="file" id="mediaInput" class="hidden" accept="image/*,video/*">
+                    </div>
+                </div>
+                
+                <!-- Description Section -->
+                <div class="bg-white rounded-xl p-4 mb-4 card-shadow">
+                    <h2 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                        📝
+                        <span class="ml-2">Maelezo</span>
+                    </h2>
+                    <textarea 
+                        id="descriptionInput" 
+                        class="w-full border border-gray-300 rounded-lg p-3 h-32 resize-none"
+                        placeholder="Elezea bidhaa au huduma yako kwa kina..."
+                        maxlength="500"
+                    ></textarea>
+                    <div class="text-right mt-2">
+                        <span id="charCount" class="text-gray-500 text-sm">0 / 500</span>
+                    </div>
+                </div>
+                
+                <!-- Upload Button -->
+                <button id="uploadButton" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl mb-4 flex items-center justify-center">
+                    <span id="uploadButtonText">TUMIA MATANGAZO</span>
+                    <div id="uploadSpinner" class="spinner ml-2 hidden"></div>
+                </button>
+                
+                <!-- Instructions -->
+                <div class="bg-blue-50 p-4 rounded-xl">
+                    <p class="font-bold text-blue-700 mb-2">ℹ️ Usaidizi:</p>
+                    <ul class="text-gray-700 text-sm space-y-1">
+                        <li>• Picha: Chagua picha chini ya 5MB</li>
+                        <li>• Video: Chini ya 20MB na sekunde 60</li>
+                        <li>• Muunganiko: Hakikisha una intaneti nzuri</li>
+                        <li>• Subiri: Upakiaji unaweza kuchukua sekunde kadhaa</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- MY POSTS TAB -->
+            <div id="myPostsTab" class="tab-content hidden">
+                <div class="bg-white rounded-xl p-4 mb-4 card-shadow">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Matangazo Yangu</h1>
+                        <button id="refreshAdsButton" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg text-sm">
+                            <span id="refreshButtonText">🔄 Pakia Upya</span>
+                            <div id="refreshSpinner" class="spinner ml-2 hidden inline-block"></div>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Ads List -->
+                <div id="adsListContainer">
+                    <!-- Ads will be dynamically inserted here -->
+                    <div id="loadingAds" class="flex-center py-12">
+                        <div class="spinner"></div>
+                        <p class="ml-3 text-gray-600">Inapakia matangazo...</p>
+                    </div>
+                    
+                    <div id="emptyAdsMessage" class="hidden text-center py-12">
+                        <div class="text-6xl text-gray-300 mb-4">📭</div>
+                        <p class="text-lg text-gray-500 font-medium mb-2">Hakuna matangazo bado</p>
+                        <p class="text-gray-400 mb-6">Tengeneza matangazo yako ya kwanza</p>
+                        <button id="createFirstAdButton" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg">
+                            TENGENEZA MATANGAZO
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed button group -->
+    <div class="fixed-button-group">
+        <a href="preview.html" class="action-button btn-rejea">
+            <i class="fas fa-eye"></i>
+            <span>REJEA</span>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://dukamkononi.com';
+        const CLOUDINARY_CONFIG = {
+            cloudName: 'dooidwbgt',
+            uploadPreset: 'react_native_uploads',
+        };
+        
+        // File size limits
+        const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+        const MAX_VIDEO_SIZE = 20 * 1024 * 1024; // 20MB
+        
+        // State management
+        let state = {
+            activeTab: 'post',
+            description: '',
+            media: null,
+            mediaType: null,
+            mediaFile: null,
+            uploading: false,
+            isOnline: true,
+            currentUser: null,
+            loadingUser: true,
+            myAdvertisements: [],
+            loadingAds: false
+        };
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            checkNetworkStatus();
+            loadUserData();
+            setupEventListeners();
+            updateUI();
+        });
+        
+        // Check network status
+        async function checkNetworkStatus() {
+            try {
+                const response = await fetch('https://www.google.com', { method: 'HEAD', mode: 'no-cors' });
+                state.isOnline = true;
+            } catch {
+                state.isOnline = false;
+            }
+            updateNetworkStatus();
+            
+            // Check every 15 seconds
+            setInterval(checkNetworkStatus, 15000);
+        }
+        
+        // Update network status UI
+        function updateNetworkStatus() {
+            const networkWarning = document.getElementById('networkWarning');
+            const uploadButton = document.getElementById('uploadButton');
+            
+            if (!state.isOnline) {
+                networkWarning.classList.remove('hidden');
+                uploadButton.disabled = true;
+                uploadButton.classList.add('bg-gray-400');
+                uploadButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                document.getElementById('uploadButtonText').textContent = 'HAKUNA INTRANETI';
+            } else {
+                networkWarning.classList.add('hidden');
+                uploadButton.disabled = false;
+                uploadButton.classList.remove('bg-gray-400');
+                uploadButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                document.getElementById('uploadButtonText').textContent = 'TUMIA MATANGAZO';
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tab switching
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            });
+            
+            // File upload
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const mediaInput = document.getElementById('mediaInput');
+            
+            fileUploadArea.addEventListener('click', function() {
+                mediaInput.click();
+            });
+            
+            mediaInput.addEventListener('change', handleFileSelect);
+            
+            // Drag and drop
+            fileUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('dragover');
+            });
+            
+            fileUploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+            });
+            
+            fileUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelect({ target: { files: e.dataTransfer.files } });
+                }
+            });
+            
+            // Clear media button
+            document.getElementById('clearMediaButton').addEventListener('click', clearMedia);
+            
+            // Description input
+            document.getElementById('descriptionInput').addEventListener('input', function() {
+                state.description = this.value;
+                document.getElementById('charCount').textContent = `${state.description.length} / 500`;
+                validateForm();
+            });
+            
+            // Upload button
+            document.getElementById('uploadButton').addEventListener('click', handleUpload);
+            
+            // Refresh ads button
+            document.getElementById('refreshAdsButton').addEventListener('click', loadMyAdvertisements);
+            
+            // Create first ad button
+            document.getElementById('createFirstAdButton').addEventListener('click', function() {
+                switchTab('post');
+            });
+        }
+        
+        // Switch between tabs
+        function switchTab(tabName) {
+            state.activeTab = tabName;
+            
+            // Update tab UI
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.getAttribute('data-tab') === tabName) {
+                    tab.classList.add('tab-active');
+                    tab.classList.remove('text-gray-600');
+                    tab.classList.add('text-orange-500');
+                } else {
+                    tab.classList.remove('tab-active');
+                    tab.classList.remove('text-orange-500');
+                    tab.classList.add('text-gray-600');
+                }
+            });
+            
+            // Show/hide content
+            if (tabName === 'post') {
+                document.getElementById('postTab').classList.remove('hidden');
+                document.getElementById('myPostsTab').classList.add('hidden');
+            } else {
+                document.getElementById('postTab').classList.add('hidden');
+                document.getElementById('myPostsTab').classList.remove('hidden');
+                
+                // Load advertisements when switching to myPosts tab
+                if (state.myAdvertisements.length === 0 && !state.loadingAds) {
+                    loadMyAdvertisements();
+                }
+            }
+        }
+        
+        // Handle file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Reset file input
+            event.target.value = '';
+            
+            // Check file type
+            const isImage = file.type.startsWith('image/');
+            const isVideo = file.type.startsWith('video/');
+            
+            if (!isImage && !isVideo) {
+                alert('Tafadhali chagua faili ya picha (JPG, PNG) au video (MP4)');
+                return;
+            }
+            
+            // Check file size
+            const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
+            if (file.size > maxSize) {
+                const maxSizeMB = maxSize / (1024 * 1024);
+                alert(`Faili ni kubwa sana! Kiwango cha juu: ${maxSizeMB}MB`);
+                return;
+            }
+            
+            // Set state
+            state.mediaFile = file;
+            state.mediaType = isImage ? 'image' : 'video';
+            state.media = URL.createObjectURL(file);
+            
+            // Update UI
+            updateMediaPreview();
+            validateForm();
+        }
+        
+        // Update media preview
+        function updateMediaPreview() {
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const mediaPreview = document.getElementById('mediaPreview');
+            const imagePreview = document.getElementById('imagePreview');
+            const videoPreview = document.getElementById('videoPreview');
+            const mediaIcon = document.getElementById('mediaIcon');
+            const mediaTypeLabel = document.getElementById('mediaTypeLabel');
+            const fileSizeHint = document.getElementById('fileSizeHint');
+            const uploadIcon = document.getElementById('uploadIcon');
+            
+            if (state.media) {
+                fileUploadArea.classList.add('hidden');
+                mediaPreview.classList.remove('hidden');
+                
+                if (state.mediaType === 'image') {
+                    imagePreview.src = state.media;
+                    imagePreview.classList.remove('hidden');
+                    videoPreview.classList.add('hidden');
+                    mediaIcon.textContent = '🖼️';
+                    mediaTypeLabel.textContent = 'Picha';
+                    fileSizeHint.textContent = '5MB';
+                    uploadIcon.textContent = '🖼️';
+                } else {
+                    videoPreview.src = state.media;
+                    videoPreview.classList.remove('hidden');
+                    imagePreview.classList.add('hidden');
+                    mediaIcon.textContent = '🎥';
+                    mediaTypeLabel.textContent = 'Video';
+                    fileSizeHint.textContent = '20MB (sekunde 60)';
+                    uploadIcon.textContent = '🎥';
+                }
+            } else {
+                fileUploadArea.classList.remove('hidden');
+                mediaPreview.classList.add('hidden');
+                mediaIcon.textContent = '🖼️';
+                mediaTypeLabel.textContent = 'Picha';
+                fileSizeHint.textContent = '5MB';
+                uploadIcon.textContent = '📁';
+            }
+        }
+        
+        // Clear media
+        function clearMedia() {
+            state.media = null;
+            state.mediaType = null;
+            state.mediaFile = null;
+            
+            // Revoke object URL to free memory
+            if (state.media) {
+                URL.revokeObjectURL(state.media);
+            }
+            
+            updateMediaPreview();
+            validateForm();
+        }
+        
+        // Validate form
+        function validateForm() {
+            const uploadButton = document.getElementById('uploadButton');
+            const isValid = state.description.trim().length > 0 && state.media !== null;
+            
+            uploadButton.disabled = !isValid || !state.isOnline || state.uploading;
+        }
+        
+        // Load user data from localStorage
+        function loadUserData() {
+            try {
+                const userDataStr = localStorage.getItem('userData');
+                const userId = localStorage.getItem('userId');
+                const userEmail = localStorage.getItem('userEmail');
+                
+                if (userDataStr && userId) {
+                    const userData = JSON.parse(userDataStr);
+                    state.currentUser = {
+                        id: parseInt(userId),
+                        email: userEmail || userData.email,
+                        name: userData.full_name || userData.business_name || 'Mtumiaji',
+                        role: userData.role,
+                        phone: userData.phone || '',
+                        business_name: userData.business_name || ''
+                    };
+                } else {
+                    // Redirect to login if no user data
+                    alert('Tafadhali ingia kwanza kwenye akaunti yako');
+                    window.location.href = 'login.html';
+                    return;
+                }
+            } catch (error) {
+                console.error('❌ Hitilafu ya kupakia taarifa za mtumiaji:', error);
+                state.currentUser = null;
+            } finally {
+                state.loadingUser = false;
+                updateUI();
+            }
+        }
+        
+        // Update UI based on state
+        function updateUI() {
+            // Update user info if needed
+            // Update ads list if in myPosts tab
+            if (state.activeTab === 'myPosts' && !state.loadingAds) {
+                renderAdsList();
+            }
+            
+            validateForm();
+        }
+        
+        // Handle upload
+        async function handleUpload() {
+            if (!state.currentUser) {
+                alert('Tafadhali ingia kwanza kwenye akaunti yako');
+                return;
+            }
+            
+            if (!state.description.trim()) {
+                alert('Tafadhali andika maelezo ya matangazo.');
+                return;
+            }
+            
+            if (!state.media) {
+                alert('Tafadhali chagua picha au video ya matangazo yako.');
+                return;
+            }
+            
+            if (!state.isOnline) {
+                alert('Hakuna Muunganiko', 'Tafadhali angalia muunganiko wako wa intaneti na ujaribu tena.');
+                return;
+            }
+            
+            state.uploading = true;
+            updateUploadButton(true);
+            
+            try {
+                alert('Upakiaji Unaanza...\nTafadhali subiri, matangazo yako yanapakiwa.');
+                
+                // 1. Upload to Cloudinary
+                const cloudinaryResult = await uploadToCloudinary(state.mediaFile, state.mediaType);
+                console.log('✅ Media imepakiwa kikamilifu kwenye Cloudinary');
+                
+                // 2. Send to backend
+                const token = localStorage.getItem('userToken');
+                
+                if (!token) {
+                    throw new Error('Hakuna token ya kuthibitisha. Tafadhali ingia tena.');
+                }
+                
+                // Calculate expiration date (30 days from now)
+                const expiresAt = new Date();
+                expiresAt.setDate(expiresAt.getDate() + 30);
+                
+                const matangazoData = {
+                    description: state.description.trim(),
+                    media_url: cloudinaryResult.secure_url,
+                    media_type: state.mediaType || 'image',
+                    thumbnail_url: cloudinaryResult.secure_url,
+                    payment_status: 'free',
+                    expires_at: expiresAt.toISOString()
+                };
+                
+                console.log('📤 Kutuma matangazo kwenye backend...', matangazoData);
+                
+                const response = await fetchWithTimeout(
+                    `${API_BASE_URL}/api/matangazo`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(matangazoData),
+                    },
+                    30000
+                );
+                
+                console.log('📄 Backend response status:', response.status);
+                
+                if (response.ok) {
+                    const newMatangazo = await response.json();
+                    console.log('✅ Matangazo yamepakuliwa kikamilifu:', newMatangazo);
+                    
+                    alert('Imefanikiwa! 🎉\nMatangazo yako yamewekwa kikamilifu!\n\n⏰ Mudumu: Siku 30\n💰 Bila malipo');
+                    
+                    // Reset form
+                    state.description = '';
+                    state.media = null;
+                    state.mediaType = null;
+                    state.mediaFile = null;
+                    
+                    // Clear inputs
+                    document.getElementById('descriptionInput').value = '';
+                    document.getElementById('charCount').textContent = '0 / 500';
+                    
+                    // Clear media preview
+                    clearMedia();
+                    
+                    // Load updated ads
+                    loadMyAdvertisements();
+                    
+                    // Switch to myPosts tab
+                    switchTab('myPosts');
+                    
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Hitilafu ya kuhifadhi matangazo:', response.status, errorText);
+                    
+                    let errorMessage = 'Imeshindikana kuhifadhi matangazo.';
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        errorMessage = errorData.error || errorData.details || errorText;
+                    } catch {
+                        errorMessage = errorText || `Hitilafu ya server: ${response.status}`;
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+            } catch (error) {
+                console.error('❌ Hitilafu ya upakiaji:', error);
+                alert(`Hitilafu ya Upakiaji\n${error.message || 'Imeshindikana kupakia matangazo. Tafadhali jaribu tena.'}`);
+            } finally {
+                state.uploading = false;
+                updateUploadButton(false);
+            }
+        }
+        
+        // Update upload button state
+        function updateUploadButton(isUploading) {
+            const uploadButton = document.getElementById('uploadButton');
+            const uploadButtonText = document.getElementById('uploadButtonText');
+            const uploadSpinner = document.getElementById('uploadSpinner');
+            
+            if (isUploading) {
+                uploadButton.disabled = true;
+                uploadButton.classList.remove('bg-green-500', 'hover:bg-green-600');
+                uploadButton.classList.add('bg-gray-400');
+                uploadButtonText.textContent = 'Inapakia...';
+                uploadSpinner.classList.remove('hidden');
+            } else {
+                uploadButton.disabled = false;
+                uploadButton.classList.remove('bg-gray-400');
+                uploadButton.classList.add('bg-green-500', 'hover:bg-green-600');
+                uploadButtonText.textContent = 'TUMIA MATANGAZO';
+                uploadSpinner.classList.add('hidden');
+            }
+        }
+        
+        // Upload to Cloudinary
+        async function uploadToCloudinary(file, resourceType = 'image') {
+            try {
+                console.log('☁️ Anzisha upakiaji wa Cloudinary...');
+                
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+                formData.append('cloud_name', CLOUDINARY_CONFIG.cloudName);
+                
+                console.log('📤 Inatuma kwa Cloudinary...');
+                
+                const timeout = resourceType === 'video' ? 180000 : 60000;
+                
+                const uploadResponse = await fetchWithTimeout(
+                    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/${resourceType}/upload`,
+                    {
+                        method: 'POST',
+                        body: formData,
+                    },
+                    timeout
+                );
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    console.error('❌ Upakiaji wa Cloudinary umeshindikana:', uploadResponse.status);
+                    throw new Error(`Upakiaji umeshindikana: ${uploadResponse.status}`);
+                }
+                
+                const data = await uploadResponse.json();
+                console.log('✅ Cloudinary upload successful');
+                
+                return {
+                    secure_url: data.secure_url,
+                    public_id: data.public_id
+                };
+                
+            } catch (error) {
+                console.error('❌ Hitilafu ya upakiaji wa Cloudinary:', error.message);
+                
+                if (error.name === 'AbortError') {
+                    throw new Error('Muda wa upakiaji umekwisha. Tafadhali angalia muunganiko wako wa intaneti na ujaribu tena.');
+                }
+                
+                throw new Error(`Upakiaji wa Cloudinary umeshindikana: ${error.message}`);
+            }
+        }
+        
+        // Fetch with timeout
+        async function fetchWithTimeout(url, options, timeout = 30000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+            
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal,
+                });
+                
+                clearTimeout(timeoutId);
+                return response;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                throw error;
+            }
+        }
+        
+        // Load user's advertisements
+        async function loadMyAdvertisements() {
+            try {
+                state.loadingAds = true;
+                updateAdsLoading(true);
+                
+                const token = localStorage.getItem('userToken');
+                
+                if (!token) {
+                    console.log('Hakuna token, sauti imepotea');
+                    return;
+                }
+                
+                console.log('📡 Kupakia matangazo yangu...');
+                const response = await fetchWithTimeout(
+                    `${API_BASE_URL}/api/matangazo/my`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                    15000
+                );
+                
+                console.log('📊 Matangazo response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📊 Matangazo yangu yamepakuliwa:', data.length);
+                    state.myAdvertisements = data;
+                    renderAdsList();
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Hitilafu ya kupakia matangazo:', response.status, errorText);
+                    alert('Imeshindikana kupakia matangazo yako.');
+                    
+                    // Load mock data for demonstration
+                    loadMockAdsData();
+                }
+            } catch (error) {
+                console.error('❌ Hitilafu katika kupakia matangazo:', error);
+                alert('Imeshindikana kupakia matangazo.');
+                
+                // Load mock data for demonstration
+                loadMockAdsData();
+            } finally {
+                state.loadingAds = false;
+                updateAdsLoading(false);
+            }
+        }
+        
+        // Update ads loading state
+        function updateAdsLoading(isLoading) {
+            const refreshButtonText = document.getElementById('refreshButtonText');
+            const refreshSpinner = document.getElementById('refreshSpinner');
+            const loadingAds = document.getElementById('loadingAds');
+            
+            if (isLoading) {
+                refreshButtonText.textContent = 'Inapakia...';
+                refreshSpinner.classList.remove('hidden');
+                loadingAds.classList.remove('hidden');
+            } else {
+                refreshButtonText.textContent = '🔄 Pakia Upya';
+                refreshSpinner.classList.add('hidden');
+                loadingAds.classList.add('hidden');
+            }
+        }
+        
+        // Render ads list
+        function renderAdsList() {
+            const container = document.getElementById('adsListContainer');
+            const emptyAdsMessage = document.getElementById('emptyAdsMessage');
+            
+            if (state.myAdvertisements.length === 0) {
+                container.innerHTML = '';
+                emptyAdsMessage.classList.remove('hidden');
+                return;
+            }
+            
+            emptyAdsMessage.classList.add('hidden');
+            
+            let adsHTML = '';
+            
+            state.myAdvertisements.forEach(ad => {
+                const createdDate = new Date(ad.created_at).toLocaleDateString('sw-TZ');
+                const isFree = ad.payment_status === 'free';
+                
+                adsHTML += `
+                    <div class="bg-white rounded-xl p-4 mb-4 card-shadow" data-ad-id="${ad.id}">
+                        <div class="flex justify-between items-start mb-3">
+                            <h3 class="font-bold text-gray-800">${ad.title || `Matangazo #${ad.id}`}</h3>
+                            <span class="text-gray-500 text-sm">${createdDate}</span>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-3 line-clamp-3">${ad.description}</p>
+                        
+                        <div class="mb-3 h-40 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                            ${ad.media_type === 'video' ? `
+                                <div class="text-center">
+                                    <div class="text-3xl mb-2">🎥</div>
+                                    <p class="text-gray-600">Video</p>
+                                </div>
+                            ` : `
+                                <img src="${ad.media_url}" alt="Matangazo image" class="w-full h-full object-cover">
+                            `}
+                        </div>
+                        
+                        <!-- Statistics Section -->
+                        <div class="flex justify-between items-center mb-3 pt-3 border-t border-gray-200">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center">
+                                    <span class="mr-1">👍</span>
+                                    <span class="text-blue-600 text-sm font-medium">${ad.like_count || 0} Likes</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="mr-1">⚠️</span>
+                                    <span class="text-red-600 text-sm font-medium">${ad.report_count || 0} Ripoti</span>
+                                </div>
+                            </div>
+                            
+                            <div class="${isFree ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} px-3 py-1 rounded-full text-xs font-medium">
+                                ${isFree ? '🆓 Bila malipo' : '💰 Imehadhiwa'}
+                            </div>
+                        </div>
+                        
+                        <button class="delete-ad-button w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-lg text-sm mt-2">
+                            Futa
+                        </button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = adsHTML;
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-ad-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const adCard = this.closest('[data-ad-id]');
+                    const adId = parseInt(adCard.getAttribute('data-ad-id'));
+                    deleteAdvertisement(adId);
+                });
+            });
+        }
+        
+        // Delete advertisement
+        async function deleteAdvertisement(id) {
+            if (!confirm('Una uhakika unataka kufuta matangazo haya?')) {
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('userToken');
+                
+                const response = await fetchWithTimeout(
+                    `${API_BASE_URL}/api/matangazo/${id}`,
+                    {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        },
+                    },
+                    15000
+                );
+                
+                if (response.ok) {
+                    alert('Imefanikiwa', 'Matangazo yamefutwa kikamilifu!');
+                    // Remove from state and re-render
+                    state.myAdvertisements = state.myAdvertisements.filter(ad => ad.id !== id);
+                    renderAdsList();
+                } else {
+                    const errorText = await response.text();
+                    alert('Hitilafu', 'Imeshindikana kufuta matangazo.');
+                }
+            } catch (error) {
+                console.error('❌ Hitilafu ya kufuta matangazo:', error);
+                alert('Hitilafu', 'Imeshindikana kufuta matangazo.');
+            }
+        }
+        
+        // Load mock ads data for demonstration
+        function loadMockAdsData() {
+            state.myAdvertisements = [
+                {
+                    id: 1,
+                    title: "Mchele Bora",
+                    description: "Mchele wa aina bora, safi na bila uchafu. Bei nafuu kwa wateja wote.",
+                    media_url: "https://via.placeholder.com/400x300/4CAF50/FFFFFF?text=Mchele+Bora",
+                    media_type: "image",
+                    created_at: new Date().toISOString(),
+                    payment_status: "free",
+                    like_count: 5,
+                    report_count: 0
+                },
+                {
+                    id: 2,
+                    title: "Video ya Utengenezaji",
+                    description: "Tazama jinsi tunavyotengeneza bidhaa zetu kwa usafi na ubora.",
+                    media_type: "video",
+                    created_at: new Date(Date.now() - 86400000).toISOString(),
+                    payment_status: "free",
+                    like_count: 12,
+                    report_count: 1
+                },
+                {
+                    id: 3,
+                    title: "Vyakula vya Haraka",
+                    description: "Vyakula vya haraka vilivyokamilika, tayari kwa matumizi ya haraka.",
+                    media_url: "https://via.placeholder.com/400x300/FF9800/FFFFFF?text=Vyakula+vya+Haraka",
+                    media_type: "image",
+                    created_at: new Date(Date.now() - 172800000).toISOString(),
+                    payment_status: "paid",
+                    like_count: 8,
+                    report_count: 0
+                }
+            ];
+            
+            renderAdsList();
+        }
+    </script>
+</body>
+</html>

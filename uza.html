@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛒 Uza Bidhaa - Dukamkononi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* React Native Style Flavor - Sawa kabisa na uza.tsx */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .keyboard-avoid {
+            flex: 1;
+            min-height: 100vh;
+        }
+        .container {
+            flex: 1;
+            background-color: #f8f9fa;
+        }
+        .loading-container {
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 30px;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            flex-direction: column;
+        }
+        .loading-text {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .loading-subtext {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .header {
+            background-color: white;
+            padding: 20px;
+            border-bottom: 1px solid #ecf0f1;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+        .header-top {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .back-button {
+            padding: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            flex: 1;
+        }
+        .refresh-button {
+            padding: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 4px;
+        }
+        .business-name {
+            font-weight: bold;
+            color: #2ecc71;
+            font-size: 15px;
+        }
+        .user-info {
+            font-size: 13px;
+            color: #95a5a6;
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+        .business-status {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            background-color: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 8px;
+            align-self: flex-start;
+            max-width: fit-content;
+        }
+        .business-status-text {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        .form-container {
+            padding: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .section-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            display: block;
+        }
+        .small-refresh-button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 4px;
+            background-color: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+        }
+        .refresh-text {
+            font-size: 12px;
+            color: #3498db;
+            font-weight: 500;
+        }
+        .error-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            padding: 10px;
+            background-color: #ffeaea;
+            border-radius: 8px;
+        }
+        .error-text {
+            color: #e74c3c;
+            font-size: 12px;
+        }
+        .search-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 0 12px;
+            margin-bottom: 12px;
+        }
+        .search-icon {
+            margin-right: 8px;
+            color: #95a5a6;
+        }
+        .search-input {
+            flex: 1;
+            padding: 12px 0;
+            font-size: 14px;
+            color: #2c3e50;
+            border: none;
+            outline: none;
+            background: transparent;
+        }
+        .loading-products {
+            display: none;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            gap: 10px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+        }
+        .loading-products-text {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-align: center;
+        }
+        .no-products-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 2px dashed #e9ecef;
+        }
+        .no-products-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+        .no-products-text {
+            font-size: 14px;
+            color: #6c757d;
+            text-align: center;
+            line-height: 20px;
+            margin-bottom: 20px;
+        }
+        .clear-search-button {
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .clear-search-button-text {
+            color: #3498db;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .add-product-button {
+            display: none;
+            flex-direction: row;
+            align-items: center;
+            background-color: #2ecc71;
+            padding: 12px 20px;
+            border-radius: 8px;
+            gap: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            color: white;
+        }
+        .add-product-button-text {
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .products-list {
+            padding-bottom: 8px;
+            display: none;
+        }
+        .product-item {
+            background-color: white;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .product-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .product-item-selected {
+            background-color: #f0f8f0;
+            border-color: #2ecc71;
+            border-width: 2px;
+        }
+        .product-item-out-of-stock {
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .product-item-content {
+            flex: 1;
+        }
+        .product-item-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            flex: 1;
+            margin-right: 10px;
+        }
+        .product-name-selected {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .product-name-out-of-stock {
+            color: #6c757d;
+            text-decoration: line-through;
+        }
+        .product-stock-badge {
+            background-color: #e8f4fd;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .product-stock-badge-low {
+            background-color: #fff3cd;
+        }
+        .product-stock-badge-out {
+            background-color: #f8d7da;
+        }
+        .product-stock-badge-text {
+            font-size: 11px;
+            font-weight: 600;
+            color: #3498db;
+        }
+        .product-category {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        .product-footer {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .product-price {
+            font-size: 15px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .product-owner-badge {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 4px;
+            background-color: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .product-owner-text {
+            font-size: 11px;
+            color: #6c757d;
+        }
+        .selected-indicator {
+            margin-left: 10px;
+        }
+        .products-count {
+            font-size: 12px;
+            color: #6c757d;
+            text-align: center;
+            font-style: italic;
+            margin-top: 10px;
+            display: none;
+        }
+        .product-info {
+            background-color: #e8f4fd;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+        .product-info-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .product-details {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .product-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .current-stock-badge {
+            background-color: #e8f4fd;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+        .current-stock-badge-low {
+            background-color: #fff3cd;
+        }
+        .current-stock-badge-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3498db;
+        }
+        .input {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            color: #2c3e50;
+            margin-top: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .input:focus {
+            outline: none;
+            border-color: #2ecc71;
+        }
+        .input-error {
+            border-color: #e74c3c;
+            background-color: #fff5f5;
+        }
+        .quantity-container {
+            position: relative;
+        }
+        .max-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #3498db;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            display: none;
+        }
+        .stock-info-container {
+            display: none;
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+        .stock-info {
+            font-size: 13px;
+            color: #e67e22;
+            font-style: italic;
+        }
+        .price-container {
+            position: relative;
+        }
+        .price-input {
+            padding-right: 120px;
+        }
+        .currency-preview {
+            position: absolute;
+            right: 15px;
+            top: 0;
+            bottom: 0;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            pointer-events: none;
+        }
+        .currency-text {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+        .price-preview {
+            font-size: 16px;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .price-comparison {
+            display: none;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        .price-comparison-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .price-comparison-value {
+            font-size: 12px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .customer-hint {
+            font-size: 12px;
+            color: #3498db;
+            margin-top: 6px;
+            font-style: italic;
+            display: none;
+        }
+        .date-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .today-button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 4px;
+            background-color: #e8f4fd;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+        }
+        .today-button-text {
+            font-size: 12px;
+            color: #3498db;
+            font-weight: 500;
+        }
+        .product-owner-info {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .product-owner-info-text {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .summary-container {
+            background-color: #f0f8f0;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #27ae60;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+        }
+        .summary-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+        .summary-details {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .summary-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 2px 0;
+        }
+        .summary-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            flex: 1;
+        }
+        .summary-value {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 500;
+            text-align: right;
+            flex: 1;
+        }
+        .summary-total {
+            font-size: 18px;
+            color: #27ae60;
+            font-weight: bold;
+            text-align: right;
+        }
+        .divider {
+            height: 1px;
+            background-color: #ecf0f1;
+            margin: 10px 0;
+        }
+        .sale-button {
+            background-color: #2ecc71;
+            padding: 20px;
+            border-radius: 12px;
+            border: none;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            box-shadow: 0 3px 4px rgba(0,0,0,0.25);
+            transition: all 0.3s ease;
+            width: 100%;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .sale-button:hover:not(:disabled) {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 8px rgba(0,0,0,0.3);
+        }
+        .sale-button-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
+        .sale-button-text-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sale-button-text {
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .sale-button-subtext {
+            color: #e8f8f0;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        .sale-button-disabled {
+            background-color: #95a5a6 !important;
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none !important;
+        }
+        .sale-button-disabled:hover {
+            transform: none !important;
+            background-color: #95a5a6 !important;
+        }
+        .instructions {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+            border-left: 4px solid #f1c40f;
+        }
+        .instructions-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        .instructions-text {
+            font-size: 13px;
+            color: #7f8c8d;
+            line-height: 20px;
+        }
+        .bottom-spacing {
+            height: 40px;
+        }
+        
+        /* Spinner for loading */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2ecc71;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Fixed Navigation Buttons from uza.html */
+        .fixed-button-group {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+        }
+        .action-button {
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s, transform 0.1s;
+            text-decoration: none; 
+            border: none;
+        }
+        .action-button:active {
+            transform: scale(0.98);
+        }
+        .action-button:hover {
+            transform: translateY(-2px);
+        }
+        .btn-mauzo {
+            background-color: #3498db; /* Blue for Mauzo */
+        }
+        .btn-profaili {
+            background-color: #9b59b6; /* Purple for Profaili */
+        }
+        .btn-mauzo:hover { 
+            background-color: #2980b9; 
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+        .btn-profaili:hover { 
+            background-color: #8e44ad; 
+            box-shadow: 0 6px 15px rgba(155, 89, 182, 0.4);
+        }
+        
+        /* Scroll view */
+        .scroll-view {
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay for initial load -->
+    <div id="loadingOverlay" class="loading-container">
+        <div class="spinner"></div>
+        <p class="loading-text">Inapakua taarifa zako...</p>
+        <p class="loading-subtext">Tafadhali subiri kidogo</p>
+    </div>
+
+    <div class="keyboard-avoid">
+        <div class="scroll-view">
+            <div class="container">
+                <!-- Header Section -->
+                <header class="header">
+                    <div class="header-top">
+                        <button class="back-button" onclick="handleBack()">
+                            <i class="fas fa-arrow-left" style="font-size: 24px; color: #2c3e50;"></i>
+                        </button>
+                        <h1 class="title">🛒 Uza Bidhaa</h1>
+                        <button class="refresh-button" onclick="refreshProducts()">
+                            <i class="fas fa-refresh" style="font-size: 20px; color: #3498db;"></i>
+                        </button>
+                    </div>
+                    
+                    <p class="subtitle">
+                        Biashara: <span class="business-name" id="businessName">Inapakia...</span>
+                    </p>
+                    <p class="user-info" id="userInfo">
+                        Unauza kama: <span id="userEmail">Inapakia...</span>
+                        <span id="userRole"></span>
+                    </p>
+                    
+                    <div class="business-status">
+                        <i class="fas fa-shield-alt" id="businessStatusIcon"></i>
+                        <span class="business-status-text" id="businessStatusText">
+                            Inapakia...
+                        </span>
+                    </div>
+                </header>
+
+                <!-- Form Container -->
+                <div class="form-container">
+                    <!-- Chagua Bidhaa Section -->
+                    <div class="input-group">
+                        <div class="section-header">
+                            <label class="label">
+                                Chagua Bidhaa *
+                            </label>
+                            <button class="small-refresh-button" onclick="refreshProducts()">
+                                <i class="fas fa-refresh" style="color: #3498db; font-size: 12px;"></i>
+                                <span class="refresh-text">Sasisha</span>
+                            </button>
+                        </div>
+                        
+                        <div id="errorContainer" class="error-container" style="display: none;">
+                            <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                            <span class="error-text" id="errorText"></span>
+                        </div>
+                        
+                        <!-- Search Bar -->
+                        <div class="search-container">
+                            <i class="fas fa-search search-icon"></i>
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                class="search-input" 
+                                placeholder="Tafuta bidhaa kwa jina au kategoria..."
+                            >
+                            <button id="clearSearchButton" style="display: none; background: none; border: none; cursor: pointer;">
+                                <i class="fas fa-times-circle" style="color: #95a5a6;"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Loading Products -->
+                        <div id="loadingProductsContainer" class="loading-products">
+                            <div class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></div>
+                            <span class="loading-products-text" id="loadingProductsText">
+                                Inapakua bidhaa...
+                            </span>
+                        </div>
+                        
+                        <!-- No Products -->
+                        <div id="noProductsContainer" class="no-products-container">
+                            <i class="fas fa-cube" style="font-size: 48px; color: #bdc3c7;"></i>
+                            <h3 class="no-products-title" id="noProductsTitle"></h3>
+                            <p class="no-products-text" id="noProductsText"></p>
+                            <button id="clearSearchBtn" class="clear-search-button">
+                                <span class="clear-search-button-text">Angalia Bidhaa Zote</span>
+                            </button>
+                            <button id="addProductBtn" class="add-product-button">
+                                <i class="fas fa-plus-circle"></i>
+                                <span class="add-product-button-text">ONGEZA BIDHAA</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Products List -->
+                        <div id="productsList" class="products-list"></div>
+                        
+                        <!-- Product ID Error -->
+                        <div id="productIdError" class="error-container" style="display: none;">
+                            <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                            <span class="error-text" id="productIdErrorText"></span>
+                        </div>
+                        
+                        <!-- Products Count -->
+                        <div id="productsCount" class="products-count"></div>
+                    </div>
+
+                    <!-- Selected Product Info -->
+                    <div id="productInfoContainer" class="product-info">
+                        <h3 class="product-info-title">📦 Bidhaa Iliyochaguliwa:</h3>
+                        <div class="product-details">
+                            <div class="product-header">
+                                <span id="selectedProductName" class="product-name"></span>
+                                <div id="currentStockBadge" class="current-stock-badge">
+                                    <span id="currentStockBadgeText" class="current-stock-badge-text"></span>
+                                </div>
+                            </div>
+                            <p id="selectedProductCategory" class="product-category"></p>
+                            <p id="selectedProductPrice" class="product-price"></p>
+                            <p id="selectedProductDescription" class="product-description" style="display: none;"></p>
+                            <div class="product-owner-info">
+                                <i id="productOwnerIcon" class="fas fa-user"></i>
+                                <span id="productOwnerInfoText" class="product-owner-info-text"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quantity Input -->
+                    <div class="input-group">
+                        <label for="quantity" class="label">Kiasi *</label>
+                        <div class="quantity-container">
+                            <input 
+                                type="text" 
+                                id="quantity" 
+                                class="input" 
+                                placeholder="Weka kiasi unachouza"
+                            >
+                            <button id="maxButton" class="max-button">
+                                <span id="maxButtonText" class="max-button-text"></span>
+                            </button>
+                        </div>
+                        <div id="quantityError" class="error-container" style="display: none;">
+                            <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                            <span class="error-text" id="quantityErrorText"></span>
+                        </div>
+                        <div id="stockInfoContainer" class="stock-info-container">
+                            <i class="fas fa-calculator" style="color: #e67e22; font-size: 14px;"></i>
+                            <span class="stock-info" id="stockInfo"></span>
+                        </div>
+                    </div>
+
+                    <!-- Unit Price Input -->
+                    <div class="input-group">
+                        <label for="unitPrice" class="label">Bei ya Uuzaji (TZS) *</label>
+                        <div class="price-container">
+                            <input 
+                                type="text" 
+                                id="unitPrice" 
+                                class="input price-input" 
+                                placeholder="Weka bei unayouzia"
+                            >
+                            <div id="currencyPreview" class="currency-preview">
+                                <span class="currency-text">TZS</span>
+                                <span id="pricePreview" class="price-preview"></span>
+                            </div>
+                        </div>
+                        <div id="priceError" class="error-container" style="display: none;">
+                            <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                            <span class="error-text" id="priceErrorText"></span>
+                        </div>
+                        <div id="priceComparison" class="price-comparison">
+                            <span class="price-comparison-label">Bei ya biashara:</span>
+                            <span id="priceComparisonValue" class="price-comparison-value"></span>
+                        </div>
+                    </div>
+
+                    <!-- Customer Name Input -->
+                    <div class="input-group">
+                        <label for="customerName" class="label">Jina la Mteja *</label>
+                        <input 
+                            type="text" 
+                            id="customerName" 
+                            class="input" 
+                            placeholder="Weka jina la mteja"
+                        >
+                        <div id="customerNameError" class="error-container" style="display: none;">
+                            <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                            <span class="error-text" id="customerNameErrorText"></span>
+                        </div>
+                        <p id="customerHint" class="customer-hint"></p>
+                    </div>
+
+                    <!-- Customer Phone Input -->
+                    <div class="input-group">
+                        <label for="customerPhone" class="label">Namba ya Simu ya Mteja</label>
+                        <input 
+                            type="tel" 
+                            id="customerPhone" 
+                            class="input" 
+                            placeholder="Weka namba ya simu ya mteja"
+                        >
+                    </div>
+
+                    <!-- Sale Date Input -->
+                    <div class="input-group">
+                        <div class="date-header">
+                            <label for="saleDate" class="label">Tarehe ya Mauzo</label>
+                            <button class="today-button" onclick="setTodayDate()">
+                                <i class="fas fa-calendar-day" style="color: #3498db; font-size: 12px;"></i>
+                                <span class="today-button-text">Leo</span>
+                            </button>
+                        </div>
+                        <input 
+                            type="date" 
+                            id="saleDate" 
+                            class="input"
+                        >
+                        <div id="saleDateError" class="error-container" style="display: none;">
+                            <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                            <span class="error-text" id="saleDateErrorText"></span>
+                        </div>
+                    </div>
+
+                    <!-- Summary Section -->
+                    <div class="summary-container">
+                        <h3 class="summary-title">🧾 Muhtasari wa Mauzo:</h3>
+                        <div class="summary-details">
+                            <div class="summary-row">
+                                <span class="summary-label">Bidhaa:</span>
+                                <span id="summaryProduct" class="summary-value">Hajachaguliwa</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Kiasi:</span>
+                                <span id="summaryQuantity" class="summary-value">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Bei ya Uuzaji:</span>
+                                <span id="summaryUnitPrice" class="summary-value">TZS 0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Mteja:</span>
+                                <span id="summaryCustomer" class="summary-value">Hajabainishwa</span>
+                            </div>
+                            <div class="divider"></div>
+                            <div class="summary-row">
+                                <span class="summary-label">Jumla:</span>
+                                <span id="summaryTotal" class="summary-total">TZS 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sale Button -->
+                    <button 
+                        id="saleButton"
+                        class="sale-button sale-button-disabled"
+                        disabled
+                    >
+                        <div id="saleButtonContent" class="sale-button-content">
+                            <i class="fas fa-shopping-cart" style="font-size: 24px;"></i>
+                            <div class="sale-button-text-container">
+                                <span class="sale-button-text">KAMILISHA MAUZO</span>
+                                <span id="saleButtonSubtext" class="sale-button-subtext">TZS 0</span>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- Instructions -->
+                    <div class="instructions">
+                        <h4 class="instructions-title">📝 Maelekezo:</h4>
+                        <p class="instructions-text">
+                            1. Chagua bidhaa kutoka kwenye orodha<br>
+                            2. Weka kiasi unachouza<br>
+                            3. Weka bei unayouzia<br>
+                            4. Weka jina la mteja<br>
+                            5. Bofya "Kamilisha Mauzo"<br>
+                            6. Mauzo yatarekodiwa kiotomatiki
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bottom-spacing"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fixed Navigation Buttons -->
+    <div class="fixed-button-group">
+        <button class="action-button btn-mauzo" onclick="window.location.href='mauzo.html'">
+            <i class="fas fa-arrow-left"></i>
+            <span>MAUZO</span>
+        </button>
+        
+        <button class="action-button btn-profaili" onclick="window.location.href='profaili2.html'">
+            <span>PROFAILI</span>
+            <i class="fas fa-arrow-right"></i>
+        </button>
+    </div>
+
+    <script>
+        // ✅ API Base URL - Sawa na uza.tsx
+        const API_BASE_URL = 'https://dukamkononi.com';
+        
+        // State variables - Sawa na uza.tsx
+        let loading = false;
+        let userData = null;
+        let businessData = null;
+        let products = [];
+        let filteredProducts = [];
+        let customers = [];
+        let searchQuery = '';
+        
+        let formData = {
+            product_id: '',
+            quantity: '',
+            unit_price: '',
+            customer_name: '',
+            customer_phone: '',
+            sale_date: new Date().toISOString().split('T')[0],
+        };
+        
+        let selectedProduct = null;
+        let validationErrors = {};
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            setupEventListeners();
+            setTodayDate();
+        });
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search input
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                handleSearch(e.target.value);
+            });
+            
+            // Clear search button
+            document.getElementById('clearSearchButton').addEventListener('click', clearSearch);
+            document.getElementById('clearSearchBtn').addEventListener('click', clearSearch);
+            
+            // Quantity input
+            document.getElementById('quantity').addEventListener('input', (e) => {
+                handleQuantityInput(e.target.value);
+            });
+            
+            // Unit price input
+            document.getElementById('unitPrice').addEventListener('input', (e) => {
+                handlePriceInput(e.target.value);
+            });
+            
+            // Customer name input
+            document.getElementById('customerName').addEventListener('input', (e) => {
+                handleCustomerNameInput(e.target.value);
+            });
+            
+            // Customer phone input
+            document.getElementById('customerPhone').addEventListener('input', (e) => {
+                handleCustomerPhoneInput(e.target.value);
+            });
+            
+            // Sale date input
+            document.getElementById('saleDate').addEventListener('input', (e) => {
+                handleSaleDateInput(e.target.value);
+            });
+            
+            // Max button
+            document.getElementById('maxButton').addEventListener('click', setMaxQuantity);
+            
+            // Sale button
+            document.getElementById('saleButton').addEventListener('click', handleSale);
+            
+            // Add product button
+            document.getElementById('addProductBtn').addEventListener('click', () => {
+                window.location.href = 'bidhaa-mpya.html';
+            });
+        }
+        
+        // Format currency - Sawa na uza.tsx
+        function formatCurrency(amount) {
+            const num = parseFloat(amount) || 0;
+            return `TZS ${num.toLocaleString('en-TZ', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+            })}`;
+        }
+        
+        // Load user data - Sawa na uza.tsx
+        async function loadUserData() {
+            showLoading(true);
+            try {
+                const userToken = localStorage.getItem('userToken');
+                const storedUserData = localStorage.getItem('userData');
+                
+                if (!userToken || !storedUserData) {
+                    alert('Hitilafu: Tafadhali ingia tena');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                userData = JSON.parse(storedUserData);
+                console.log('✅ User data loaded:', userData);
+                
+                await loadBusinessData();
+                
+            } catch (error) {
+                console.error('❌ Error loading user data:', error);
+                alert('Hitilafu: Imekosekana kupakua taarifa za mtumiaji');
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Load business data - Sawa na uza.tsx
+        async function loadBusinessData() {
+            try {
+                if (!userData || !userData.business_name) {
+                    console.log('⚠️ User has no business name');
+                    businessData = { 
+                        id: userData.id, 
+                        business_name: userData.business_name || 'Personal',
+                        is_admin: userData.role === 'admin' 
+                    };
+                    updateHeaderInfo();
+                    loadProducts();
+                    loadCustomers();
+                    return;
+                }
+                
+                console.log('🏢 Loading business data for:', userData.business_name);
+                
+                const response = await fetch(
+                    `${API_BASE_URL}/api/business/by-name/${encodeURIComponent(userData.business_name)}`, 
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'ngrok-skip-browser-warning': 'true'
+                        },
+                    }
+                );
+                
+                if (response.ok) {
+                    const businessInfo = await response.json();
+                    console.log('✅ Business data loaded:', businessInfo);
+                    
+                    if (businessInfo.exists && businessInfo.hasAdmin) {
+                        businessData = {
+                            id: businessInfo.admin.id,
+                            business_name: businessInfo.admin.business_name,
+                            is_admin: true,
+                            admin_email: businessInfo.admin.email
+                        };
+                    } else {
+                        businessData = { 
+                            id: userData.id, 
+                            business_name: userData.business_name,
+                            is_admin: userData.role === 'admin' 
+                        };
+                    }
+                } else {
+                    console.log('⚠️ Business not found, using personal data');
+                    businessData = { 
+                        id: userData.id, 
+                        business_name: userData.business_name || 'Personal',
+                        is_admin: userData.role === 'admin' 
+                    };
+                }
+                
+                updateHeaderInfo();
+                loadProducts();
+                loadCustomers();
+                
+            } catch (error) {
+                console.error('❌ Error loading business data:', error);
+                businessData = { 
+                    id: userData.id, 
+                    business_name: userData.business_name || 'Personal',
+                    is_admin: userData.role === 'admin' 
+                };
+                updateHeaderInfo();
+                loadProducts();
+                loadCustomers();
+            }
+        }
+        
+        // Update header info - Sawa na uza.tsx
+        function updateHeaderInfo() {
+            if (userData && businessData) {
+                document.getElementById('businessName').textContent = businessData.business_name;
+                document.getElementById('userEmail').textContent = userData.full_name || userData.email;
+                document.getElementById('userRole').textContent = businessData.is_admin ? ' (Msimamizi)' : ' (Muuzaji)';
+                document.getElementById('businessStatusText').textContent = businessData.is_admin 
+                    ? 'Unaona bidhaa zako' 
+                    : 'Unaona bidhaa za biashara';
+                document.getElementById('businessStatusIcon').className = businessData.is_admin 
+                    ? 'fas fa-shield-alt' 
+                    : 'fas fa-user';
+                document.getElementById('businessStatusIcon').style.color = businessData.is_admin 
+                    ? '#27ae60' 
+                    : '#3498db';
+            }
+        }
+        
+        // Load products - Sawa na uza.tsx
+        async function loadProducts() {
+            setLoadingProducts(true);
+            validationErrors = {};
+            
+            try {
+                if (!businessData) {
+                    console.log('⚠️ No business data available');
+                    products = [];
+                    filteredProducts = [];
+                    renderProducts();
+                    return;
+                }
+                
+                console.log('📦 Loading products for business:', businessData.business_name);
+                
+                let productsData = [];
+                const token = localStorage.getItem('userToken');
+                
+                if (!token) {
+                    alert('Hitilafu: Tafadhali ingia tena');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                if (businessData.is_admin) {
+                    // Admin sees all products of their business
+                    const response = await fetch(`${API_BASE_URL}/api/products/my`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'ngrok-skip-browser-warning': 'true'
+                        },
+                    });
+                    
+                    if (response.ok) {
+                        productsData = await response.json();
+                        console.log(`✅ Admin loaded ${productsData.length} products`);
+                    } else {
+                        const errorText = await response.text();
+                        console.error('❌ Error loading admin products:', errorText);
+                        productsData = [];
+                    }
+                } else {
+                    // Seller sees products from ALL sellers in the same business
+                    try {
+                        // First get all sellers in this business
+                        const sellersResponse = await fetch(
+                            `${API_BASE_URL}/api/business/${encodeURIComponent(businessData.business_name)}/sellers`,
+                            {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Content-Type': 'application/json',
+                                    'ngrok-skip-browser-warning': 'true'
+                                },
+                            }
+                        );
+                        
+                        let allProducts = [];
+                        
+                        if (sellersResponse.ok) {
+                            const sellers = await sellersResponse.json();
+                            console.log(`✅ Found ${sellers.length} sellers in business`);
+                            
+                            // Get products from each seller
+                            for (const seller of sellers) {
+                                const sellerProductsResponse = await fetch(
+                                    `${API_BASE_URL}/api/products/seller/${seller.id}`,
+                                    {
+                                        method: 'GET',
+                                        headers: {
+                                            'Authorization': `Bearer ${token}`,
+                                            'Content-Type': 'application/json',
+                                            'ngrok-skip-browser-warning': 'true'
+                                        },
+                                    }
+                                );
+                                
+                                if (sellerProductsResponse.ok) {
+                                    const sellerProducts = await sellerProductsResponse.json();
+                                    allProducts = [...allProducts, ...sellerProducts];
+                                }
+                            }
+                            
+                            productsData = allProducts;
+                            console.log(`✅ Seller loaded ${productsData.length} products from all sellers`);
+                        } else {
+                            // Fallback to business products endpoint
+                            console.log('⚠️ Using fallback method for products');
+                            const fallbackResponse = await fetch(
+                                `${API_BASE_URL}/api/businesses/${businessData.id}/products`, 
+                                {
+                                    method: 'GET',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json',
+                                        'ngrok-skip-browser-warning': 'true'
+                                    },
+                                }
+                            );
+                            
+                            if (fallbackResponse.ok) {
+                                productsData = await fallbackResponse.json();
+                                console.log(`✅ Loaded ${productsData.length} products via fallback`);
+                            } else {
+                                // Final fallback to personal products
+                                const personalResponse = await fetch(`${API_BASE_URL}/api/products/my`, {
+                                    method: 'GET',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json',
+                                        'ngrok-skip-browser-warning': 'true'
+                                    },
+                                });
+                                
+                                if (personalResponse.ok) {
+                                    productsData = await personalResponse.json();
+                                    console.log(`✅ Loaded ${productsData.length} personal products as final fallback`);
+                                } else {
+                                    productsData = [];
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('❌ Error loading business products:', error);
+                        productsData = [];
+                    }
+                }
+                
+                // Filter active products only
+                const activeProducts = productsData.filter(product => 
+                    product && (product.is_active !== false) && (product.stock > 0)
+                );
+                
+                products = activeProducts;
+                filteredProducts = activeProducts;
+                
+                renderProducts();
+                
+                if (activeProducts.length === 0 && productsData.length > 0) {
+                    alert(
+                        'Hakuna Bidhaa Zilizopo\n\nBidhaa zote zina 0 stock. Tafadhali ongeza kiasi cha bidhaa au bidhaa nyingine.'
+                    );
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading products:', error);
+                
+                validationErrors.products = 'Imeshindwa kuunganisha na server. Tafadhali jaribu tena.';
+                showError('products', validationErrors.products);
+                
+                products = [];
+                filteredProducts = [];
+                renderProducts();
+            } finally {
+                setLoadingProducts(false);
+            }
+        }
+        
+        // Load customers - Sawa na uza.tsx
+        async function loadCustomers() {
+            try {
+                const token = localStorage.getItem('userToken');
+                
+                if (!token) return;
+                
+                const response = await fetch(`${API_BASE_URL}/api/customers/my`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    },
+                });
+                
+                if (response.ok) {
+                    const customersData = await response.json();
+                    customers = customersData || [];
+                    
+                    if (customers.length > 0) {
+                        document.getElementById('customerHint').textContent = `💡 Wateja wanaosajiliwa: ${customers.length}`;
+                        document.getElementById('customerHint').style.display = 'block';
+                    }
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading customers:', error);
+            }
+        }
+        
+        // Render products list - Sawa na uza.tsx
+        function renderProducts() {
+            const container = document.getElementById('productsList');
+            container.innerHTML = '';
+            
+            document.getElementById('loadingProductsContainer').style.display = 'none';
+            document.getElementById('noProductsContainer').style.display = 'none';
+            document.getElementById('productsList').style.display = 'none';
+            document.getElementById('productsCount').style.display = 'none';
+            
+            if (filteredProducts.length === 0) {
+                if (searchQuery) {
+                    document.getElementById('noProductsTitle').textContent = 'Hakuna Matokeo';
+                    document.getElementById('noProductsText').textContent = 'Hakuna bidhaa zinazolingana na utafutaji wako.';
+                    document.getElementById('clearSearchBtn').style.display = 'block';
+                    document.getElementById('addProductBtn').style.display = 'none';
+                } else {
+                    document.getElementById('noProductsTitle').textContent = 'Hakuna Bidhaa';
+                    document.getElementById('noProductsText').textContent = businessData?.is_admin
+                        ? 'Huna bidhaa zozote zilizopo. Ongeza bidhaa kwanza.'
+                        : `Biashara "${businessData?.business_name}" haina bidhaa zilizopo.`;
+                    document.getElementById('clearSearchBtn').style.display = 'none';
+                    if (businessData?.is_admin) {
+                        document.getElementById('addProductBtn').style.display = 'flex';
+                    } else {
+                        document.getElementById('addProductBtn').style.display = 'none';
+                    }
+                }
+                
+                document.getElementById('noProductsContainer').style.display = 'flex';
+                return;
+            }
+            
+            document.getElementById('productsList').style.display = 'block';
+            
+            filteredProducts.forEach(product => {
+                const isSelected = formData.product_id === product.id;
+                const isOutOfStock = product.stock <= 0;
+                const isLowStock = product.stock <= 5;
+                
+                const productItem = document.createElement('div');
+                productItem.className = `product-item ${isSelected ? 'product-item-selected' : ''} ${isOutOfStock ? 'product-item-out-of-stock' : ''}`;
+                productItem.onclick = () => {
+                    if (!isOutOfStock) {
+                        handleProductSelect(product);
+                    }
+                };
+                
+                // Stock badge class
+                let stockBadgeClass = 'product-stock-badge';
+                if (isLowStock) stockBadgeClass += ' product-stock-badge-low';
+                if (isOutOfStock) stockBadgeClass += ' product-stock-badge-out';
+                
+                // Owner badge
+                const isOwner = product.seller_id === userData?.id;
+                
+                productItem.innerHTML = `
+                    <div class="product-item-content">
+                        <div class="product-item-header">
+                            <span class="product-name ${isSelected ? 'product-name-selected' : ''} ${isOutOfStock ? 'product-name-out-of-stock' : ''}">
+                                ${product.name}
+                            </span>
+                            <div class="${stockBadgeClass}">
+                                <span class="product-stock-badge-text">${product.stock} imebaki</span>
+                            </div>
+                        </div>
+                        <p class="product-category">${product.category || 'Hakuna kategoria'}</p>
+                        <div class="product-footer">
+                            <span class="product-price">${formatCurrency(product.price)}</span>
+                            <div class="product-owner-badge">
+                                <i class="fas ${isOwner ? 'fa-user' : 'fa-building'}" style="color: ${isOwner ? '#3498db' : '#2ecc71'}; font-size: 12px;"></i>
+                                <span class="product-owner-text">${isOwner ? 'Yako' : 'Biashara'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    ${isSelected ? '<div class="selected-indicator"><i class="fas fa-check-circle" style="color: #2ecc71; font-size: 24px;"></i></div>' : ''}
+                `;
+                
+                container.appendChild(productItem);
+            });
+            
+            // Update count
+            document.getElementById('productsCount').innerHTML = `
+                ${filteredProducts.length} bidhaa • ${filteredProducts.filter(p => p.stock > 0).length} zina kiasi
+            `;
+            document.getElementById('productsCount').style.display = 'block';
+        }
+        
+        // Handle product selection - Sawa na uza.tsx
+        function handleProductSelect(product) {
+            formData.product_id = product.id;
+            selectedProduct = product;
+            
+            // Update form fields
+            document.getElementById('unitPrice').value = product.price;
+            formData.unit_price = product.price.toString();
+            handlePriceInput(product.price.toString());
+            
+            // Show product info
+            document.getElementById('productInfoContainer').style.display = 'block';
+            document.getElementById('selectedProductName').textContent = product.name;
+            document.getElementById('currentStockBadgeText').textContent = `${product.stock} imebaki`;
+            document.getElementById('selectedProductCategory').innerHTML = `<i class="fas fa-tag" style="color: #7f8c8d; font-size: 14px;"></i> ${product.category || 'Hakuna Kategoria'}`;
+            document.getElementById('selectedProductPrice').innerHTML = `<i class="fas fa-money-bill-wave" style="color: #27ae60; font-size: 14px;"></i> Bei: ${formatCurrency(product.price)}`;
+            
+            if (product.description) {
+                document.getElementById('selectedProductDescription').innerHTML = `<i class="fas fa-file-alt" style="color: #3498db; font-size: 14px;"></i> ${product.description}`;
+                document.getElementById('selectedProductDescription').style.display = 'block';
+            } else {
+                document.getElementById('selectedProductDescription').style.display = 'none';
+            }
+            
+            const isOwner = product.seller_id === userData?.id;
+            document.getElementById('productOwnerIcon').className = isOwner ? 'fas fa-user' : 'fas fa-building';
+            document.getElementById('productOwnerIcon').style.color = isOwner ? '#3498db' : '#2ecc71';
+            document.getElementById('productOwnerInfoText').textContent = isOwner ? 'Bidhaa yako' : 'Bidhaa ya biashara';
+            
+            // Update stock badge color
+            const currentStockBadge = document.getElementById('currentStockBadge');
+            if (product.stock <= 5) {
+                currentStockBadge.classList.add('current-stock-badge-low');
+            } else {
+                currentStockBadge.classList.remove('current-stock-badge-low');
+            }
+            
+            // Show max button
+            document.getElementById('maxButton').style.display = 'block';
+            document.getElementById('maxButtonText').textContent = `Max: ${product.stock}`;
+            
+            // Update stock info
+            updateStockInfo();
+            
+            // Update price comparison
+            document.getElementById('priceComparisonValue').textContent = formatCurrency(product.price);
+            document.getElementById('priceComparison').style.display = 'flex';
+            
+            // Update summary
+            updateSummary();
+            updateSaleButtonState();
+            
+            // Clear product ID error
+            document.getElementById('productIdError').style.display = 'none';
+            
+            // Re-render products to update selection
+            renderProducts();
+        }
+        
+        // Handle search - Sawa na uza.tsx
+        function handleSearch(value) {
+            searchQuery = value;
+            const clearButton = document.getElementById('clearSearchButton');
+            clearButton.style.display = value ? 'block' : 'none';
+            
+            if (value.trim() === '') {
+                filteredProducts = products.filter(p => p.stock > 0);
+            } else {
+                filteredProducts = products.filter(product =>
+                    product.name.toLowerCase().includes(value.toLowerCase()) ||
+                    (product.category && product.category.toLowerCase().includes(value.toLowerCase())) ||
+                    (product.description && product.description.toLowerCase().includes(value.toLowerCase()))
+                );
+            }
+            
+            renderProducts();
+        }
+        
+        // Clear search
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            handleSearch('');
+        }
+        
+        // Handle quantity input - Sawa na uza.tsx
+        function handleQuantityInput(value) {
+            const cleanedValue = value.replace(/[^0-9]/g, '');
+            document.getElementById('quantity').value = cleanedValue;
+            formData.quantity = cleanedValue;
+            
+            // Validate
+            validateQuantity();
+            updateStockInfo();
+            updateSummary();
+            updateSaleButtonState();
+        }
+        
+        // Handle price input - Sawa na uza.tsx
+        function handlePriceInput(value) {
+            const cleanedValue = value.replace(/[^0-9.]/g, '');
+            document.getElementById('unitPrice').value = cleanedValue;
+            formData.unit_price = cleanedValue;
+            
+            // Show currency preview
+            const currencyPreview = document.getElementById('currencyPreview');
+            const pricePreview = document.getElementById('pricePreview');
+            
+            if (cleanedValue) {
+                pricePreview.textContent = parseFloat(cleanedValue || '0').toLocaleString();
+                currencyPreview.style.display = 'flex';
+            } else {
+                currencyPreview.style.display = 'none';
+            }
+            
+            // Validate
+            validatePrice();
+            updateSummary();
+            updateSaleButtonState();
+        }
+        
+        // Handle customer name input - Sawa na uza.tsx
+        function handleCustomerNameInput(value) {
+            formData.customer_name = value;
+            
+            // Validate
+            validateCustomerName();
+            updateSummary();
+            updateSaleButtonState();
+        }
+        
+        // Handle customer phone input - Sawa na uza.tsx
+        function handleCustomerPhoneInput(value) {
+            formData.customer_phone = value;
+        }
+        
+        // Handle sale date input - Sawa na uza.tsx
+        function handleSaleDateInput(value) {
+            formData.sale_date = value;
+            
+            // Validate
+            validateSaleDate();
+        }
+        
+        // Set max quantity - Sawa na uza.tsx
+        function setMaxQuantity() {
+            if (selectedProduct) {
+                document.getElementById('quantity').value = selectedProduct.stock;
+                formData.quantity = selectedProduct.stock.toString();
+                validateQuantity();
+                updateStockInfo();
+                updateSummary();
+                updateSaleButtonState();
+            }
+        }
+        
+        // Set today's date - Sawa na uza.tsx
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('saleDate').value = today;
+            formData.sale_date = today;
+        }
+        
+        // Update stock info - Sawa na uza.tsx
+        function updateStockInfo() {
+            if (selectedProduct && formData.quantity) {
+                const quantity = parseInt(formData.quantity) || 0;
+                const remaining = Math.max(0, selectedProduct.stock - quantity);
+                document.getElementById('stockInfo').textContent = `Kiasi kitakachobaki: ${remaining}`;
+                document.getElementById('stockInfoContainer').style.display = 'flex';
+            } else {
+                document.getElementById('stockInfoContainer').style.display = 'none';
+            }
+        }
+        
+        // Update summary - Sawa na uza.tsx
+        function updateSummary() {
+            // Product
+            document.getElementById('summaryProduct').textContent = selectedProduct?.name || 'Hajachaguliwa';
+            
+            // Quantity
+            document.getElementById('summaryQuantity').textContent = formData.quantity || '0';
+            
+            // Unit price
+            document.getElementById('summaryUnitPrice').textContent = formData.unit_price ? formatCurrency(parseFloat(formData.unit_price)) : 'TZS 0';
+            
+            // Customer
+            document.getElementById('summaryCustomer').textContent = formData.customer_name || 'Hajabainishwa';
+            
+            // Total
+            const quantity = parseInt(formData.quantity) || 0;
+            const unitPrice = parseFloat(formData.unit_price) || 0;
+            const total = quantity * unitPrice;
+            document.getElementById('summaryTotal').textContent = formatCurrency(total);
+            document.getElementById('saleButtonSubtext').textContent = formatCurrency(total);
+        }
+        
+        // Update sale button state - Sawa na uza.tsx
+        function updateSaleButtonState() {
+            const saleButton = document.getElementById('saleButton');
+            const isValid = formData.product_id && 
+                          parseFloat(formData.quantity) > 0 && 
+                          parseFloat(formData.unit_price) > 0 && 
+                          formData.customer_name.trim();
+            
+            if (isValid && !loading) {
+                saleButton.disabled = false;
+                saleButton.classList.remove('sale-button-disabled');
+            } else {
+                saleButton.disabled = true;
+                saleButton.classList.add('sale-button-disabled');
+            }
+        }
+        
+        // Validation functions - Sawa na uza.tsx
+        function validateQuantity() {
+            const quantity = parseInt(formData.quantity);
+            const errorContainer = document.getElementById('quantityError');
+            
+            if (!formData.quantity || isNaN(quantity) || quantity <= 0) {
+                document.getElementById('quantityErrorText').textContent = 'Tafadhali weka kiasi sahihi (namba kubwa kuliko 0)';
+                errorContainer.style.display = 'flex';
+                return false;
+            }
+            
+            if (selectedProduct && quantity > selectedProduct.stock) {
+                document.getElementById('quantityErrorText').textContent = `Kiasi hakitoshi. Kiasi kilichobaki: ${selectedProduct.stock}`;
+                errorContainer.style.display = 'flex';
+                return false;
+            }
+            
+            errorContainer.style.display = 'none';
+            return true;
+        }
+        
+        function validatePrice() {
+            const unitPrice = parseFloat(formData.unit_price);
+            const errorContainer = document.getElementById('priceError');
+            
+            if (!formData.unit_price || isNaN(unitPrice) || unitPrice <= 0) {
+                document.getElementById('priceErrorText').textContent = 'Tafadhali weka bei sahihi (namba kubwa kuliko 0)';
+                errorContainer.style.display = 'flex';
+                return false;
+            }
+            
+            errorContainer.style.display = 'none';
+            return true;
+        }
+        
+        function validateCustomerName() {
+            const errorContainer = document.getElementById('customerNameError');
+            
+            if (!formData.customer_name || !formData.customer_name.trim()) {
+                document.getElementById('customerNameErrorText').textContent = 'Tafadhali weka jina la mteja';
+                errorContainer.style.display = 'flex';
+                return false;
+            }
+            
+            errorContainer.style.display = 'none';
+            return true;
+        }
+        
+        function validateSaleDate() {
+            const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+            const errorContainer = document.getElementById('saleDateError');
+            
+            if (formData.sale_date && !dateRegex.test(formData.sale_date)) {
+                document.getElementById('saleDateErrorText').textContent = 'Tafadhali tumia muundo wa Tarehe: YYYY-MM-DD';
+                errorContainer.style.display = 'flex';
+                return false;
+            }
+            
+            errorContainer.style.display = 'none';
+            return true;
+        }
+        
+        function showError(field, message) {
+            document.getElementById('errorText').textContent = message;
+            document.getElementById('errorContainer').style.display = 'flex';
+        }
+        
+        // Get or create customer - Sawa na uza.tsx
+        async function getOrCreateCustomer(customerName, customerPhone) {
+            try {
+                const token = localStorage.getItem('userToken');
+                if (!token) return null;
+                
+                // Check existing customers
+                const existingCustomer = customers.find(c => 
+                    c.name.toLowerCase() === customerName.trim().toLowerCase()
+                );
+                
+                if (existingCustomer) {
+                    console.log('✅ Using existing customer:', existingCustomer.id);
+                    return existingCustomer.id;
+                }
+                
+                console.log('➕ Creating new customer:', customerName);
+                
+                const customerData = {
+                    name: customerName.trim(),
+                    phone: customerPhone?.trim() || "",
+                    email: ""
+                };
+                
+                const response = await fetch(`${API_BASE_URL}/api/customers`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    },
+                    body: JSON.stringify(customerData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    const newCustomerId = result.customer?.id || result.id;
+                    
+                    console.log('✅ Customer created:', newCustomerId);
+                    
+                    // Reload customers
+                    loadCustomers();
+                    
+                    return newCustomerId;
+                } else {
+                    console.log('⚠️ Customer creation failed');
+                    return null;
+                }
+                
+            } catch (error) {
+                console.error('❌ Error in getOrCreateCustomer:', error);
+                return null;
+            }
+        }
+        
+        // Handle sale - Sawa na uza.tsx
+        async function handleSale() {
+            // Validate product selection
+            if (!formData.product_id) {
+                document.getElementById('productIdErrorText').textContent = 'Tafadhali chagua bidhaa';
+                document.getElementById('productIdError').style.display = 'flex';
+                return;
+            }
+            
+            // Validate all other fields
+            if (!validateQuantity() || !validatePrice() || !validateCustomerName() || !validateSaleDate()) {
+                alert('Hitilafu: Tafadhali kamilisha sehemu zote kwa usahihi');
+                return;
+            }
+            
+            loading = true;
+            setLoadingSale(true);
+            
+            try {
+                const token = localStorage.getItem('userToken');
+                
+                if (!token) {
+                    alert('Hitilafu: Tafadhali ingia tena');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const productId = formData.product_id.trim();
+                const quantity = parseInt(formData.quantity);
+                const unitPrice = parseFloat(formData.unit_price);
+                
+                // Check if product still has enough stock
+                const currentProduct = products.find(p => p.id === productId);
+                if (!currentProduct) {
+                    alert('Hitilafu: Bidhaa haipo tena');
+                    return;
+                }
+                
+                if (quantity > currentProduct.stock) {
+                    alert(`Kiasi Hakitoshi\n\nBidhaa "${currentProduct.name}" haina kiasi cha kutosha.\n\nKiasi kilichobaki: ${currentProduct.stock}\nKiasi unachotaka: ${quantity}`);
+                    return;
+                }
+                
+                // Get or create customer
+                let customerId = null;
+                if (formData.customer_name.trim()) {
+                    customerId = await getOrCreateCustomer(
+                        formData.customer_name.trim(),
+                        formData.customer_phone.trim()
+                    );
+                }
+                
+                // Prepare sale data
+                const saleData = {
+                    items: [
+                        {
+                            product_id: productId,
+                            quantity: quantity,
+                            unit_price: unitPrice
+                        }
+                    ],
+                    sale_date: formData.sale_date,
+                    payment_method: 'cash',
+                    notes: `Muuzaji: ${userData.full_name || userData.email}`
+                };
+                
+                if (customerId) {
+                    saleData.customer_id = customerId;
+                }
+                
+                console.log('📤 Sending sale data:', saleData);
+                
+                // Send sale request
+                const response = await fetch(`${API_BASE_URL}/api/sales`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    },
+                    body: JSON.stringify(saleData)
+                });
+                
+                const responseText = await response.text();
+                console.log('📥 API Response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    body: responseText
+                });
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ Failed to parse JSON response:', responseText);
+                    throw new Error(`Hitilafu ya server: ${response.status} ${response.statusText}`);
+                }
+                
+                if (!response.ok) {
+                    let errorMessage = `Hitilafu ya server (${response.status})`;
+                    
+                    if (result?.error) errorMessage = result.error;
+                    if (result?.message) errorMessage = result.message;
+                    if (result?.details) errorMessage = `${errorMessage}\n\nDetails: ${result.details}`;
+                    
+                    throw new Error(errorMessage);
+                }
+                
+                console.log('✅ Sale successful:', result);
+                
+                if (result.success === false) {
+                    throw new Error(result.error || result.message || 'Mauzo yameshindikana');
+                }
+                
+                // Update product stock in UI
+                const productIndex = products.findIndex(p => p.id === productId);
+                if (productIndex !== -1) {
+                    products[productIndex].stock = Math.max(0, products[productIndex].stock - quantity);
+                }
+                
+                // Update selected product
+                if (selectedProduct && selectedProduct.id === productId) {
+                    selectedProduct.stock = Math.max(0, selectedProduct.stock - quantity);
+                }
+                
+                // Remove product from list if stock reaches 0
+                if (currentProduct.stock - quantity <= 0) {
+                    products = products.filter(p => p.id !== productId || p.stock > 0);
+                    filteredProducts = filteredProducts.filter(p => p.id !== productId || p.stock > 0);
+                    selectedProduct = null;
+                }
+                
+                const invoiceNumber = result.invoice_number || result.sale?.invoice_number || 'N/A';
+                const total = quantity * unitPrice;
+                
+                const userChoice = confirm(
+                    `Mafanikio! 🎉\n\n` +
+                    `Umefanikiwa kuuza ${quantity} ya ${currentProduct.name}\n` +
+                    `Kwa: ${formData.customer_name}\n` +
+                    `Jumla: ${formatCurrency(total)}\n\n` +
+                    `Nambari ya ankra: ${invoiceNumber}\n\n` +
+                    `Bonyeza OK kuweka upya fomu, CANCEL kwenda Mauzo.`
+                );
+                
+                if (userChoice) {
+                    resetForm();
+                } else {
+                    window.location.href = 'mauzo.html';
+                }
+                
+            } catch (error) {
+                console.error('❌ Error processing sale:', error);
+                alert(`Hitilafu: ${error.message || 'Imeshindwa kukamilisha mauzo'}`);
+            } finally {
+                loading = false;
+                setLoadingSale(false);
+            }
+        }
+        
+        // Reset form - Sawa na uza.tsx
+        function resetForm() {
+            formData = {
+                product_id: '',
+                quantity: '',
+                unit_price: '',
+                customer_name: '',
+                customer_phone: '',
+                sale_date: new Date().toISOString().split('T')[0],
+            };
+            
+            selectedProduct = null;
+            
+            // Reset form fields
+            document.getElementById('quantity').value = '';
+            document.getElementById('unitPrice').value = '';
+            document.getElementById('customerName').value = '';
+            document.getElementById('customerPhone').value = '';
+            setTodayDate();
+            
+            // Hide product info
+            document.getElementById('productInfoContainer').style.display = 'none';
+            
+            // Hide errors
+            document.querySelectorAll('.error-container').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Hide max button
+            document.getElementById('maxButton').style.display = 'none';
+            
+            // Hide stock info
+            document.getElementById('stockInfoContainer').style.display = 'none';
+            
+            // Hide price comparison
+            document.getElementById('priceComparison').style.display = 'none';
+            
+            // Hide currency preview
+            document.getElementById('currencyPreview').style.display = 'none';
+            
+            // Update summary
+            updateSummary();
+            updateSaleButtonState();
+            
+            // Clear search
+            clearSearch();
+            
+            // Re-render products to clear selection
+            renderProducts();
+        }
+        
+        // Refresh products - Sawa na uza.tsx
+        function refreshProducts() {
+            loadProducts();
+            loadCustomers();
+        }
+        
+        // Handle back
+        function handleBack() {
+            if (confirm('Unahakika unataka kurudi nyuma? Mabadiliko yoyote yasiyohifadhiwa yatapotea.')) {
+                window.history.back();
+            }
+        }
+        
+        // Loading states
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+        
+        function setLoadingProducts(show) {
+            if (show) {
+                document.getElementById('loadingProductsContainer').style.display = 'flex';
+                document.getElementById('loadingProductsText').textContent = businessData?.is_admin 
+                    ? 'Inapakua bidhaa zako...' 
+                    : `Inapakua bidhaa za ${businessData?.business_name}...`;
+                document.getElementById('productsList').style.display = 'none';
+                document.getElementById('noProductsContainer').style.display = 'none';
+            } else {
+                document.getElementById('loadingProductsContainer').style.display = 'none';
+            }
+        }
+        
+        function setLoadingSale(show) {
+            const saleButton = document.getElementById('saleButton');
+            const saleButtonContent = document.getElementById('saleButtonContent');
+            
+            if (show) {
+                saleButtonContent.style.display = 'none';
+                saleButton.innerHTML = '<i class="fas fa-spinner fa-spin" style="font-size: 20px;"></i>';
+                saleButton.disabled = true;
+            } else {
+                saleButton.innerHTML = '';
+                saleButton.appendChild(saleButtonContent);
+                saleButtonContent.style.display = 'flex';
+                updateSaleButtonState();
+            }
+        }
+    </script>
+</body>
+</html>

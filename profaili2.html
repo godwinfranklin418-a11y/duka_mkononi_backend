@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profaili Yangu - Duka Mkononi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Mitindo ya React Native kwa HTML */
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+        }
+        
+        /* Loading Styles */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2ecc71;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+        
+        /* Error State */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .error-text {
+            font-size: 16px;
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .retry-button {
+            background-color: #3498db;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .retry-button-text {
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 20px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header-button {
+            padding: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* Profile Card */
+        .profile-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .avatar-text {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .role-badge {
+            background-color: #f8f9fa;
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid #ecf0f1;
+        }
+        
+        .role-text {
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .user-email {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+        
+        .business-info {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        
+        .business-text {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .edit-profile-button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 10px;
+            background-color: #e8f4fd;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            width: fit-content;
+        }
+        
+        .edit-profile-button-text {
+            font-size: 12px;
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 16px;
+        }
+        
+        .stats-subtitle {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: normal;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-align: center;
+        }
+        
+        .stats-note {
+            font-size: 12px;
+            color: #95a5a6;
+            text-align: center;
+            margin-top: 12px;
+            font-style: italic;
+        }
+        
+        /* Info Section */
+        .info-section {
+            padding: 20px;
+        }
+        
+        .info-card {
+            background-color: white;
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        
+        .info-label-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        
+        .info-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 500;
+            flex: 1;
+            text-align: right;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+        
+        .status-text {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .modal-subtitle {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+            margin-top: 12px;
+        }
+        
+        .input {
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #f8f9fa;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+            gap: 12px;
+        }
+        
+        .modal-button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cancel-button {
+            background-color: #95a5a6;
+        }
+        
+        .save-button {
+            background-color: #3498db;
+        }
+        
+        .cancel-button-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .save-button-text {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        /* Logout Section */
+        .logout-section {
+            padding: 20px;
+            padding-top: 10px;
+        }
+        
+        .logout-button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            background-color: #e74c3c;
+            padding: 16px;
+            border-radius: 12px;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+            width: 100%;
+        }
+        
+        .logout-button-text {
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            margin-top: 10px;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        .footer-text {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 4px;
+        }
+        
+        .footer-sub-text {
+            font-size: 12px;
+            color: #bdc3c7;
+        }
+        
+        /* Navigation Buttons (Kutoka profaili2.html) */
+        .fixed-button-group {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .action-button {
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            justify-content: center;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .btn-uza {
+            background-color: #2ecc71;
+        }
+        
+        .btn-mauzo {
+            background-color: #f39c12;
+        }
+        
+        .btn-uza:hover { 
+            background-color: #27ae60; 
+        }
+        
+        .btn-mauzo:hover { 
+            background-color: #e67e22; 
+        }
+        
+        /* Scrollbar Styling */
+        .scroll-container {
+            height: 100vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .scroll-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+        
+        .scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-container hidden">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Inapakua taarifa zako...</div>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="error-container hidden">
+        <i class="fas fa-exclamation-circle fa-4x" style="color: #e74c3c;"></i>
+        <div class="error-text">Imekosekana kupakua taarifa za mtumiaji</div>
+        <button id="retryButton" class="retry-button">
+            <span class="retry-button-text">Jaribu Tena</span>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="scroll-container">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="header-top">
+                    <div class="title">Wasifu Wangu</div>
+                    <div class="header-actions">
+                        <button id="refreshButton" class="header-button">
+                            <i class="fas fa-redo-alt" style="color: #3498db;"></i>
+                        </button>
+                        <button id="editProfileButton" class="header-button">
+                            <i class="fas fa-edit" style="color: #3498db;"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Profile Card -->
+                <div id="profileCard" class="profile-card">
+                    <div class="avatar-section">
+                        <div id="avatar" class="avatar">
+                            <span id="avatarText" class="avatar-text">UM</span>
+                        </div>
+                        <div id="roleBadge" class="role-badge">
+                            <span id="roleText" class="role-text">MTUMIAJI</span>
+                        </div>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div id="userName" class="user-name">Mtumiaji</div>
+                        <div id="userEmail" class="user-email">barua@example.com</div>
+                        
+                        <div id="businessInfoRow" class="business-info hidden">
+                            <i class="fas fa-store" style="color: #2ecc71; font-size: 16px;"></i>
+                            <span id="businessNameText" class="business-text"></span>
+                        </div>
+                        
+                        <div id="locationInfoRow" class="business-info hidden">
+                            <i class="fas fa-map-marker-alt" style="color: #7f8c8d; font-size: 16px;"></i>
+                            <span id="locationText" class="business-text"></span>
+                        </div>
+
+                        <!-- Edit Profile Button -->
+                        <button id="editProfileBtn" class="edit-profile-button">
+                            <i class="fas fa-edit" style="color: #3498db; font-size: 16px;"></i>
+                            <span class="edit-profile-button-text">Badili Taarifa za Wasifu</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="section-title">
+                    Takwimu za <span id="statsBusinessName">Biashara Yako</span>
+                    <span id="statsSubtitle" class="stats-subtitle"> (Zote za Biashara)</span>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #e8f4fd;">
+                            <i class="fas fa-box" style="color: #3498db; font-size: 24px;"></i>
+                        </div>
+                        <div id="statProducts" class="stat-value">0</div>
+                        <div id="statProductsLabel" class="stat-label">Bidhaa za Biashara</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #f0f8f0;">
+                            <i class="fas fa-shopping-cart" style="color: #27ae60; font-size: 24px;"></i>
+                        </div>
+                        <div id="statSales" class="stat-value">0</div>
+                        <div id="statSalesLabel" class="stat-label">Mauzo ya Biashara</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #fff8e1;">
+                            <i class="fas fa-users" style="color: #e67e22; font-size: 24px;"></i>
+                        </div>
+                        <div id="statCustomers" class="stat-value">0</div>
+                        <div id="statCustomersLabel" class="stat-label">Wateja wa Biashara</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background-color: #fce4ec;">
+                            <i class="fas fa-money-bill-wave" style="color: #9b59b6; font-size: 24px;"></i>
+                        </div>
+                        <div id="statRevenue" class="stat-value">TZS 0</div>
+                        <div id="statRevenueLabel" class="stat-label">Mapato ya Biashara</div>
+                    </div>
+                </div>
+
+                <div id="statsNote" class="stats-note">
+                    Takwimu zote za biashara yako
+                </div>
+            </div>
+
+            <!-- Account Information -->
+            <div class="info-section">
+                <div class="section-title">Taarifa za Akaunti</div>
+                
+                <div class="info-card">
+                    <div class="info-row">
+                        <div class="info-label-container">
+                            <i class="fas fa-user" style="color: #7f8c8d;"></i>
+                            <span class="info-label">Jina Kamili:</span>
+                        </div>
+                        <span id="accountFullName" class="info-value">Haijawekwa</span>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label-container">
+                            <i class="fas fa-envelope" style="color: #7f8c8d;"></i>
+                            <span class="info-label">Barua Pepe:</span>
+                        </div>
+                        <span id="accountEmail" class="info-value">barua@example.com</span>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label-container">
+                            <i class="fas fa-phone" style="color: #7f8c8d;"></i>
+                            <span class="info-label">Namba ya Simu:</span>
+                        </div>
+                        <span id="accountPhone" class="info-value">Haijawekwa</span>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label-container">
+                            <i class="fas fa-id-card" style="color: #7f8c8d;"></i>
+                            <span class="info-label">Kitambulisho cha Akaunti:</span>
+                        </div>
+                        <span id="accountId" class="info-value">#N/A</span>
+                    </div>
+
+                    <div class="info-row" id="accountBusinessRow">
+                        <div class="info-label-container">
+                            <i class="fas fa-store" style="color: #7f8c8d;"></i>
+                            <span class="info-label">Biashara:</span>
+                        </div>
+                        <span id="accountBusiness" class="info-value">Haijawekwa</span>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label-container">
+                            <i class="fas fa-map-marker-alt" style="color: #7f8c8d;"></i>
+                            <span class="info-label">Eneo la Biashara:</span>
+                        </div>
+                        <span id="accountLocation" class="info-value">Haijawekwa</span>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label-container">
+                            <i class="fas fa-calendar-alt" style="color: #7f8c8d;"></i>
+                            <span class="info-label">Imejisajiliwa:</span>
+                        </div>
+                        <span id="accountCreated" class="info-value">Haijawekwa</span>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-label-container">
+                            <i class="fas fa-shield-alt" style="color: #7f8c8d;"></i>
+                            <span class="info-label">Hali ya Akaunti:</span>
+                        </div>
+                        <div id="accountStatusBadge" class="status-badge" style="background-color: #e8f6f3;">
+                            <span id="accountStatusText" class="status-text" style="color: #27ae60;">Imethibitishwa</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logout Section -->
+            <div class="logout-section">
+                <button id="logoutButton" class="logout-button">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="logout-button-text">Toka Kwenye Akaunti</span>
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <div class="footer-text">
+                    Duka Mkononi • <span id="currentYear"></span>
+                </div>
+                <div id="footerSubText" class="footer-sub-text">
+                    Inafanya kazi kwa msimamizi
+                </div>
+            </div>
+            
+            <!-- Space for fixed buttons -->
+            <div style="height: 100px;"></div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Badili Wasifu Wako</div>
+            <div class="modal-subtitle">Unaweza kubadili taarifa zako za wasifu</div>
+            
+            <div class="input-label">Jina Kamili *</div>
+            <input id="editFullName" type="text" class="input" placeholder="Weka jina lako kamili">
+            
+            <div class="input-label">Namba ya Simu</div>
+            <input id="editPhone" type="tel" class="input" placeholder="Weka namba yako ya simu">
+            
+            <div class="input-label">Jina la Biashara</div>
+            <input id="editBusinessName" type="text" class="input" placeholder="Weka jina la biashara yako">
+            
+            <div class="input-label">Eneo la Biashara</div>
+            <input id="editBusinessLocation" type="text" class="input" placeholder="Weka eneo la biashara yako">
+
+            <div class="modal-buttons">
+                <button id="cancelEditButton" class="modal-button cancel-button">
+                    <span class="cancel-button-text">Ghairi</span>
+                </button>
+                <button id="saveProfileButton" class="modal-button save-button">
+                    <span id="saveButtonText" class="save-button-text">Hifadhi</span>
+                    <span id="saveSpinner" class="hidden" style="margin-left: 8px;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons (Kutoka profaili2.html) -->
+    <div class="fixed-button-group">
+        <a href="uza.html" class="action-button btn-uza">
+            <i class="fas fa-arrow-left"></i>
+            <span>UZA</span>
+        </a>
+        
+        <!-- Weka mauzo button kwa upande wa kulia ikiwa unataka -->
+        <!-- <a href="mauzo.html" class="action-button btn-mauzo">
+            <i class="fas fa-chart-line"></i>
+            <span>MAUZO</span>
+        </a> -->
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'https://dukamkononi.com';
+        
+        // State variables
+        let loading = true;
+        let userData = null;
+        let businessData = null;
+        let stats = {
+            totalProducts: 0,
+            totalSales: 0,
+            totalCustomers: 0,
+            totalRevenue: 0,
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current year
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            
+            // Set up event listeners
+            document.getElementById('refreshButton').addEventListener('click', handleRefresh);
+            document.getElementById('editProfileButton').addEventListener('click', handleEditProfile);
+            document.getElementById('editProfileBtn').addEventListener('click', handleEditProfile);
+            document.getElementById('logoutButton').addEventListener('click', handleLogout);
+            document.getElementById('retryButton').addEventListener('click', loadUserData);
+            document.getElementById('cancelEditButton').addEventListener('click', () => closeEditModal());
+            document.getElementById('saveProfileButton').addEventListener('click', handleUpdateProfile);
+            
+            // Close modal when clicking outside
+            document.getElementById('editModal').addEventListener('click', (e) => {
+                if (e.target.id === 'editModal') {
+                    closeEditModal();
+                }
+            });
+            
+            // Load initial data
+            loadUserData();
+        });
+
+        // Helper Functions
+        function formatCurrency(amount) {
+            return `TZS ${parseFloat(amount || 0).toLocaleString()}`;
+        }
+
+        function getRoleDisplayName(role) {
+            switch (role) {
+                case 'customer': return 'MTEJA';
+                case 'seller': return 'MUUZAJI';
+                case 'admin': return 'MSIMAMIZI';
+                default: return 'MTUMIAJI';
+            }
+        }
+
+        function getRoleColor(role) {
+            switch (role) {
+                case 'customer': return '#3498db';
+                case 'seller': return '#2ecc71';
+                case 'admin': return '#e74c3c';
+                default: return '#2c3e50';
+            }
+        }
+
+        function getInitials(name) {
+            return name
+                ?.split(' ')
+                .map(word => word.charAt(0))
+                .join('')
+                .toUpperCase()
+                .substring(0, 2) || 'UM';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Haijawekwa';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('sw-TZ', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (error) {
+                return dateString;
+            }
+        }
+
+        // UI Update Functions
+        function updateUI() {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (loading) {
+                loadingState.classList.remove('hidden');
+                errorState.classList.add('hidden');
+                mainContent.classList.add('hidden');
+                return;
+            }
+            
+            if (!userData) {
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                mainContent.classList.add('hidden');
+                return;
+            }
+            
+            loadingState.classList.add('hidden');
+            errorState.classList.add('hidden');
+            mainContent.classList.remove('hidden');
+            
+            // Update profile information
+            const fullName = userData.full_name || userData.email || 'Mtumiaji';
+            const email = userData.email || 'barua@example.com';
+            const role = userData.role || 'user';
+            const roleColor = getRoleColor(role);
+            
+            document.getElementById('userName').textContent = fullName;
+            document.getElementById('userEmail').textContent = email;
+            document.getElementById('avatarText').textContent = getInitials(fullName);
+            document.getElementById('avatar').style.backgroundColor = roleColor;
+            document.getElementById('roleText').textContent = getRoleDisplayName(role);
+            document.getElementById('roleText').style.color = roleColor;
+            
+            // Update business info
+            const businessName = userData.business_name || '';
+            const businessLocation = userData.business_location || '';
+            
+            if (businessName) {
+                document.getElementById('businessInfoRow').classList.remove('hidden');
+                document.getElementById('businessNameText').textContent = businessName;
+                document.getElementById('statsBusinessName').textContent = businessName;
+                document.getElementById('accountBusiness').textContent = businessName;
+            }
+            
+            if (businessLocation) {
+                document.getElementById('locationInfoRow').classList.remove('hidden');
+                document.getElementById('locationText').textContent = businessLocation;
+                document.getElementById('accountLocation').textContent = businessLocation;
+            }
+            
+            // Update account information
+            document.getElementById('accountFullName').textContent = fullName || 'Haijawekwa';
+            document.getElementById('accountEmail').textContent = email;
+            document.getElementById('accountPhone').textContent = userData.phone || 'Haijawekwa';
+            document.getElementById('accountId').textContent = userData.id ? `#${userData.id}` : '#N/A';
+            document.getElementById('accountCreated').textContent = formatDate(userData.created_at);
+            
+            // Update stats
+            document.getElementById('statProducts').textContent = stats.totalProducts;
+            document.getElementById('statSales').textContent = stats.totalSales;
+            document.getElementById('statCustomers').textContent = stats.totalCustomers;
+            document.getElementById('statRevenue').textContent = formatCurrency(stats.totalRevenue);
+            
+            // Update status badge
+            const status = userData.status || 'approved';
+            let statusText, statusColor, bgColor;
+            
+            switch (status) {
+                case 'approved':
+                    statusText = 'Imethibitishwa';
+                    statusColor = '#27ae60';
+                    bgColor = '#e8f6f3';
+                    break;
+                case 'pending':
+                    statusText = 'Inasubiri';
+                    statusColor = '#f39c12';
+                    bgColor = '#fef9e7';
+                    break;
+                case 'rejected':
+                    statusText = 'Imekataliwa';
+                    statusColor = '#e74c3c';
+                    bgColor = '#fdedec';
+                    break;
+                default:
+                    statusText = status;
+                    statusColor = '#7f8c8d';
+                    bgColor = '#f8f9fa';
+            }
+            
+            document.getElementById('accountStatusText').textContent = statusText;
+            document.getElementById('accountStatusText').style.color = statusColor;
+            document.getElementById('accountStatusBadge').style.backgroundColor = bgColor;
+            
+            // Update footer
+            const roleDisplay = userData.role === 'seller' ? 'muuzaji' : 
+                               userData.role === 'customer' ? 'mteja' : 'msimamizi';
+            let footerText = `Inafanya kazi kwa ${roleDisplay}`;
+            
+            if (businessName) {
+                footerText += ` • ${businessName}`;
+            }
+            
+            document.getElementById('footerSubText').textContent = footerText;
+        }
+
+        // API Functions
+        async function loadUserData() {
+            loading = true;
+            updateUI();
+            
+            try {
+                const token = localStorage.getItem('userToken');
+                
+                if (!token) {
+                    // Use demo data if no token
+                    userData = getDemoUserData();
+                    stats = getDemoStats();
+                    loading = false;
+                    updateUI();
+                    return;
+                }
+
+                // Fetch user profile
+                console.log('📤 Fetching user profile...');
+                const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    }
+                });
+
+                const responseText = await response.text();
+                console.log('📨 Profile API Response:', {
+                    status: response.status,
+                    ok: response.ok,
+                    text: responseText
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server imerudisha ${response.status}: ${responseText}`);
+                }
+
+                const user = JSON.parse(responseText);
+                userData = user;
+                
+                // Save to localStorage
+                localStorage.setItem('userData', JSON.stringify(user));
+                
+                // Load business data
+                await loadBusinessData(token, user);
+                
+                // Load stats
+                await loadUserStats(token, user.id);
+                
+                loading = false;
+                updateUI();
+            } catch (error) {
+                console.error('❌ Error loading user data:', error);
+                
+                // Try to use stored data as fallback
+                try {
+                    const storedUserData = localStorage.getItem('userData');
+                    if (storedUserData) {
+                        userData = JSON.parse(storedUserData);
+                        console.log('📄 Using stored user data as fallback');
+                    }
+                } catch (fallbackError) {
+                    console.error('❌ Error loading stored data:', fallbackError);
+                    userData = getDemoUserData();
+                }
+                
+                stats = getDemoStats();
+                loading = false;
+                updateUI();
+                showAlert('Hitilafu', 'Imekosekana kupakua taarifa za mtumiaji. Inatumia data ya awali.');
+            }
+        }
+
+        async function loadBusinessData(token, user) {
+            try {
+                if (!user || !user.business_name) {
+                    console.log('⚠️ User has no business name');
+                    businessData = { 
+                        id: user.id, 
+                        business_name: user.business_name || 'Personal',
+                        is_admin: user.role === 'admin' 
+                    };
+                    return;
+                }
+
+                console.log('🏢 Loading business data for:', user.business_name);
+                
+                const response = await fetch(
+                    `${API_BASE_URL}/api/business/by-name/${encodeURIComponent(user.business_name)}`, 
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                            'ngrok-skip-browser-warning': 'true'
+                        },
+                    }
+                );
+
+                if (response.ok) {
+                    const businessInfo = await response.json();
+                    console.log('✅ Business data loaded:', businessInfo);
+                    
+                    if (businessInfo.exists && businessInfo.hasAdmin) {
+                        businessData = {
+                            id: businessInfo.admin.id,
+                            business_name: businessInfo.admin.business_name,
+                            is_admin: true,
+                            admin_email: businessInfo.admin.email
+                        };
+                    } else {
+                        businessData = { 
+                            id: user.id, 
+                            business_name: user.business_name,
+                            is_admin: user.role === 'admin' 
+                        };
+                    }
+                } else {
+                    console.log('⚠️ Business not found, using personal data');
+                    businessData = { 
+                        id: user.id, 
+                        business_name: user.business_name || 'Personal',
+                        is_admin: user.role === 'admin' 
+                    };
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading business data:', error);
+                businessData = { 
+                    id: user.id, 
+                    business_name: user.business_name || 'Personal',
+                    is_admin: user.role === 'admin' 
+                };
+            }
+        }
+
+        async function loadUserStats(token, userId) {
+            try {
+                console.log('📊 Loading user stats...');
+                
+                // Load products count
+                const productsResponse = await fetch(`${API_BASE_URL}/api/products/my`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': 'true'
+                    }
+                });
+
+                if (productsResponse.ok) {
+                    const productsData = await productsResponse.json();
+                    stats.totalProducts = Array.isArray(productsData) ? productsData.length : 0;
+                    
+                    // Update label based on business data
+                    const isAdmin = businessData?.is_admin || false;
+                    document.getElementById('statProductsLabel').textContent = 
+                        isAdmin ? 'Bidhaa za Biashara' : 'Bidhaa Zako';
+                }
+
+                // Load sales data
+                const salesResponse = await fetch(`${API_BASE_URL}/api/sales/my`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': 'true'
+                    }
+                });
+
+                if (salesResponse.ok) {
+                    const salesData = await salesResponse.json();
+                    stats.totalSales = Array.isArray(salesData) ? salesData.length : 0;
+                    stats.totalRevenue = Array.isArray(salesData) ? 
+                        salesData.reduce((sum, sale) => sum + parseFloat(sale.total_amount || 0), 0) : 0;
+                    
+                    // Update label based on business data
+                    const isAdmin = businessData?.is_admin || false;
+                    document.getElementById('statSalesLabel').textContent = 
+                        isAdmin ? 'Mauzo ya Biashara' : 'Mauzo Yako';
+                    document.getElementById('statRevenueLabel').textContent = 
+                        isAdmin ? 'Mapato ya Biashara' : 'Mapato Yako';
+                }
+
+                // Load customers data
+                const customersResponse = await fetch(`${API_BASE_URL}/api/customers/my`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': 'true'
+                    }
+                });
+
+                if (customersResponse.ok) {
+                    const customersData = await customersResponse.json();
+                    stats.totalCustomers = Array.isArray(customersData) ? customersData.length : 0;
+                    
+                    // Update label based on business data
+                    const isAdmin = businessData?.is_admin || false;
+                    document.getElementById('statCustomersLabel').textContent = 
+                        isAdmin ? 'Wateja wa Biashara' : 'Wateja Wako';
+                }
+                
+                // Update stats note
+                const isAdmin = businessData?.is_admin || false;
+                document.getElementById('statsNote').textContent = 
+                    isAdmin ? 'Takwimu zote za biashara yako' : 'Takwimu zako binafsi katika biashara hii';
+                document.getElementById('statsSubtitle').textContent = 
+                    isAdmin ? ' (Zote za Biashara)' : ' (Zako Binafsi)';
+                
+                console.log('✅ Stats loaded:', stats);
+            } catch (error) {
+                console.error('❌ Error loading stats:', error);
+            }
+        }
+
+        // Event Handlers
+        function handleEditProfile() {
+            if (userData) {
+                document.getElementById('editFullName').value = userData.full_name || '';
+                document.getElementById('editPhone').value = userData.phone || '';
+                document.getElementById('editBusinessName').value = userData.business_name || '';
+                document.getElementById('editBusinessLocation').value = userData.business_location || '';
+            }
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        async function handleUpdateProfile() {
+            const saveButton = document.getElementById('saveProfileButton');
+            const saveButtonText = document.getElementById('saveButtonText');
+            const saveSpinner = document.getElementById('saveSpinner');
+            
+            saveButton.disabled = true;
+            saveButtonText.classList.add('hidden');
+            saveSpinner.classList.remove('hidden');
+            
+            try {
+                const token = localStorage.getItem('userToken');
+                if (!token) {
+                    throw new Error('Tafadhali ingia tena');
+                }
+                
+                const formData = {
+                    full_name: document.getElementById('editFullName').value,
+                    phone: document.getElementById('editPhone').value,
+                    business_name: document.getElementById('editBusinessName').value,
+                    business_location: document.getElementById('editBusinessLocation').value
+                };
+                
+                if (!formData.full_name.trim()) {
+                    throw new Error('Tafadhali weka jina lako kamili');
+                }
+                
+                console.log('📤 Updating profile with data:', formData);
+                
+                const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const responseText = await response.text();
+                console.log('📨 Update profile response:', {
+                    status: response.status,
+                    ok: response.ok,
+                    text: responseText
+                });
+                
+                if (response.ok) {
+                    const updatedData = JSON.parse(responseText);
+                    
+                    // Update user data
+                    userData = {
+                        ...userData,
+                        full_name: updatedData.user?.full_name || formData.full_name,
+                        phone: updatedData.user?.phone || formData.phone,
+                        business_name: updatedData.user?.business_name || formData.business_name,
+                        business_location: updatedData.user?.business_location || formData.business_location
+                    };
+                    
+                    // Update localStorage
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    
+                    // Reload business data if business name changed
+                    if (formData.business_name !== userData.business_name) {
+                        await loadBusinessData(token, userData);
+                    }
+                    
+                    closeEditModal();
+                    updateUI();
+                    
+                    showAlert('Mafanikio', 'Wasifu wako umesasishwa kikamilifu!');
+                } else {
+                    throw new Error(responseText || 'Imeshindikana kusasisha wasifu');
+                }
+            } catch (error) {
+                console.error('❌ Error updating profile:', error);
+                showAlert('Hitilafu', 'Imeshindikana kusasisha wasifu: ' + error.message);
+            } finally {
+                saveButton.disabled = false;
+                saveButtonText.classList.remove('hidden');
+                saveSpinner.classList.add('hidden');
+            }
+        }
+
+        function handleLogout() {
+            showConfirmDialog(
+                'Toka',
+                'Una uhakika unataka kutoka?',
+                async () => {
+                    try {
+                        localStorage.removeItem('userToken');
+                        localStorage.removeItem('userData');
+                        localStorage.removeItem('userId');
+                        localStorage.removeItem('userEmail');
+                        localStorage.removeItem('userRole');
+                        localStorage.removeItem('userName');
+                        
+                        // Redirect to login page
+                        window.location.href = 'login.html';
+                    } catch (error) {
+                        console.error('❌ Error during logout:', error);
+                        window.location.href = 'login.html';
+                    }
+                }
+            );
+        }
+
+        function handleRefresh() {
+            loading = true;
+            updateUI();
+            loadUserData();
+        }
+
+        // UI Helper Functions
+        function showAlert(title, message) {
+            const alertModal = document.createElement('div');
+            alertModal.className = 'modal';
+            alertModal.innerHTML = `
+                <div class="modal-content" style="max-width: 300px;">
+                    <div class="modal-title">${title}</div>
+                    <div class="modal-subtitle">${message}</div>
+                    <div class="modal-buttons">
+                        <button id="alertOkButton" class="modal-button save-button" style="flex: 1;">
+                            <span class="save-button-text">Sawa</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(alertModal);
+            alertModal.style.display = 'flex';
+            
+            document.getElementById('alertOkButton').addEventListener('click', () => {
+                document.body.removeChild(alertModal);
+            });
+            
+            alertModal.addEventListener('click', (e) => {
+                if (e.target === alertModal) {
+                    document.body.removeChild(alertModal);
+                }
+            });
+        }
+
+        function showConfirmDialog(title, message, onConfirm) {
+            const confirmModal = document.createElement('div');
+            confirmModal.className = 'modal';
+            confirmModal.innerHTML = `
+                <div class="modal-content" style="max-width: 300px;">
+                    <div class="modal-title">${title}</div>
+                    <div class="modal-subtitle">${message}</div>
+                    <div class="modal-buttons">
+                        <button id="confirmCancelButton" class="modal-button cancel-button">
+                            <span class="cancel-button-text">Ghairi</span>
+                        </button>
+                        <button id="confirmOkButton" class="modal-button save-button" style="background-color: #e74c3c;">
+                            <span class="save-button-text">Ndio, Toka</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(confirmModal);
+            confirmModal.style.display = 'flex';
+            
+            document.getElementById('confirmCancelButton').addEventListener('click', () => {
+                document.body.removeChild(confirmModal);
+            });
+            
+            document.getElementById('confirmOkButton').addEventListener('click', () => {
+                document.body.removeChild(confirmModal);
+                onConfirm();
+            });
+            
+            confirmModal.addEventListener('click', (e) => {
+                if (e.target === confirmModal) {
+                    document.body.removeChild(confirmModal);
+                }
+            });
+        }
+
+        // Demo data (fallback)
+        function getDemoUserData() {
+            return {
+                id: 'USR001',
+                full_name: 'Mtumiaji Mfanyabiashara',
+                email: 'mfanyabiashara@example.com',
+                phone: '+255 712 345 678',
+                business_name: 'Duka la Mtandaoni',
+                business_location: 'Dar es Salaam',
+                role: 'seller',
+                status: 'approved',
+                created_at: new Date().toISOString()
+            };
+        }
+
+        function getDemoStats() {
+            return {
+                totalProducts: 15,
+                totalSales: 42,
+                totalCustomers: 28,
+                totalRevenue: 1250000
+            };
+        }
+    </script>
+</body>
+</html>

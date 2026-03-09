@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Duka Mkononi - Soko la Kuaminika la Kuuza na Kununua Bidhaa Mtandaoni Tanzania. Jiunge na duka letu la kisasa na uanze biashara yako ya mtandaoni leo.">
+    <meta name="keywords" content="duka mkononi, soko mtandaoni Tanzania, biashara mtandaoni, nunua bidhaa Tanzania, uza bidhaa mtandaoni">
+    <title>Duka Mkononi | Soko Lako la Kuaminika la Mtandaoni</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header & Logo */
+        header {
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #2c3e50, #1a2530);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+        }
+        
+        .logo-text h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: #2c3e50;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-text span {
+            color: #FF9800;
+        }
+        
+        .logo-text p {
+            font-size: 12px;
+            color: #666;
+            margin-top: -3px;
+        }
+        
+        /* App Download Button */
+        .app-download-btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #FF9800, #FF5722);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .app-download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+            background: linear-gradient(45deg, #FF5722, #FF9800);
+        }
+        
+        .app-download-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Main Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            min-height: 80vh;
+            padding: 40px 0;
+        }
+        
+        .hero-content {
+            flex: 1;
+            max-width: 600px;
+        }
+        
+        .hero-image {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tagline {
+            font-size: 16px;
+            color: #FF9800;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+        
+        h1.main-headline {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: #2C3E50;
+        }
+        
+        h1.main-headline span {
+            color: #2c3e50;
+            text-decoration: underline;
+            text-decoration-color: #FF9800;
+            text-decoration-thickness: 3px;
+        }
+        
+        .description {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        /* CTA Button */
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #2c3e50, #1a2530);
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(44, 62, 80, 0.4);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(44, 62, 80, 0.5);
+            background: linear-gradient(45deg, #1a2530, #2c3e50);
+        }
+        
+        .cta-button:active {
+            transform: translateY(-2px);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: white;
+            border-radius: 30px 30px 0 0;
+            margin-top: 40px;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            color: #2C3E50;
+            margin-bottom: 50px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 20px;
+            transition: transform 0.3s ease;
+            border-left: 5px solid #2c3e50;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 40px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #2C3E50;
+        }
+        
+        .feature-card p {
+            color: #666;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #2C3E50;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+        
+        .footer-logo {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        
+        .copyright {
+            color: #bbb;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .app-download-btn {
+                margin-top: 10px;
+            }
+            
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px 0;
+            }
+            
+            .hero-content {
+                margin-bottom: 40px;
+            }
+            
+            h1.main-headline {
+                font-size: 36px;
+            }
+            
+            .description {
+                font-size: 16px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Logo -->
+    <header class="container">
+        <div class="logo-area">
+            <div class="logo-placeholder">
+                DM
+            </div>
+            <div class="logo-text">
+                <h1>Duka<span>Mkononi</span></h1>
+                <p>Soko la Kuaminika</p>
+            </div>
+        </div>
+        
+        <!-- App Download Button -->
+        <nav>
+            <a href="https://github.com/Godwin-cmd-ux/duka_mkononi_apk/raw/refs/heads/main/dukamkononi.apk?download=" 
+               class="app-download-btn" 
+               target="_blank">
+                📱 Pakua App Yetu
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Hero Section -->
+    <main>
+        <section class="hero container">
+            <div class="hero-content">
+                <div class="tagline">Karibu Duka Mkononi</div>
+                <h1 class="main-headline">Soko Lako la <span>Kuaminika</span> Mtandaoni</h1>
+                <p class="description">
+                    Duka Mkononi ni jukwaa la kisasa la biashara mtandaoni nchini Tanzania. Tunakuwezesha kufungua duka lako la mtandaoni kwa urahisi, kuuza bidhaa zako, na kufikia wateja wengi zaidi. Jiunge na maelfu ya wafanyabiashara ambao tayari wanafanikiwa kupitia mfumo wetu.
+                </p>
+                <p class="description">
+                    Hakuna uhitaji wa ujuzi wa kiufundi. Kwa kubofya kituo kimoja, unaweza kuanzisha duka lako na kuanza kuuza. Tuna mifumo ya malipo salama, usafirishaji wa bidhaa, na msaada wa wateja kila wakati.
+                </p>
+                
+                <a href="home.html" class="cta-button">
+                    🔥 Anza Sasa - Bure Kabisa!
+                </a>
+            </div>
+            
+            <div class="hero-image">
+                <!-- Placeholder for an image - in production, add actual image -->
+                <img src="https://res.cloudinary.com/dooidwbgt/image/upload/v1764828413/y3qxsngkx0ymlmyaqt3u.png" alt="Duka Mkononi - Biashara Mtandaoni Tanzania">
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">Kwa Nini Kuchagua Duka Mkononi?</h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>Anza Haraka</h3>
+                        <p>Fungua duka lako la mtandaoni kwa dakika chache. Hakuna msimbo, hakuna ujanja wa kiufundi unahitajika.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Salama na Ya Kuaminika</h3>
+                        <p>Mifumo yetu ya malipo ni salama kabisa. Tuna lisansi na ushirikiano na benki kuu Tanzania.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>Inafaa kwa Simu</h3>
+                        <p>Duka lako litaonekana vizuri kwenye simu, kompyuta na tablet. Wateja wote wataona vyema.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <h3>Rudisha Taarifa</h3>
+                        <p>Pata taarifa za kina juu ya mauzo, wateja na faida yako kwa wakati halisi.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🌍</div>
+                        <h3>Fikia Wateja Wengi</h3>
+                        <p>Duka lako litaonekana kwenye Google na mitandao mingine ya kijamii ufikie wateja wengi zaidi.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🛒</div>
+                        <h3>Mfumo Kamili</h3>
+                        <p>Kutoka kwenye mauzo, malipo, hadi usafirishaji - kila kitu kiko chini ya paa moja.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">DukaMkononi.com</div>
+            <p>Soko Lako la Kuaminika la Mtandaoni Tanzania</p>
+            <p>✉ info@dukamkononi.com | 📞 0757071967</p>
+            <p class="copyright">© 2025 Duka Mkononi. Haki zote zimehifadhiwa.</p>
+        </div>
+    </footer>
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Duka Mkononi",
+      "alternateName": "Soko la Kuaminika la Mtandaoni Tanzania",
+      "url": "https://www.dukamkononi.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://www.dukamkononi.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "description": "Duka Mkononi ni jukwaa la kisasa la biashara mtandaoni nchini Tanzania. Fungua duka lako la mtandaoni leo na uanze kuuza bidhaa zako kwa urahisi.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Duka Mkononi",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.dukamkononi.com/logo.png"
+        }
+      }
+    }
+    </script>
+</body>
+</html>

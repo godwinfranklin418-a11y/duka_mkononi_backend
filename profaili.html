@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profaili ya Mtumiaji</title>
+    <style>
+        /* CSS Inayotokana na profaili.tsx styles */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        /* UTILITY & LOADING */
+        .container {
+            min-height: calc(100vh - 80px);
+        }
+        .center {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .loading-text {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #666;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007AFF;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* HEADER */
+        .header {
+            background-color: white;
+            padding: 30px;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            background-color: #007AFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .avatar-text {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .greeting {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .role {
+            font-size: 16px;
+            color: #666;
+            text-transform: capitalize;
+        }
+
+        /* SECTION & CARD */
+        .section {
+            padding: 20px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .field {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+        .field:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .value {
+            font-size: 16px;
+            color: #333;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            display: block;
+        }
+        .input {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+        }
+
+        /* BADGES */
+        .role-badge, .status-badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            text-transform: capitalize;
+        }
+        .role-badge {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        .approved {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+        }
+        .pending {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+        .inactive {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        /* SETTINGS & BUTTONS */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .setting-info {
+            flex: 1;
+            margin-right: 15px;
+        }
+        .setting-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        .setting-description {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.3;
+        }
+        .button-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .button, .action-button {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            transition: background-color 0.2s;
+        }
+        .edit-button {
+            background-color: #007AFF;
+        }
+        .save-button {
+            background-color: #27ae60;
+        }
+        .cancel-button {
+            background-color: #95a5a6;
+        }
+        .disabled-button {
+            background-color: #bdc3c7;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .logout-button {
+            background-color: #e74c3c;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 30px;
+            align-items: center;
+            background-color: #f1f2f6;
+            text-align: center;
+        }
+        .footer-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .footer-subtext {
+            font-size: 12px;
+            color: #999;
+        }
+        
+        /* SLIDE NAVIGATION */
+        .slide-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            background-color: #fff;
+            border-top: none;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 0 15px;
+        }
+        .nav-button {
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .nav-button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        .nav-button.disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .page-indicator {
+            display: flex;
+            gap: 8px;
+        }
+        .page-indicator span {
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e0e0e0;
+            transition: background-color 0.3s;
+        }
+        .page-indicator .active-dot {
+            background-color: #667eea;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+        }
+
+        /* Switch Styling */
+        .switch-container {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch-container input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #f4f3f4;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #81b0ff;
+        }
+        input:focus + .slider {
+            box-shadow: 0 0 1px #81b0ff;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+            background-color: #007AFF;
+        }
+        
+        /* Alert Modal Styling */
+        .alert-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        .alert-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .alert-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            padding: 20px 20px 10px;
+            margin: 0;
+        }
+        .alert-message {
+            font-size: 16px;
+            color: #666;
+            padding: 0 20px 20px;
+            margin: 0;
+        }
+        .alert-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+        .alert-button {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 80px;
+        }
+        .alert-button-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+        .alert-button-destructive {
+            background-color: #dc3545;
+            color: white;
+        }
+        .alert-button-default {
+            background-color: #007AFF;
+            color: white;
+        }
+        
+        /* TOAST NOTIFICATION SYSTEM */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .toast {
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            transform: translateY(-20px);
+            display: flex;
+            align-items: center;
+        }
+        .toast-success {
+            background-color: #28a745;
+        }
+        .toast-error {
+            background-color: #dc3545;
+        }
+        .toast-info {
+            background-color: #007AFF;
+        }
+        .toast-warning {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .toast-icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="toast-container"></div>
+
+    <div id="loading-state" class="center">
+        <div class="spinner"></div>
+        <p class="loading-text">Inapakua wasifu...</p>
+    </div>
+    
+    <div id="main-content" class="container" style="display: none;">
+        <div id="scroll-view">
+            <div class="header">
+                <div class="avatar">
+                    <span id="avatar-text" class="avatar-text">U</span>
+                </div>
+                <h1 id="greeting" class="greeting">Habari!</h1>
+                <p id="role" class="role">Mtumiaji</p>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Taarifa za Wasifu</h2>
+                
+                <div class="info-card">
+                    <div class="field">
+                        <p class="label">Jina Kamili</p>
+                        <div id="full-name-display" class="value">Haijawekwa</div>
+                        <input id="full-name-input" type="text" class="input" placeholder="Weka jina lako kamili" style="display: none;">
+                    </div>
+
+                    <div class="field">
+                        <p class="label">Barua Pepe</p>
+                        <span id="email-value" class="value">Haipatikani</span>
+                    </div>
+
+                    <div class="field">
+                        <p class="label">Nambari ya Simu</p>
+                        <div id="phone-display" class="value">Haijawekwa</div>
+                        <input id="phone-input" type="tel" class="input" placeholder="Weka nambari yako ya simu" style="display: none;">
+                    </div>
+
+                    <div class="field">
+                        <p class="label">Wadhifa</p>
+                        <span id="role-badge" class="value role-badge">mteja</span>
+                    </div>
+
+                    <div class="field">
+                        <p class="label">Hali</p>
+                        <span id="status-badge" class="value status-badge pending">inasubiri</span>
+                    </div>
+
+                    <div class="field">
+                        <p class="label">Mwanachama Tangu</p>
+                        <span id="created-at-value" class="value">Haipatikani</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Mipangilio</h2>
+                
+                <div class="info-card">
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <p class="setting-label">Arifa za Kujiongeza</p>
+                            <p class="setting-description">
+                                Pokewa taarifa kuhusu matangazo mapya na promosheni
+                            </p>
+                        </div>
+                        <div class="switch-container">
+                            <input type="checkbox" id="notifications-switch" checked>
+                            <span class="slider"></span>
+                        </div>
+                    </div>
+
+                    <div class="button-row">
+                        <button 
+                            id="edit-cancel-button"
+                            class="button edit-button"
+                            onclick="handleEditToggle()"
+                        >
+                            Hariri Wasifu
+                        </button>
+
+                        <button 
+                            id="save-button"
+                            class="button save-button"
+                            onclick="handleSaveProfile()"
+                            style="display: none;"
+                            disabled
+                        >
+                            <span id="save-button-text">Hifadhi</span>
+                            <div id="save-spinner" class="spinner" style="display: none; width: 16px; height: 16px; border-width: 2px; border-top-color: white;"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">Vitendo vya Akaunti</h2>
+                
+                <div class="info-card">
+                    <button 
+                        class="action-button logout-button" 
+                        onclick="handleLogout()"
+                    >
+                        🚪 Toka kwenye Akaunti
+                    </button>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p class="footer-text">
+                    Duka Mkononi © 2024
+                </p>
+                <p class="footer-subtext">
+                    Toleo 1.0.0
+                </p>
+            </div>
+            
+            <div style="height: 80px;"></div>
+        </div>
+    </div>
+    
+    <div id="slide-nav" class="slide-nav">
+        <button id="prev-button" class="nav-button prev-button" onclick="window.location.href = 'matangazo.html'">
+            &larr; Nyuma
+        </button>
+        <div class="page-indicator">
+            <span></span><span></span><span class="active-dot"></span>
+        </div>
+        <button id="next-button" class="nav-button next-button disabled" disabled>
+            Ifuatayo &rarr;
+        </button>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://dukamkononi.com';
+        
+        // --- Global State & DOM Elements ---
+        let profile = null;
+        let loading = true;
+        let editing = false;
+        let saving = false;
+        let notifications = true;
+        let formData = { full_name: '', phone: '' };
+
+        const D = (id) => document.getElementById(id);
+
+        const elements = {
+            loadingState: D('loading-state'),
+            mainContent: D('main-content'),
+            avatarText: D('avatar-text'),
+            greeting: D('greeting'),
+            roleHeader: D('role'),
+            fullNameDisplay: D('full-name-display'),
+            fullNameInput: D('full-name-input'),
+            emailValue: D('email-value'),
+            phoneDisplay: D('phone-display'),
+            phoneInput: D('phone-input'),
+            roleBadge: D('role-badge'),
+            statusBadge: D('status-badge'),
+            createdAtValue: D('created-at-value'),
+            notificationsSwitch: D('notifications-switch'),
+            editCancelButton: D('edit-cancel-button'),
+            saveButton: D('save-button'),
+            saveButtonText: D('save-button-text'),
+            saveSpinner: D('save-spinner')
+        };
+        
+        // --- Alert System (to match React Native Alert.alert) ---
+        const showAlert = (title, message, buttons) => {
+            const modal = document.createElement('div');
+            modal.className = 'alert-modal';
+            modal.id = 'alert-modal';
+            
+            const content = document.createElement('div');
+            content.className = 'alert-content';
+            
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'alert-title';
+            titleEl.textContent = title;
+            
+            const messageEl = document.createElement('p');
+            messageEl.className = 'alert-message';
+            messageEl.textContent = message;
+            
+            const buttonsEl = document.createElement('div');
+            buttonsEl.className = 'alert-buttons';
+            
+            if (!buttons || buttons.length === 0) {
+                buttons = [{ text: 'OK', style: 'default' }];
+            }
+            
+            buttons.forEach(button => {
+                const btn = document.createElement('button');
+                btn.className = `alert-button alert-button-${button.style || 'default'}`;
+                btn.textContent = button.text;
+                
+                btn.onclick = () => {
+                    document.body.removeChild(modal);
+                    if (button.onPress) button.onPress();
+                };
+                
+                buttonsEl.appendChild(btn);
+            });
+            
+            content.appendChild(titleEl);
+            content.appendChild(messageEl);
+            content.appendChild(buttonsEl);
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        };
+
+        // --- Toast Notification System ---
+        const showToast = (message, type = 'info', duration = 3000) => {
+            const container = D('toast-container');
+            if (!container) return;
+
+            let icon = '';
+            let typeClass = `toast-${type}`;
+
+            switch (type) {
+                case 'success': icon = '✅'; break;
+                case 'error': icon = '❌'; break;
+                case 'warning': icon = '⚠️'; break;
+                case 'info': default: icon = '💬'; break;
+            }
+
+            const toastElement = document.createElement('div');
+            toastElement.className = `toast ${typeClass}`;
+            toastElement.innerHTML = `<span class="toast-icon">${icon}</span>${message}`;
+            
+            container.appendChild(toastElement);
+
+            setTimeout(() => {
+                toastElement.classList.add('show');
+            }, 10);
+
+            setTimeout(() => {
+                toastElement.classList.remove('show');
+                setTimeout(() => {
+                    container.removeChild(toastElement);
+                }, 300);
+            }, duration);
+        };
+
+        // --- Utility Functions ---
+        const showLoading = (show) => {
+            loading = show;
+            elements.loadingState.style.display = show ? 'flex' : 'none';
+            elements.mainContent.style.display = show ? 'none' : 'block';
+        };
+        
+        const updateSavingState = (isSaving) => {
+            saving = isSaving;
+            if (isSaving) {
+                elements.saveButtonText.style.display = 'none';
+                elements.saveSpinner.style.display = 'block';
+                elements.saveButton.disabled = true;
+                elements.saveButton.classList.add('disabled-button');
+                elements.editCancelButton.disabled = true;
+                elements.editCancelButton.classList.add('disabled-button');
+            } else {
+                elements.saveButtonText.style.display = 'inline';
+                elements.saveSpinner.style.display = 'none';
+                elements.saveButton.disabled = false;
+                elements.saveButton.classList.remove('disabled-button');
+                elements.editCancelButton.disabled = false;
+                elements.editCancelButton.classList.remove('disabled-button');
+            }
+        };
+
+        // --- Rendering Functions ---
+        const renderProfile = () => {
+            if (!profile) return;
+
+            const name = profile.full_name || 'Mgeni';
+            const initial = name.charAt(0)?.toUpperCase() || profile.email?.charAt(0)?.toUpperCase() || 'U';
+            const roleText = profile.role === 'customer' ? 'Mteja' : 
+                             profile.role === 'admin' ? 'Msimamizi' : 
+                             profile.role || 'Mtumiaji';
+            const statusText = profile.status === 'approved' ? 'imeidhinishwa' : 
+                               profile.status === 'pending' ? 'inasubiri' : 
+                               profile.status || 'inasubiri';
+            const createdAt = profile.created_at ? new Date(profile.created_at).toLocaleDateString('sw-TZ', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            }) : 'Haipatikani';
+            
+            elements.avatarText.textContent = initial;
+            elements.greeting.textContent = name ? `Habari, ${name}!` : 'Habari!';
+            elements.roleHeader.textContent = roleText;
+
+            // Display values
+            elements.fullNameDisplay.textContent = profile.full_name || 'Haijawekwa';
+            elements.emailValue.textContent = profile.email || 'Haipatikani';
+            elements.phoneDisplay.textContent = profile.phone || 'Haijawekwa';
+            elements.createdAtValue.textContent = createdAt;
+
+            // Badges
+            elements.roleBadge.textContent = roleText;
+            elements.statusBadge.textContent = statusText;
+            elements.statusBadge.className = `value status-badge ${profile.status || 'pending'}`;
+
+            // Inputs
+            elements.fullNameInput.value = formData.full_name;
+            elements.phoneInput.value = formData.phone;
+        };
+
+        const renderEditingState = () => {
+            if (editing) {
+                elements.fullNameDisplay.style.display = 'none';
+                elements.phoneDisplay.style.display = 'none';
+                elements.fullNameInput.style.display = 'block';
+                elements.phoneInput.style.display = 'block';
+
+                elements.editCancelButton.textContent = 'Ghairi';
+                elements.editCancelButton.classList.remove('edit-button');
+                elements.editCancelButton.classList.add('cancel-button');
+                
+                elements.saveButton.style.display = 'block';
+            } else {
+                elements.fullNameDisplay.style.display = 'block';
+                elements.phoneDisplay.style.display = 'block';
+                elements.fullNameInput.style.display = 'none';
+                elements.phoneInput.style.display = 'none';
+
+                elements.editCancelButton.textContent = 'Hariri Wasifu';
+                elements.editCancelButton.classList.remove('cancel-button');
+                elements.editCancelButton.classList.add('edit-button');
+                
+                elements.saveButton.style.display = 'none';
+            }
+        };
+
+        // --- Core Functions ---
+        const loadNotificationSettings = () => {
+            const settings = localStorage.getItem('notificationSettings');
+            if (settings !== null) {
+                notifications = JSON.parse(settings);
+                elements.notificationsSwitch.checked = notifications;
+            }
+        };
+
+        const saveNotificationSettings = (value) => {
+            localStorage.setItem('notificationSettings', JSON.stringify(value));
+        };
+
+        const loadUserProfile = async () => {
+            showLoading(true);
+            try {
+                const token = localStorage.getItem('userToken');
+                
+                if (!token) {
+                    showAlert('Kosa', 'Tafadhali ingia kwenye akaunti yako kuona wasifu');
+                    showLoading(false);
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': 'true',
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                });
+
+                console.log('📡 Fetching profile from:', `${API_BASE_URL}/api/user/profile`);
+                console.log('🔑 Token present:', !!token);
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    console.log('✅ Profile data received:', userData);
+                    profile = userData;
+                    formData = {
+                        full_name: userData.full_name || '',
+                        phone: userData.phone || ''
+                    };
+                    renderProfile();
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Profile fetch error:', response.status, errorText);
+                    throw new Error('Imeshindwa kupakua wasifu');
+                }
+            } catch (error) {
+                console.error('❌ Error loading profile:', error);
+                showAlert('Kosa', 'Imeshindwa kupakua taarifa za wasifu');
+            } finally {
+                showLoading(false);
+            }
+        };
+
+        const validateForm = () => {
+            if (!formData.full_name.trim()) {
+                showAlert('Kosa', 'Jina kamili linahitajika');
+                return false;
+            }
+
+            if (formData.phone && !/^[0-9+-\s()]{10,}$/.test(formData.phone)) {
+                showAlert('Kosa', 'Tafadhali weka nambari ya simu sahihi');
+                return false;
+            }
+
+            return true;
+        };
+
+        const handleSaveProfile = async () => {
+            if (!validateForm()) return;
+
+            updateSavingState(true);
+            try {
+                const token = localStorage.getItem('userToken');
+                
+                if (!token) {
+                    showAlert('Kosa', 'Tafadhali ingia kwenye akaunti yako kusasisha wasifu');
+                    return;
+                }
+
+                console.log('📡 Updating profile to:', `${API_BASE_URL}/api/user/profile`);
+                console.log('📝 Data being sent:', formData);
+
+                const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'ngrok-skip-browser-warning': 'true',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Profile update successful:', result);
+                    profile = result.user;
+                    editing = false;
+                    
+                    showAlert('Mafanikio', 'Wasifu umesasishwa kikamilifu!');
+                    
+                    if (result.user.full_name) {
+                        localStorage.setItem('userName', result.user.full_name);
+                    }
+                    renderProfile();
+                    renderEditingState();
+                } else {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('❌ Profile update failed:', response.status, errorData);
+                    throw new Error(errorData.error || 'Imeshindwa kusasisha wasifu');
+                }
+            } catch (error) {
+                console.error('❌ Error updating profile:', error);
+                showAlert('Kosa', error.message || 'Imeshindwa kusasisha wasifu');
+            } finally {
+                updateSavingState(false);
+            }
+        };
+
+        const handleEditToggle = () => {
+            if (editing) {
+                // Ghairi: Rejesha data ya fomu kwenye profile
+                formData = {
+                    full_name: profile?.full_name || '',
+                    phone: profile?.phone || ''
+                };
+            }
+            editing = !editing;
+            renderProfile();
+            renderEditingState();
+        };
+
+        const handleLogout = () => {
+            showAlert(
+                'Toka',
+                'Una uhakika unataka kutoka?',
+                [
+                    { text: 'Ghairi', style: 'cancel' },
+                    { 
+                        text: 'Toka', 
+                        style: 'destructive',
+                        onPress: async () => {
+                            try {
+                                // Futa data ya mtumiaji
+                                localStorage.removeItem('userToken');
+                                localStorage.removeItem('userName');
+                                localStorage.removeItem('notificationSettings');
+                                
+                                showAlert(
+                                    'Mafanikio', 
+                                    'Umetoka kikamilifu',
+                                    [
+                                        {
+                                            text: 'Sawa',
+                                            onPress: () => {
+                                                // Rudisha kwenye ukurasa wa kuingia
+                                                window.location.href = 'login.html';
+                                            }
+                                        }
+                                    ]
+                                );
+                                
+                            } catch (error) {
+                                console.error('Error during logout:', error);
+                                showAlert('Kosa', 'Kumetokea kosa wakati wa kutoka');
+                            }
+                        }
+                    }
+                ]
+            );
+        };
+
+        const toggleNotifications = (event) => {
+            notifications = event.target.checked;
+            saveNotificationSettings(notifications);
+        };
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadNotificationSettings();
+            elements.notificationsSwitch.addEventListener('change', toggleNotifications);
+            loadUserProfile();
+        });
+    </script>
+</body>
+</html>

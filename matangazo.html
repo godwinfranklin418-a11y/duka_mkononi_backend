@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matangazo - Duka Mkononi</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 60px; /* Space for the navigation */
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease-out;
+            margin: 20px 0 80px 0; /* Space for navigation */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .message-box {
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #27ae60;
+        }
+
+        .message-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .message-text {
+            font-size: 16px;
+            color: #5d6d7e;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .app-store-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .store-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 15px 25px;
+            background-color: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .store-button:hover {
+            transform: translateY(-3px);
+            background-color: #222;
+        }
+
+        .store-button.ios {
+            background-color: #000;
+        }
+
+        .store-button.android {
+            background-color: #3ddc84;
+            color: #333;
+        }
+
+        .store-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .store-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .store-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .store-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .features {
+            text-align: left;
+            margin: 25px 0;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 15px;
+        }
+
+        .features-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #5d6d7e;
+        }
+
+        .feature-icon {
+            color: #27ae60;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .qr-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            border: 2px solid #ecf0f1;
+        }
+
+        .qr-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .qr-code-placeholder {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(45deg, #ecf0f1, #bdc3c7);
+            margin: 0 auto 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        .qr-text {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+
+        .contact-info {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .contact-link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-link:hover {
+            text-decoration: underline;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #2980b9;
+        }
+
+        /* SLIDE NAVIGATION SIMULATION (FROM THE FIRST FILE) */
+        .slide-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            background-color: #fff;
+            border-top: none; 
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1); 
+            z-index: 1000;
+            padding: 0 15px;
+        }
+        .nav-button {
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        .nav-button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        .nav-button.disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .page-indicator {
+            display: flex;
+            gap: 8px;
+        }
+        .page-indicator span {
+            width: 8px;
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e0e0e0;
+            transition: background-color 0.3s;
+        }
+        .page-indicator .active-dot {
+            background-color: #667eea;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+                margin: 20px 20px 80px 20px;
+            }
+            
+            .title {
+                font-size: 28px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+            
+            .app-store-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .store-button {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+            
+            body {
+                padding-bottom: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🛍️</div>
+        
+        <h1 class="title">Duka Mkononi</h1>
+        <p class="subtitle">Biashara zako mkononi mwako, popote unapokuwako</p>
+        
+        <div class="message-box">
+            <h2 class="message-title">🎯 Angalia Matangazo ya Biashara Hapa!</h2>
+            <p class="message-text">
+                Unahitaji kupakua <strong>Duka Mkononi App</strong> ili kufurahia huduma kamili za matangazo!
+                <br><br>
+                Kwenye app yetu utaweza:
+            </p>
+        </div>
+        
+        <div class="features">
+            <h3 class="features-title">🔍 Vitu Unavyopata Kwenye App</h3>
+            <div class="feature-item">
+                <span class="feature-icon">✔️</span>
+                <span>Kuona matangazo ya biashara mbalimbali</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✔️</span>
+                <span>Kupenda na kushare matangazo</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✔️</span>
+                <span>Kuwasiliana moja kwa moja na wafanyabiashara</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✔️</span>
+                <span>Kufanya maagizo ya bidhaa na huduma</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">✔️</span>
+                <span>Kufuata biashara unazozipenda</span>
+            </div>
+        </div>
+        
+        <div class="qr-section">
+            <h3 class="qr-title">📱 Pakua App Yetu</h3>
+            <div class="qr-code-placeholder">
+                Scan QR Code
+            </div>
+            <p class="qr-text">Piga picha ya QR code hapo juu kwa simu yako ili kupakua app</p>
+        </div>
+        
+        <div class="app-store-buttons">
+            <a href="#" class="store-button ios">
+                <span class="store-icon">🍎</span>
+                <div class="store-text">
+                    <span class="store-label">Pakua kwenye</span>
+                    <span class="store-name">App Store</span>
+                </div>
+            </a>
+            
+            <a href="#" class="store-button android">
+                <span class="store-icon">🤖</span>
+                <div class="store-text">
+                    <span class="store-label">Pakua kwenye</span>
+                    <span class="store-name">Google Play</span>
+                </div>
+            </a>
+        </div>
+        
+        <div class="contact-info">
+            <p>Kwa maswali au usaidizi:</p>
+            <p>
+                📧 <a href="mailto:info@dukamkononi.com" class="contact-link">info@dukamkononi.com</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                📞 <a href="tel:+255757071967" class="contact-link">+255 757071967</a>
+            </p>
+            <p>© 2024 Duka Mkononi. Haki zote zimehifadhiwa.</p>
+        </div>
+        
+        <a href="biashara.html" class="back-button">← Rudi Nyuma</a>
+    </div>
+    
+    <!-- SLIDE NAVIGATION (FROM THE FIRST FILE) -->
+    <div id="slide-nav" class="slide-nav">
+        <button id="prev-button" class="nav-button prev-button" onclick="window.location.href = 'biashara.html'">
+            &larr; Nyuma
+        </button>
+        <div class="page-indicator">
+            <span></span><span class="active-dot"></span><span></span>
+        </div>
+        <button id="next-button" class="nav-button next-button" onclick="window.location.href = 'profaili.html'">
+            Ifuatayo &rarr;
+        </button>
+    </div>
+    
+    <script>
+        // On page load, check if it's a mobile device
+        document.addEventListener('DOMContentLoaded', function() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Update message for mobile users
+                document.querySelector('.message-text').innerHTML += 
+                    '<br><br><strong style="color: #e74c3c;">Tafadhali pakua app yetu ili kufurahia matangazo kamili!</strong>';
+            }
+            
+            // Add animation to features
+            const features = document.querySelectorAll('.feature-item');
+            features.forEach((feature, index) => {
+                feature.style.animationDelay = (index * 0.1) + 's';
+                feature.style.animation = 'fadeIn 0.5s ease-out forwards';
+                feature.style.opacity = '0';
+            });
+        });
+    </script>
+</body>
+</html>

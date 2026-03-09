@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingia Kwenye Akaunti - Dukamkononi</title>
+    <style>
+        :root {
+            --color-mteja: #3498db;
+            --color-muuzaji: #2ecc71;
+            --color-msimamizi: #e74c3c;
+            --color-lipia: #9b59b6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: #e0e0e0;
+            transform: translateX(-2px);
+        }
+
+        .role-badge {
+            padding: 8px 15px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-text {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .role-description {
+            font-size: 16px;
+            color: #7f8c8d;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .content {
+            padding: 0 25px 30px;
+        }
+
+        .form-container {
+            width: 100%;
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .label-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-left: 8px;
+        }
+
+        .input {
+            width: 100%;
+            height: 56px;
+            padding: 0 20px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .input-error {
+            border-color: #e74c3c;
+            border-width: 2px;
+            background: #fff5f5;
+        }
+
+        .error-text {
+            font-size: 12px;
+            color: #e74c3c;
+            margin-top: 5px;
+            margin-left: 5px;
+            display: none;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .eye-button {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .remember-forgot-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .remember-me-button {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid #ddd;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox.checked {
+            background: #3498db;
+            border-color: #3498db;
+        }
+
+        .remember-me-text {
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .forgot-password-text {
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password-text:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 58px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .login-button-text {
+            margin-left: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .signup-text {
+            font-size: 15px;
+            color: #7f8c8d;
+            margin-right: 5px;
+        }
+
+        .signup-link {
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .signup-link:hover {
+            text-decoration: underline;
+        }
+
+        .security-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .security-text {
+            font-size: 14px;
+            color: #3498db;
+            margin-left: 10px;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .role-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .role-option {
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-transform: capitalize;
+        }
+
+        .role-option.active {
+            color: white;
+            border-color: transparent;
+        }
+
+        .message-container {
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .alert-message {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #e74c3c;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        /* Home Navigation Button */
+        .home-container {
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .home-button {
+            width: 100%;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #667eea;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+        }
+
+        .home-button:hover {
+            background-color: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .home-button-icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            body {
+                padding: 0;
+            }
+
+            .content {
+                padding: 0 20px 20px;
+            }
+
+            .welcome-text {
+                font-size: 24px;
+            }
+
+            .role-option {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Home Navigation Button -->
+        <div class="home-container">
+            <a href="home.html" class="home-button">
+                <i class="fas fa-home home-button-icon"></i>
+                RUDI NYUMBANI
+            </a>
+        </div>
+
+        <!-- Role Selector -->
+        <div class="role-selector" id="roleSelector">
+            <div class="role-option active" data-role="mteja">Mteja</div>
+            <div class="role-option" data-role="muuzaji">Muuzaji</div>
+            <div class="role-option" data-role="msimamizi">Msimamizi</div>
+        </div>
+
+        <div class="header-section">
+            <div class="header-top">
+                <div class="back-button" id="backButton">
+                    <i class="fas fa-arrow-left"></i>
+                </div>
+                <div class="role-badge" id="roleBadge">MTEJA</div>
+            </div>
+
+            <div class="avatar-container">
+                <div class="avatar" id="avatar" style="background-color: var(--color-mteja);">
+                    <i class="fas fa-user" style="font-size: 30px; color: white;"></i>
+                </div>
+                <h1 class="welcome-text">Karibu Tena!</h1>
+                <p class="role-description" id="roleDescription">Ninaomba huduma au bidhaa</p>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Message Container -->
+            <div class="message-container" id="messageContainer"></div>
+
+            <!-- Login Form -->
+            <div class="form-container">
+                <div class="input-container">
+                    <div class="input-label">
+                        <i class="fas fa-envelope"></i>
+                        <span class="label-text">Barua Pepe</span>
+                    </div>
+                    <input 
+                        type="email" 
+                        class="input" 
+                        id="emailInput" 
+                        placeholder="example@email.com"
+                        required
+                    >
+                    <div class="error-text" id="emailError">Barua pepe inahitajika</div>
+                </div>
+
+                <div class="input-container">
+                    <div class="input-label">
+                        <i class="fas fa-lock"></i>
+                        <span class="label-text">Nenosiri</span>
+                    </div>
+                    <div class="password-container">
+                        <input 
+                            type="password" 
+                            class="input" 
+                            id="passwordInput" 
+                            placeholder="••••••••"
+                            required
+                        >
+                        <button type="button" class="eye-button" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="error-text" id="passwordError">Nenosiri linahitajika</div>
+                </div>
+
+                <div class="remember-forgot-container">
+                    <div class="remember-me-button" id="rememberMeButton">
+                        <div class="checkbox" id="rememberCheckbox">
+                            <i class="fas fa-check" style="color: white; font-size: 12px; display: none;"></i>
+                        </div>
+                        <span class="remember-me-text">Nikumbuke</span>
+                    </div>
+                    <div class="forgot-password-text" id="forgotPassword" style="color: var(--color-mteja);">
+                        Umesahau nenosiri?
+                    </div>
+                </div>
+
+                <button class="login-button" id="loginButton" style="background-color: var(--color-mteja);">
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                    <i class="fas fa-sign-in-alt" id="loginIcon"></i>
+                    <span class="login-button-text" id="loginButtonText">INGIA</span>
+                </button>
+
+                <div class="signup-container">
+                    <span class="signup-text">Huna akaunti?</span>
+                    <div class="signup-link" id="signupLink" style="color: var(--color-mteja);">
+                        Jisajili kama Mteja
+                    </div>
+                </div>
+            </div>
+
+            <div class="security-info">
+                <i class="fas fa-shield-alt"></i>
+                <span class="security-text">Taarifa zako zinalindwa kwa usalama wa juu</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://dukamkononi.com';
+        
+        // State Variables
+        let currentRole = 'mteja';
+        let rememberMe = false;
+        let showPassword = false;
+        let isLoading = false;
+
+        // DOM Elements
+        const roleSelector = document.getElementById('roleSelector');
+        const roleOptions = document.querySelectorAll('.role-option');
+        const roleBadge = document.getElementById('roleBadge');
+        const avatar = document.getElementById('avatar');
+        const roleDescription = document.getElementById('roleDescription');
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const togglePassword = document.getElementById('togglePassword');
+        const rememberMeButton = document.getElementById('rememberMeButton');
+        const rememberCheckbox = document.getElementById('rememberCheckbox');
+        const forgotPassword = document.getElementById('forgotPassword');
+        const loginButton = document.getElementById('loginButton');
+        const loginButtonText = document.getElementById('loginButtonText');
+        const loginIcon = document.getElementById('loginIcon');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const signupLink = document.getElementById('signupLink');
+        const backButton = document.getElementById('backButton');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // Color mapping for roles
+        const roleColors = {
+            'mteja': '#3498db',
+            'muuzaji': '#2ecc71',
+            'msimamizi': '#e74c3c'
+        };
+
+        // Role descriptions
+        const roleDescriptions = {
+            'mteja': 'Ninaomba huduma au bidhaa',
+            'muuzaji': 'Ninauzia bidhaa na huduma',
+            'msimamizi': 'Ninafanya usimamizi wa duka'
+        };
+
+        // Role titles
+        const roleTitles = {
+            'mteja': 'MTEJA',
+            'muuzaji': 'MUUZAJI',
+            'msimamizi': 'MSIMAMIZI'
+        };
+
+        // Signup button texts
+        const signupButtonTexts = {
+            'mteja': 'Jisajili kama Mteja',
+            'muuzaji': 'Jisajili kama Muuzaji',
+            'msimamizi': 'Jisajili kama Msimamizi'
+        };
+
+        // Role icons
+        const roleIcons = {
+            'mteja': 'fa-user',
+            'muuzaji': 'fa-cart-shopping',
+            'msimamizi': 'fa-shield'
+        };
+
+        // Initialize the app
+        function init() {
+            // Check if user came from home.html
+            checkHomePageSelection();
+            
+            // Get role from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const roleParam = urlParams.get('role');
+            
+            if (roleParam && roleColors[roleParam]) {
+                currentRole = roleParam;
+                updateRoleUI();
+            }
+
+            loadSavedCredentials();
+            setupEventListeners();
+            emailInput.focus();
+        }
+
+        // Check if user came from home.html with role selection
+        function checkHomePageSelection() {
+            try {
+                // Check URL parameters first
+                const urlParams = new URLSearchParams(window.location.search);
+                const roleParam = urlParams.get('role');
+                
+                // Then check localStorage for home page selection
+                const homePageRole = localStorage.getItem('userRole');
+                
+                // Use role from URL if available, otherwise from localStorage
+                if (roleParam && roleColors[roleParam]) {
+                    currentRole = roleParam;
+                } else if (homePageRole && roleColors[homePageRole]) {
+                    currentRole = homePageRole;
+                    // Clear the stored role after using it
+                    localStorage.removeItem('userRole');
+                }
+                
+                updateRoleUI();
+            } catch (error) {
+                console.error('Error checking home page selection:', error);
+            }
+        }
+
+        // Update UI based on selected role
+        function updateRoleUI() {
+            const color = roleColors[currentRole];
+            
+            // Update role badge
+            roleBadge.textContent = roleTitles[currentRole];
+            roleBadge.style.color = color;
+            
+            // Update role selector
+            roleOptions.forEach(option => {
+                const optionRole = option.dataset.role;
+                option.classList.toggle('active', optionRole === currentRole);
+                option.style.backgroundColor = optionRole === currentRole ? color : '';
+                option.style.borderColor = optionRole === currentRole ? color : '#e0e0e0';
+            });
+            
+            // Update avatar
+            avatar.style.backgroundColor = color;
+            const iconClass = roleIcons[currentRole];
+            avatar.innerHTML = `<i class="fas ${iconClass}" style="font-size: 30px; color: white;"></i>`;
+            
+            // Update role description
+            roleDescription.textContent = roleDescriptions[currentRole];
+            
+            // Update forgot password link color
+            forgotPassword.style.color = color;
+            
+            // Update login button color
+            loginButton.style.backgroundColor = color;
+            
+            // Update signup link
+            signupLink.textContent = signupButtonTexts[currentRole];
+            signupLink.style.color = color;
+        }
+
+        // Load saved credentials from localStorage
+        function loadSavedCredentials() {
+            try {
+                const savedEmail = localStorage.getItem(`savedEmail_${currentRole}`);
+                const savedPassword = localStorage.getItem(`savedPassword_${currentRole}`);
+                const savedRememberMe = localStorage.getItem(`rememberMe_${currentRole}`);
+                
+                if (savedRememberMe === 'true' && savedEmail && savedPassword) {
+                    emailInput.value = savedEmail;
+                    passwordInput.value = savedPassword;
+                    rememberMe = true;
+                    rememberCheckbox.classList.add('checked');
+                    rememberCheckbox.querySelector('i').style.display = 'block';
+                    console.log(`Loaded saved credentials for ${currentRole}`);
+                }
+            } catch (error) {
+                console.error('Error loading saved credentials:', error);
+                clearLoginData();
+            }
+        }
+
+        // Clear login data from localStorage
+        function clearLoginData() {
+            try {
+                const keys = Object.keys(localStorage);
+                keys.forEach(key => {
+                    if (key.includes('savedEmail_') || key.includes('savedPassword_') || key.includes('rememberMe_')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+                console.log('Cleared all login data');
+            } catch (error) {
+                console.error('Error clearing login data:', error);
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Role selector
+            roleOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    currentRole = option.dataset.role;
+                    updateRoleUI();
+                    loadSavedCredentials();
+                });
+            });
+
+            // Password toggle
+            togglePassword.addEventListener('click', () => {
+                showPassword = !showPassword;
+                passwordInput.type = showPassword ? 'text' : 'password';
+                togglePassword.innerHTML = showPassword 
+                    ? '<i class="fas fa-eye-slash"></i>' 
+                    : '<i class="fas fa-eye"></i>';
+            });
+
+            // Remember me
+            rememberMeButton.addEventListener('click', () => {
+                rememberMe = !rememberMe;
+                rememberCheckbox.classList.toggle('checked', rememberMe);
+                const checkIcon = rememberCheckbox.querySelector('i');
+                checkIcon.style.display = rememberMe ? 'block' : 'none';
+            });
+
+            // Forgot password
+            forgotPassword.addEventListener('click', () => {
+                window.location.href = `forgot.html?role=${currentRole}`;
+            });
+
+            // Signup link
+            signupLink.addEventListener('click', () => {
+                const signupRoutes = {
+                    'mteja': 'client_signup.html',
+                    'muuzaji': 'cashier_signup.html',
+                    'msimamizi': 'admin_signup.html'
+                };
+                window.location.href = `${signupRoutes[currentRole]}?role=${currentRole}`;
+            });
+
+            // Back button - goes back to home page
+            backButton.addEventListener('click', () => {
+                window.location.href = 'home.html';
+            });
+
+            // Login button
+            loginButton.addEventListener('click', handleLogin);
+
+            // Enter key for login
+            document.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
+
+            // Real-time validation
+            emailInput.addEventListener('input', () => {
+                if (emailError.style.display === 'block') {
+                    validateEmail();
+                }
+            });
+
+            passwordInput.addEventListener('input', () => {
+                if (passwordError.style.display === 'block') {
+                    validatePassword();
+                }
+            });
+        }
+
+        // Validate email
+        function validateEmail() {
+            const email = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!email) {
+                emailError.textContent = 'Barua pepe inahitajika';
+                emailError.style.display = 'block';
+                emailInput.classList.add('input-error');
+                return false;
+            } else if (!emailRegex.test(email)) {
+                emailError.textContent = 'Andika barua pepe sahihi';
+                emailError.style.display = 'block';
+                emailInput.classList.add('input-error');
+                return false;
+            } else {
+                emailError.style.display = 'none';
+                emailInput.classList.remove('input-error');
+                return true;
+            }
+        }
+
+        // Validate password
+        function validatePassword() {
+            const password = passwordInput.value;
+            
+            if (!password) {
+                passwordError.textContent = 'Nenosiri linahitajika';
+                passwordError.style.display = 'block';
+                passwordInput.classList.add('input-error');
+                return false;
+            } else if (password.length < 6) {
+                passwordError.textContent = 'Nenosiri lazima liwe na herufi 6 au zaidi';
+                passwordError.style.display = 'block';
+                passwordInput.classList.add('input-error');
+                return false;
+            } else {
+                passwordError.style.display = 'none';
+                passwordInput.classList.remove('input-error');
+                return true;
+            }
+        }
+
+        // Validate form
+        function validateForm() {
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            return isEmailValid && isPasswordValid;
+        }
+
+        // Show message/alert
+        function showMessage(message, type = 'error') {
+            messageContainer.innerHTML = '';
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert-message alert-${type}`;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            
+            alertDiv.innerHTML = `
+                <i class="fas ${icon}" style="margin-right: 10px;"></i>
+                <span>${message}</span>
+            `;
+            
+            messageContainer.appendChild(alertDiv);
+            
+            // Auto-remove error messages after 5 seconds
+            if (type === 'error') {
+                setTimeout(() => {
+                    if (alertDiv.parentNode === messageContainer) {
+                        messageContainer.removeChild(alertDiv);
+                    }
+                }, 5000);
+            }
+        }
+
+        // Convert frontend role to backend role
+        function getBackendRole(frontendRole) {
+            switch (frontendRole) {
+                case 'mteja': return 'customer';
+                case 'muuzaji': return 'seller';
+                case 'msimamizi': return 'admin';
+                default: return frontendRole;
+            }
+        }
+
+        // Get dashboard route
+        function getDashboardRoute(backendRole) {
+            switch (backendRole) {
+                case 'customer': return 'biashara.html';
+                case 'seller': return 'bidhaa-mpya.html';
+                case 'admin': return 'profaili3.html';
+                default: return 'home.html';
+            }
+        }
+
+        // Check user approval status
+        function checkUserApprovalStatus(user) {
+            console.log('Checking user approval status:', user);
+            
+            const statusValue = user.status || user.is_approved || user.verified || user.account_status;
+            
+            if (statusValue === undefined || statusValue === null) {
+                console.log('No explicit status field found');
+                
+                if (user.role === 'seller') {
+                    return {
+                        approved: false,
+                        message: 'Akaunti ya muuzaji haijaidhinishwa. Tafadhali wasiliana na msimamizi.'
+                    };
+                }
+                
+                return {
+                    approved: true,
+                    message: ''
+                };
+            }
+            
+            const statusStr = String(statusValue).toLowerCase().trim();
+            
+            const approvedStatuses = [
+                'approved', 'active', 'verified', 'confirmed', 'valid',
+                'true', '1', 'yes', 'enabled', 'activated'
+            ];
+            
+            const pendingStatuses = [
+                'pending', 'waiting', 'review', 'processing', 'in_review'
+            ];
+            
+            const rejectedStatuses = [
+                'rejected', 'denied', 'suspended', 'blocked', 'banned',
+                'false', '0', 'no', 'disabled', 'inactive'
+            ];
+            
+            if (approvedStatuses.includes(statusStr)) {
+                return {
+                    approved: true,
+                    message: ''
+                };
+            }
+            
+            if (pendingStatuses.includes(statusStr)) {
+                return {
+                    approved: false,
+                    message: 'Akaunti yako bado haijaidhinishwa. Subiri msimamizi akuidhinishe.'
+                };
+            }
+            
+            if (rejectedStatuses.includes(statusStr)) {
+                return {
+                    approved: false,
+                    message: 'Akaunti yako imekataliwa. Tafadhali wasiliana na msimamizi.'
+                };
+            }
+            
+            if (statusValue === true || statusValue === 1) {
+                return {
+                    approved: true,
+                    message: ''
+                };
+            }
+            
+            if (statusValue === false || statusValue === 0) {
+                return {
+                    approved: false,
+                    message: 'Akaunti yako haijaidhinishwa. Tafadhali wasiliana na msimamizi.'
+                };
+            }
+            
+            console.warn(`Unknown status value: ${statusValue}`);
+            return {
+                approved: false,
+                message: `Akaunti yako ina hali isiyojulikana (${statusValue}). Tafadhali wasiliana na msimamizi.`
+            };
+        }
+
+        // Main login function
+        async function handleLogin() {
+            // Clear previous messages
+            messageContainer.innerHTML = '';
+            
+            // Validate form
+            if (!validateForm()) {
+                return;
+            }
+
+            // Set loading state
+            isLoading = true;
+            loginButton.disabled = true;
+            loginButtonText.style.display = 'none';
+            loginIcon.style.display = 'none';
+            loadingSpinner.style.display = 'block';
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const backendRole = getBackendRole(currentRole);
+
+            try {
+                console.log('Sending login request:', {
+                    email: email,
+                    role: backendRole,
+                    endpoint: `${API_BASE_URL}/api/login`
+                });
+
+                const response = await fetch(`${API_BASE_URL}/api/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        role: backendRole
+                    }),
+                });
+
+                // Reset loading state
+                isLoading = false;
+                loginButton.disabled = false;
+                loginButtonText.style.display = 'inline';
+                loginIcon.style.display = 'inline';
+                loadingSpinner.style.display = 'none';
+
+                if (!response.ok) {
+                    let errorMessage = 'Hitilafu imetokea';
+                    
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorData.message || `Hitilafu: ${response.status}`;
+                        
+                        if (errorData.error === 'Invalid credentials') {
+                            errorMessage = 'Barua pepe au nenosiri si sahihi.';
+                        } else if (errorData.error === 'Account not found') {
+                            errorMessage = 'Akaunti haipo. Tafadhali jisajili kwanza.';
+                        } else if (errorData.error === 'Account not approved') {
+                            errorMessage = 'Akaunti yako haijaidhinishwa. Tafadhali wasiliana na msimamizi.';
+                        }
+                    } catch {
+                        errorMessage = `Hitilafu ya server: ${response.status}`;
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                console.log('Login response:', data);
+
+                if (!data.token || !data.user) {
+                    throw new Error('Jibu lisilo sahihi kutoka kwa server');
+                }
+
+                const user = data.user;
+                const token = data.token;
+                
+                // Check user approval status
+                const approvalCheck = checkUserApprovalStatus(user);
+                if (!approvalCheck.approved) {
+                    showMessage(approvalCheck.message, 'error');
+                    return;
+                }
+
+                // Save user data to localStorage
+                const userDataToSave = {
+                    userToken: token,
+                    userData: JSON.stringify(user),
+                    userId: String(user.id),
+                    userEmail: user.email,
+                    userRole: user.role,
+                    userStatus: user.status || 'approved',
+                    userName: user.full_name || user.email.split('@')[0],
+                    ...(user.business_name && { userBusiness: user.business_name })
+                };
+
+                // Save all data
+                Object.entries(userDataToSave).forEach(([key, value]) => {
+                    localStorage.setItem(key, value);
+                });
+
+                // Handle remember me
+                if (rememberMe) {
+                    localStorage.setItem(`savedEmail_${currentRole}`, email);
+                    localStorage.setItem(`savedPassword_${currentRole}`, password);
+                    localStorage.setItem(`rememberMe_${currentRole}`, 'true');
+                } else {
+                    localStorage.removeItem(`savedEmail_${currentRole}`);
+                    localStorage.removeItem(`savedPassword_${currentRole}`);
+                    localStorage.removeItem(`rememberMe_${currentRole}`);
+                }
+
+                // Determine dashboard route
+                const dashboardRoute = getDashboardRoute(user.role);
+
+                const userName = user.full_name || user.business_name || user.email.split('@')[0];
+
+                // Show success message
+                showMessage(`Karibu ${userName}! Umefanikiwa kuingia.`, 'success');
+
+                // Redirect after delay
+                setTimeout(() => {
+                    window.location.href = dashboardRoute;
+                }, 1500);
+
+            } catch (error) {
+                console.error('Login Error:', error);
+                
+                // Reset loading state
+                isLoading = false;
+                loginButton.disabled = false;
+                loginButtonText.style.display = 'inline';
+                loginIcon.style.display = 'inline';
+                loadingSpinner.style.display = 'none';
+                
+                let errorMessage = error.message || 'Hitilafu imetokea wakati wa kuingia';
+                
+                // Network error handling
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMessage = 'Hitilafu ya mtandao. Hakikisha umeunganishwa kwenye internet.';
+                }
+                
+                showMessage(errorMessage, 'error');
+            }
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

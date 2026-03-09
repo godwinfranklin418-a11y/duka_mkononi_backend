@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chagua Jukumu - Dukamkononi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Mitindo ya Jumla na Mwonekano wa Simu */
+        body {
+            background-color: #f8f9fa; 
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            padding: 20px;
+        }
+        
+        /* Kitufe Kikubwa cha Jukumu */
+        .role-button {
+            width: 100%;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+            cursor: pointer;
+            text-align: center;
+            color: white;
+        }
+        .role-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        .role-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .role-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .role-description {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        /* Rangi */
+        /* MTEJA: #3498db (Bluu) */
+        .btn-mteja {
+            background-color: #3498db;
+        }
+        /* MUUZAJI: #2ecc71 (Kijani) */
+        .btn-muuzaji {
+            background-color: #2ecc71;
+        }
+        /* MSIMAMIZI: #e74c3c (Nyekundu) */
+        .btn-msimamizi {
+            background-color: #e74c3c;
+        }
+        /* WASHA: #9b59b6 (Zambarau) */
+        .btn-washa {
+            background-color: #9b59b6;
+        }
+
+        /* Text color in buttons */
+        .role-button * {
+            color: white;
+        }
+
+        .welcome-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 20px; 
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+    <div class="container bg-white shadow-lg">
+        
+        <header class="welcome-header">
+            <h1 class="text-4xl font-extrabold text-[#3498db] mb-2">Dukamkononi</h1>
+            <p class="text-lg text-[#7f8c8d]">Chagua **jukumu** lako ili uingie kwenye mfumo.</p>
+        </header>
+
+        <div class="space-y-4">
+            
+            <div 
+                class="role-button btn-muuzaji"
+                onclick="setRoleAndNavigate('muuzaji')"
+            >
+                <i class="role-icon fas fa-shopping-cart"></i>
+                <p class="role-title">MUUZAJI</p>
+                <p class="role-description">Kuingiza bidhaa na kufanya mauzo</p>
+            </div>
+
+            <div 
+                class="role-button btn-msimamizi"
+                onclick="setRoleAndNavigate('msimamizi')"
+            >
+                <i class="role-icon fas fa-shield-alt"></i>
+                <p class="role-title">MSIMAMIZI</p>
+                <p class="role-description">Kuangalia ripoti na kusimamia wauzaji</p>
+            </div>
+
+            <div 
+                class="role-button btn-mteja"
+                onclick="setRoleAndNavigate('mteja')"
+            >
+                <i class="role-icon fas fa-users"></i>
+                <p class="role-title">MTEJA</p>
+                <p class="role-description">Kununua au kuangalia bidhaa (Haihitaji kuingia)</p>
+            </div>
+            
+            <div 
+                class="role-button btn-washa"
+                onclick="navigateTo('malipo.html')"
+            >
+                <i class="role-icon fas fa-bolt"></i>
+                <p class="role-title">WASHA</p>
+                <p class="role-description">Malipo ya haraka kwa namba ya akaunti (Nenda Malipo)</p>
+            </div>
+        </div>
+
+        <div class="mt-8 text-center">
+             <p class="text-sm text-[#95a5a6]">© Dukamkononi 2024</p>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Fanya Urambazaji wa Haraka bila Kuhifadhi Jukumu
+         * @param {string} pageUrl URL ya ukurasa wa kwenda
+         */
+        function navigateTo(pageUrl) {
+            window.location.href = pageUrl;
+        }
+
+        /**
+         * Kuhifadhi Jukumu kwenye Local Storage na Kuenda Login
+         * @param {string} role Jukumu lililochaguliwa ('muuzaji', 'msimamizi', 'mteja')
+         */
+        function setRoleAndNavigate(role) {
+            // 1. Hifadhi jukumu kwenye localStorage. Hii inamwezesha login.html kujua jukumu.
+            localStorage.setItem('userRole', role);
+            
+            // 2. Tuma mtumiaji kwenye ukurasa unaofaa
+            if (role === 'mteja') {
+                // Mteja hahitaji kuingia, mpeleke moja kwa moja kwenye orodha ya bidhaa.
+                navigateTo('login.html');
+            } else {
+                // Muuzaji na Msimamizi lazima waingie (login).
+                navigateTo('login.html');
+            }
+
+            console.log(`Jukumu '${role}' limehifadhiwa na linaelekea 'login.html' (au ukurasa wa mteja).`);
+        }
+    </script>
+</body>
+</html>

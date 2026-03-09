@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Picha Cloudinary</title>
+    <style>
+        .upload-container {
+            padding: 20px;
+            border: 2px dashed #4CAF50;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px;
+            cursor: pointer;
+        }
+        .preview {
+            max-width: 300px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Upload Picha kwa Duka Mkononi</h2>
+    
+    <div class="upload-container" onclick="document.getElementById('fileInput').click()">
+        <p>📤 Bonyeza hapa au Buruta picha hapa</p>
+        <input 
+            type="file" 
+            id="fileInput" 
+            accept="image/*" 
+            style="display:none" 
+            onchange="handleImageUpload(event)"
+        />
+    </div>
+    
+    <div id="status"></div>
+    <img id="preview" class="preview" />
+    <input type="hidden" id="imageUrl" />
+    
+    <script>
+        const CLOUDINARY_CONFIG = {
+            cloudName: 'dooidwbgt',
+            uploadPreset: 'react_native_uploads',
+        };
+
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = '<p>📤 Ina-upload picha...</p>';
+            
+            try {
+                const imageUrl = await uploadToCloudinary(file);
+                
+                if (imageUrl) {
+                    statusDiv.innerHTML = '<p style="color:green">✅ Picha imesafirishwa!</p>';
+                    document.getElementById('preview').src = imageUrl;
+                    document.getElementById('imageUrl').value = imageUrl;
+                    
+                    // Tumia URL hii kwa ajili yako
+                    console.log('Image URL:', imageUrl);
+                    alert('Picha imesafirishwa! URL: ' + imageUrl);
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<p style="color:red">❌ Hitilafu ilitokea: ' + error.message + '</p>';
+            }
+        }
+
+        async function uploadToCloudinary(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+            
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`,
+                { method: 'POST', body: formData }
+            );
+            
+            if (!response.ok) {
+                throw new Error('Upload failed');
+            }
+            
+            const data = await response.json();
+            return data.secure_url;
+        }
+    </script>
+</body>
+</html>

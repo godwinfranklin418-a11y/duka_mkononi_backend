@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mauzo Yako - Duka Mkononi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Mitindo ya React Native kwa HTML */
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        /* Loading Styles */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+            padding: 30px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2196F3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        /* Header Styles */
+        .header {
+            background-color: white;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .back-button {
+            padding: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .refresh-button {
+            padding: 8px;
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            border: 1px solid #e3f2fd;
+            cursor: pointer;
+        }
+        
+        /* Stats Container */
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            padding: 0 8px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196F3;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        /* Edit Button Styles */
+        .edit-button {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            background-color: #2196F3;
+            padding: 14px 20px;
+            border-radius: 10px;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(33, 150, 243, 0.2);
+            width: 100%;
+        }
+        
+        .edit-button:hover {
+            background-color: #1976D2;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+        }
+        
+        .edit-button-text {
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        /* Navigation Buttons (Kutoka mauzo.html) */
+        .fixed-button-group {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .action-button {
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            justify-content: center;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .btn-bidhaa {
+            background-color: #3498db;
+        }
+        
+        .btn-uza {
+            background-color: #2ecc71;
+        }
+        
+        .btn-bidhaa:hover { 
+            background-color: #2980b9; 
+        }
+        
+        .btn-uza:hover { 
+            background-color: #27ae60; 
+        }
+        
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Alert Modal */
+        .alert-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .alert-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .alert-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .alert-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+        
+        .alert-buttons {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .alert-button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .alert-ok-button {
+            background-color: #2196F3;
+            color: white;
+        }
+        
+        .alert-ok-button:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading State -->
+    <div id="loadingState" class="loading-container">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Inapakua data ya mauzo...</div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" class="container hidden">
+        <!-- HEADER SECTION -->
+        <div class="header">
+            <div class="header-top">
+                <button id="backButton" class="back-button">
+                    <i class="fas fa-arrow-left" style="color: #2c3e50; font-size: 24px;"></i>
+                </button>
+                <div class="title">Mauzo Yako</div>
+                <button id="refreshButton" class="refresh-button">
+                    <i class="fas fa-redo-alt" style="color: #2196F3; font-size: 22px;"></i>
+                </button>
+            </div>
+            
+            <!-- STATS SECTION - REAL DATA FROM DATABASE -->
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div id="salesCount" class="stat-value">0</div>
+                    <div class="stat-label">Mauzo</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div id="todaySales" class="stat-value">TZS 0</div>
+                    <div class="stat-label">Leo</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div id="customersCount" class="stat-value">0</div>
+                    <div class="stat-label">Wateja</div>
+                </div>
+            </div>
+
+            <!-- EDIT BUTTON -->
+            <button id="editButton" class="edit-button">
+                <i class="fas fa-edit" style="color: white; font-size: 20px;"></i>
+                <span class="edit-button-text">Hariri Mauzo</span>
+            </button>
+        </div>
+        
+        <!-- Additional space for content if needed -->
+        <div style="padding: 20px; text-align: center; color: #7f8c8d;">
+            <p>Sehemu hii inaweza kuongezewa na orodha ya mauzo katika toleo linalofuata.</p>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="alert-modal hidden">
+        <div class="alert-content">
+            <div id="alertTitle" class="alert-title"></div>
+            <div id="alertMessage" class="alert-message"></div>
+            <div class="alert-buttons">
+                <button id="alertOkButton" class="alert-button alert-ok-button">Sawa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons (Kutoka mauzo.html) -->
+    <div class="fixed-button-group">
+        <a href="bidhaa-mpya.html" class="action-button btn-bidhaa">
+            <i class="fas fa-arrow-left"></i>
+            <span>BIDHAA MPYA</span>
+        </a>
+        
+        <a href="uza.html" class="action-button btn-uza">
+            <span>UZA</span>
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'https://dukamkononi.com';
+        
+        // State variables
+        let loading = true;
+        let salesData = [];
+        let stats = {
+            todaySales: 0,
+            totalCustomers: 0,
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up event listeners
+            document.getElementById('backButton').addEventListener('click', handleBack);
+            document.getElementById('refreshButton').addEventListener('click', onRefresh);
+            document.getElementById('editButton').addEventListener('click', handleEditSaleButton);
+            document.getElementById('alertOkButton').addEventListener('click', closeAlert);
+            
+            // Load initial data
+            loadSalesData();
+        });
+
+        // Helper Functions
+        function formatCurrency(amount) {
+            const num = parseFloat(amount || 0);
+            return `TZS ${num.toLocaleString('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            })}`;
+        }
+
+        // UI Update Functions
+        function updateUI() {
+            const loadingState = document.getElementById('loadingState');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (loading) {
+                loadingState.classList.remove('hidden');
+                mainContent.classList.add('hidden');
+                return;
+            }
+            
+            loadingState.classList.add('hidden');
+            mainContent.classList.remove('hidden');
+            
+            // Update stats
+            document.getElementById('salesCount').textContent = salesData.length;
+            document.getElementById('todaySales').textContent = formatCurrency(stats.todaySales);
+            document.getElementById('customersCount').textContent = stats.totalCustomers;
+        }
+
+        // API Functions
+        async function loadSalesData() {
+            loading = true;
+            updateUI();
+            
+            try {
+                const token = localStorage.getItem('userToken');
+                
+                if (!token) {
+                    // Use demo data if no token
+                    showAlert('Hitilafu', 'Tafadhali ingia tena');
+                    // Redirect to login page after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                    return;
+                }
+
+                // Fetch sales data
+                console.log('📤 Fetching sales data...');
+                const response = await fetch(`${API_BASE_URL}/api/sales/my`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    salesData = Array.isArray(data) ? data : [];
+                    
+                    // Calculate stats from real data
+                    const today = new Date().toISOString().split('T')[0];
+                    const todaySales = salesData
+                        .filter(sale => {
+                            // Handle different date formats
+                            const saleDate = sale.sale_date || sale.created_at;
+                            if (!saleDate) return false;
+                            return saleDate.startsWith(today);
+                        })
+                        .reduce((sum, sale) => sum + parseFloat(sale.total_amount || 0), 0);
+
+                    // Get unique customers
+                    const customerIds = salesData
+                        .map(sale => sale.customer_id)
+                        .filter(id => id);
+                    const uniqueCustomers = [...new Set(customerIds)];
+
+                    stats = {
+                        todaySales,
+                        totalCustomers: uniqueCustomers.length,
+                    };
+                    
+                    console.log('✅ Sales data loaded:', {
+                        totalSales: salesData.length,
+                        todaySales: stats.todaySales,
+                        customers: stats.totalCustomers
+                    });
+                } else {
+                    console.error('Failed to fetch sales data');
+                    showAlert('Hitilafu', 'Imeshindwa kupakua data ya mauzo');
+                    
+                    // Use demo data as fallback
+                    salesData = getDemoSalesData();
+                    stats = {
+                        todaySales: 125000,
+                        totalCustomers: 3,
+                    };
+                }
+            } catch (error) {
+                console.error('❌ Error loading sales:', error);
+                showAlert('Hitilafu', 'Kosa wakati wa upakuaji wa data ya mauzo');
+                
+                // Use demo data as fallback
+                salesData = getDemoSalesData();
+                stats = {
+                    todaySales: 125000,
+                    totalCustomers: 3,
+                };
+            } finally {
+                loading = false;
+                updateUI();
+            }
+        }
+
+        // Event Handlers
+        function handleBack() {
+            window.history.back();
+        }
+
+        function onRefresh() {
+            loading = true;
+            updateUI();
+            loadSalesData();
+        }
+
+        function handleEditSaleButton() {
+            showAlert('Hariri Mauzo', 'Utendaji wa kuhariri mauzo utaongezwa hapa.');
+        }
+
+        // Alert Functions
+        function showAlert(title, message) {
+            document.getElementById('alertTitle').textContent = title;
+            document.getElementById('alertMessage').textContent = message;
+            document.getElementById('alertModal').classList.remove('hidden');
+        }
+
+        function closeAlert() {
+            document.getElementById('alertModal').classList.add('hidden');
+        }
+
+        // Demo data (fallback)
+        function getDemoSalesData() {
+            return [
+                {
+                    id: 'S001',
+                    total_amount: 125000,
+                    sale_date: new Date().toISOString(),
+                    customer_id: 'C001',
+                    customer_name: 'John Doe',
+                    payment_method: 'cash',
+                    created_at: new Date().toISOString()
+                },
+                {
+                    id: 'S002',
+                    total_amount: 45000,
+                    sale_date: new Date(Date.now() - 86400000).toISOString(),
+                    customer_id: 'C002',
+                    customer_name: 'Jane Smith',
+                    payment_method: 'card',
+                    created_at: new Date(Date.now() - 86400000).toISOString()
+                },
+                {
+                    id: 'S003',
+                    total_amount: 24000,
+                    sale_date: new Date(Date.now() - 172800000).toISOString(),
+                    customer_id: 'C003',
+                    customer_name: 'Robert Johnson',
+                    payment_method: 'cash',
+                    created_at: new Date(Date.now() - 172800000).toISOString()
+                }
+            ];
+        }
+
+        // Close alert when clicking outside
+        document.getElementById('alertModal').addEventListener('click', (e) => {
+            if (e.target.id === 'alertModal') {
+                closeAlert();
+            }
+        });
+    </script>
+</body>
+</html>

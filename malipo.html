@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanya Malipo - Dukamkononi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Mitindo ya Msingi */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Kichwa */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-top: 10px;
+        }
+
+        .back-button {
+            padding: 10px;
+            cursor: pointer;
+            color: #2c3e50;
+            font-size: 20px;
+            background: none;
+            border: none;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .header-right {
+            width: 40px;
+        }
+
+        /* Sehemu */
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        /* Kiasi */
+        .amount-container {
+            display: flex;
+            align-items: center;
+            border: 2px solid #3498db;
+            border-radius: 12px;
+            padding: 0 15px;
+            height: 60px;
+            background-color: #f8f9fa;
+        }
+
+        .currency {
+            font-size: 20px;
+            font-weight: bold;
+            color: #3498db;
+            margin-right: 10px;
+        }
+
+        .amount-input {
+            flex: 1;
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+            height: 100%;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
+
+        /* Nambari ya Simu */
+        .phone-container {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            height: 60px;
+            background-color: #f8f9fa;
+        }
+
+        .country-code {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            padding: 0 15px;
+            border-right: 1px solid #ddd;
+            line-height: 60px;
+        }
+
+        .phone-input {
+            flex: 1;
+            font-size: 18px;
+            padding: 0 15px;
+            color: #2c3e50;
+            height: 100%;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
+
+        /* Njia za Malipo */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .payment-method {
+            height: 90px;
+            border: 1.5px solid;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .payment-method:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .payment-method i {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .payment-method-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Sanduku la Maelezo */
+        .info-box {
+            display: flex;
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            align-items: flex-start;
+        }
+
+        .info-content {
+            flex: 1;
+            margin-left: 12px;
+        }
+
+        .info-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .info-text {
+            font-size: 14px;
+            color: #5d6d7e;
+            line-height: 20px;
+        }
+
+        .info-text br {
+            display: block;
+            content: "";
+            margin-bottom: 5px;
+        }
+
+        /* Kitufe cha Malipo */
+        .pay-button {
+            background-color: #2ecc71;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+            transition: all 0.3s;
+            border: none;
+            width: 100%;
+        }
+
+        .pay-button:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(46, 204, 113, 0.4);
+        }
+
+        .pay-button:active {
+            transform: translateY(0);
+        }
+
+        .pay-button-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            margin-left: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Angalizo */
+        .warning-box {
+            display: flex;
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid #ffc107;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        .warning-text {
+            flex: 1;
+            font-size: 14px;
+            color: #856404;
+            margin-left: 10px;
+            line-height: 20px;
+        }
+
+        /* Rangi za njia za malipo */
+        .mpesa { border-color: #00A859; color: #00A859; }
+        .tigo { border-color: #FF0000; color: #FF0000; }
+        .airtel { border-color: #FF0000; color: #FF0000; }
+        .halotel { border-color: #800080; color: #800080; }
+        .kadi { border-color: #3498db; color: #3498db; }
+        .ezypesa { border-color: #FF6B00; color: #FF6B00; }
+
+        /* Placeholder */
+        input::placeholder {
+            color: #95a5a6;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #95a5a6;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Kichwa -->
+        <div class="header">
+            <button class="back-button" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="header-title">Fanya Malipo</div>
+            <div class="header-right"></div>
+        </div>
+
+        <!-- Sehemu ya Kiasi -->
+        <div class="section">
+            <div class="section-title">Kiasi cha Kulipa</div>
+            <div class="amount-container">
+                <span class="currency">Tsh</span>
+                <input 
+                    type="text" 
+                    class="amount-input" 
+                    id="amountInput" 
+                    placeholder="0.00"
+                    oninput="formatAmount(this)"
+                >
+            </div>
+        </div>
+
+        <!-- Sehemu ya Nambari ya Simu -->
+        <div class="section">
+            <div class="section-title">Nambari ya Simu</div>
+            <div class="phone-container">
+                <span class="country-code">+255</span>
+                <input 
+                    type="text" 
+                    class="phone-input" 
+                    id="phoneInput" 
+                    placeholder="XXX XXX XXX"
+                    maxlength="9"
+                    oninput="formatPhoneNumber(this)"
+                >
+            </div>
+        </div>
+
+        <!-- Sehemu ya Njia za Malipo -->
+        <div class="section">
+            <div class="section-title">Chagua Njia ya Malipo</div>
+            <div class="payment-methods">
+                <!-- M-Pesa -->
+                <div class="payment-method mpesa" onclick="selectPaymentMethod('M-Pesa')">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div class="payment-method-text">M-Pesa</div>
+                </div>
+
+                <!-- Tigo Pesa -->
+                <div class="payment-method tigo" onclick="selectPaymentMethod('Tigo Pesa')">
+                    <i class="fas fa-bolt"></i>
+                    <div class="payment-method-text">Tigo Pesa</div>
+                </div>
+
+                <!-- Airtel Money -->
+                <div class="payment-method airtel" onclick="selectPaymentMethod('Airtel Money')">
+                    <i class="fas fa-signal"></i>
+                    <div class="payment-method-text">Airtel Money</div>
+                </div>
+
+                <!-- Halotel Pesa -->
+                <div class="payment-method halotel" onclick="selectPaymentMethod('Halotel Pesa')">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <div class="payment-method-text">Halotel Pesa</div>
+                </div>
+
+                <!-- Kadi ya Benki -->
+                <div class="payment-method kadi" onclick="selectPaymentMethod('Kadi ya Benki')">
+                    <i class="far fa-credit-card"></i>
+                    <div class="payment-method-text">Kadi ya Benki</div>
+                </div>
+
+                <!-- EzyPesa -->
+                <div class="payment-method ezypesa" onclick="selectPaymentMethod('EzyPesa')">
+                    <i class="fas fa-wallet"></i>
+                    <div class="payment-method-text">EzyPesa</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maelezo ya Malipo -->
+        <div class="info-box">
+            <i class="fas fa-info-circle" style="font-size: 22px; color: #3498db;"></i>
+            <div class="info-content">
+                <div class="info-title">Maelezo ya Malipo:</div>
+                <div class="info-text">
+                    • Malipo yatakusanywa kikamilifu<br>
+                    • Hakuna ada ya ziada<br>
+                    • Miamala yote ni salama na imefichwa<br>
+                    • Unaweza kufuta malipo kabla ya kukamilika
+                </div>
+            </div>
+        </div>
+
+        <!-- Kitufe cha Kulipa -->
+        <button class="pay-button" onclick="handlePayment()">
+            <i class="fas fa-lock" style="color: white; font-size: 22px;"></i>
+            <div class="pay-button-text">ENDELEA NA MALIPO</div>
+        </button>
+
+        <!-- Angalizo -->
+        <div class="warning-box">
+            <i class="fas fa-shield-alt" style="color: #856404; font-size: 18px;"></i>
+            <div class="warning-text">
+                Hakikisha umesoma na kukubaliana na sheria na masharti yetu kabla ya kufanya malipo.
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© Dukamkononi 2024 | Malipo Salama na Ya Kuaminika</p>
+        </div>
+    </div>
+
+    <script>
+        // Chagua njia ya malipo
+        let selectedPaymentMethod = '';
+        
+        function selectPaymentMethod(method) {
+            selectedPaymentMethod = method;
+            alert(`Umechagua ${method}`);
+            
+            // Onyesha kwa mtumiaji kuwa amechagua
+            const methods = document.querySelectorAll('.payment-method');
+            methods.forEach(el => {
+                el.style.backgroundColor = '#f8f9fa';
+                el.style.transform = 'translateY(0)';
+            });
+            
+            event.currentTarget.style.backgroundColor = '#e8f4fc';
+            event.currentTarget.style.transform = 'translateY(-3px)';
+        }
+
+        // Fanya malipo
+        function handlePayment() {
+            const amount = document.getElementById('amountInput').value;
+            const phone = document.getElementById('phoneInput').value;
+            
+            if (!amount || !phone) {
+                alert('Tafadhali jaza kiasi na nambari ya simu');
+                return;
+            }
+            
+            if (!selectedPaymentMethod) {
+                alert('Tafadhali chagua njia ya malipo');
+                return;
+            }
+            
+            const confirmed = confirm(`Unataka kulipa Tsh ${amount} kwa nambari +255${phone} kwa kutumia ${selectedPaymentMethod}?`);
+            
+            if (confirmed) {
+                alert('Malipo yako yamepokelewa kikamilifu!');
+                setTimeout(() => {
+                    goBack();
+                }, 1500);
+            }
+        }
+
+        // Kurudi nyuma
+        function goBack() {
+            // Rudi kwenye ukurasa uliopita au ukurasa wa nyumbani
+            window.history.back();
+        }
+
+        // Format nambari ya simu
+        function formatPhoneNumber(input) {
+            // Ondoa herufi zote isipokuwa nambari
+            let value = input.value.replace(/\D/g, '');
+            
+            // Format kwa kuongeka nafasi
+            if (value.length > 6) {
+                value = value.substring(0, 3) + ' ' + value.substring(3, 6) + ' ' + value.substring(6, 9);
+            } else if (value.length > 3) {
+                value = value.substring(0, 3) + ' ' + value.substring(3);
+            }
+            
+            input.value = value;
+        }
+
+        // Format kiasi cha pesa
+        function formatAmount(input) {
+            // Ondoa herufi zote isipokuwa nambari na nukta
+            let value = input.value.replace(/[^\d.]/g, '');
+            
+            // Hakikisha nukta moja tu
+            const dots = value.split('.').length - 1;
+            if (dots > 1) {
+                value = value.substring(0, value.lastIndexOf('.'));
+            }
+            
+            // Hakikisha nukta imefuatiwa na nambari 2 tu
+            if (value.includes('.')) {
+                const parts = value.split('.');
+                if (parts[1].length > 2) {
+                    parts[1] = parts[1].substring(0, 2);
+                    value = parts.join('.');
+                }
+            }
+            
+            input.value = value;
+        }
+
+        // Ongeza matukio kwa kubonyeza kitufe cha kurudi nyuma
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                goBack();
+            }
+        });
+
+        // Ongeza matukio kwa kubonyeza kitufe cha kuingia
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                handlePayment();
+            }
+        });
+    </script>
+</body>
+</html>

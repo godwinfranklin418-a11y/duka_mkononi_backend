@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matangazo - Duka Mkononi</title>
+    <style>
+        /* CSS Inayotokana na matangazo.tsx styles */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+
+        /* UTILITY & LOADING */
+        .center {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: white;
+        }
+        .loading-text {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #666;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007AFF;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* LIST HEADER */
+        .list-header {
+            padding: 20px;
+            background-color: white;
+            border-bottom: 1px solid #eee;
+        }
+        .screen-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .screen-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .login-warning {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin-top: 10px;
+        }
+        .login-warning-text {
+            font-size: 14px;
+            color: #856404;
+        }
+        .refresh-button {
+            padding: 10px 15px;
+            background-color: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* POST CONTAINER */
+        .post-container {
+            background-color: white;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+        }
+        .business-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background-color: #FF6B35;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+        }
+        .avatar-text {
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .business-details {
+            flex: 1;
+        }
+        .business-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+        .owner-name {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+        }
+        .business-name-text {
+            font-weight: bold;
+            color: #333;
+        }
+        .order-button {
+            background-color: #27ae60;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .order-button-text {
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* MEDIA */
+        .media {
+            width: 100%;
+            height: 400px; /* Sawa na upana wa skrini kwenye rununu */
+            background-color: #000;
+            display: block;
+        }
+        .unknown-media {
+            background-color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .unknown-text {
+            color: #666;
+            font-size: 16px;
+        }
+        /* VIDEO OVERLAY (Kwa alama ya kucheza) */
+        .video-container {
+            position: relative;
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .play-button-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .play-button {
+            color: white;
+            font-size: 24px;
+            margin-left: 4px;
+        }
+
+        /* ACTIONS */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .action-button {
+            padding: 8px 15px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+        }
+        .liked-button {
+            background-color: #ffe6e6; /* Rangi nyekundu nyepesi */
+        }
+        .action-text {
+            font-size: 14px;
+            color: #333;
+            font-weight: 600;
+        }
+        .liked-text {
+            color: #e74c3c; /* Rangi nyekundu */
+        }
+
+        /* DESCRIPTION & CONTACT */
+        .description-container {
+            padding: 15px;
+            padding-bottom: 10px;
+        }
+        .description {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+        }
+        .contact-container {
+            padding: 15px;
+            padding-top: 0;
+        }
+        .contact-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .phone {
+            color: #007AFF;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .business-contact {
+            font-size: 14px;
+            color: #333;
+            font-style: italic;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 15px;
+            padding-top: 5px;
+        }
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* EMPTY STATE */
+        .empty {
+            padding: 50px;
+            margin-top: 50px;
+            text-align: center;
+        }
+        .empty-text {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .empty-subtext {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* WEB NAVIGATION SIMULATION (Kama _layout.tsx) */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            height: 60px;
+            background-color: #fff;
+            border-top: 1px solid #e0e0e0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+            z-index: 1000;
+        }
+        .tab-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            padding-top: 8px;
+        }
+        .tab-icon {
+            font-size: 20px;
+        }
+        .tab-label {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+        .tab-item.active .tab-label,
+        .tab-item.active .tab-icon {
+            color: #667eea; /* tab barActiveTintColor */
+            font-size: 22px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-state" class="center">
+        <div class="spinner"></div>
+        <p class="loading-text">Inapakua matangazo...</p>
+    </div>
+    
+    <div id="main-content" style="display: none;">
+        
+        <div class="list-header">
+            <h1 class="screen-title">Matangazo</h1>
+            <p id="screen-subtitle" class="screen-subtitle">
+                Gundua bidhaa na huduma mpya kutoka kwa biashara mbalimbali.
+            </p>
+            <div id="login-warning" class="login-warning" style="display: none;">
+                <p class="login-warning-text">
+                    ⚠️ Ingia kwenye akaunti yako kupenda au kuripoti matangazo
+                </p>
+            </div>
+            <button class="refresh-button" onclick="onRefresh()">
+                🔄 Pakua Upya
+            </button>
+        </div>
+
+        <div id="posts-container">
+            </div>
+
+        <div id="empty-state" class="empty" style="display: none;">
+            <p class="empty-text">Hakuna matangazo yanayopatikana</p>
+            <p class="empty-subtext">Wa kwanza kutangaza!</p>
+        </div>
+        
+        <div class="tab-bar">
+            <div class="tab-item" onclick="alert('Kuelekea Biashara')">
+                <span class="tab-icon">🏪</span>
+                <span class="tab-label">Biashara</span>
+            </div>
+            <div class="tab-item active" onclick="alert('Uko Matangazo')">
+                <span class="tab-icon" style="color: #667eea;">📢</span>
+                <span class="tab-label" style="color: #667eea;">Matangazo</span>
+            </div>
+            <div class="tab-item" onclick="window.location.href = 'profaili.html'; alert('Kuelekea Profaili')">
+                <span class="tab-icon">👤</span>
+                <span class="tab-label">Profaili</span>
+            </div>
+        </div>
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://dukamkononibackend-production.up.railway.app';
+        
+        // --- DOM Elements ---
+        const loadingState = document.getElementById('loading-state');
+        const mainContent = document.getElementById('main-content');
+        const postsContainer = document.getElementById('posts-container');
+        const emptyState = document.getElementById('empty-state');
+        const screenSubtitle = document.getElementById('screen-subtitle');
+        const loginWarning = document.getElementById('login-warning');
+
+        // --- Global State ---
+        let matangazo = [];
+        let likedPosts = new Set();
+        let reactionCounts = {};
+        let userToken = null;
+        let userName = null;
+        let currentPlayingVideo = null;
+        const videoRefs = {}; // Kwa ajili ya kuhifadhi marejeleo ya video
+        let observer = null; // Kwa ajili ya IntersectionObserver
+
+        // --- Utility Functions ---
+        const showLoading = (show) => {
+            loadingState.style.display = show ? 'flex' : 'none';
+            mainContent.style.display = show ? 'none' : 'block';
+        };
+
+        const showAlert = (title, message) => {
+            alert(`${title}: ${message}`);
+        };
+
+        // --- Local Storage (Simulated AsyncStorage) ---
+        const loadUserData = async () => {
+            try {
+                const token = localStorage.getItem('userToken');
+                const name = localStorage.getItem('userName');
+                
+                userToken = token;
+                userName = name;
+
+                if (userName) {
+                    screenSubtitle.textContent = `Karibu, ${userName}! Gundua bidhaa na huduma mpya kutoka kwa biashara mbalimbali.`;
+                }
+                
+                if (!userToken) {
+                    loginWarning.style.display = 'block';
+                } else {
+                    loginWarning.style.display = 'none';
+                }
+
+                await fetchMatangazo();
+            } catch (error) {
+                console.error('Kosa wakati wa upakuaji wa data ya mtumiaji:', error);
+                showLoading(false);
+            }
+        };
+
+        // --- API & Core Functions ---
+        const fetchMatangazo = async () => {
+            showLoading(true);
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/matangazo`, {
+                    headers: { 'ngrok-skip-browser-warning': 'true' },
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Hitilafu ya HTTP! status: ${response.status}`);
+                }
+                
+                matangazo = await response.json();
+
+                if (userToken) {
+                    await fetchUserLikes();
+                }
+                
+                await fetchReactionCounts(matangazo);
+                
+                renderMatangazo();
+            } catch (error) {
+                console.error('Kosa wakati wa upakuaji wa matangazo:', error);
+                showAlert('Kosa', 'Imeshindwa kupakua matangazo. Tafadhali jaribu tena.');
+                matangazo = [];
+                renderMatangazo();
+            } finally {
+                showLoading(false);
+            }
+        };
+
+        const fetchUserLikes = async () => {
+            if (!userToken) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/reactions/user/likes`, {
+                    headers: {
+                        'Authorization': `Bearer ${userToken}`,
+                        'ngrok-skip-browser-warning': 'true',
+                    },
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    likedPosts = new Set(data.likedPosts);
+                }
+            } catch (error) {
+                console.error('Kosa wakati wa upakuaji wa matangazo yaliyopendwa:', error);
+            }
+        };
+
+        const fetchReactionCounts = async (posts) => {
+            const counts = {};
+            const postIds = posts.map(post => post.id);
+
+            try {
+                if (postIds.length > 0) {
+                    const response = await fetch(`${API_BASE_URL}/api/reactions/matangazo/counts/batch`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'ngrok-skip-browser-warning': 'true',
+                        },
+                        body: JSON.stringify({ matangazo_ids: postIds }),
+                    });
+
+                    if (response.ok) {
+                        const batchCounts = await response.json();
+                        Object.assign(counts, batchCounts);
+                    } else {
+                        // Rudi kwenye maombi ya mmoja mmoja ikiwa kundi limefeli
+                        throw new Error("Batch failed");
+                    }
+                }
+            } catch (error) {
+                 console.warn('Batch count failed, fetching individually:', error);
+                 // Hii inahitaji utekelezaji wa maombi ya mmoja mmoja, kwa mfano huu, tunatumia 0.
+            }
+            
+            // Jaza na 0 kwa wale waliokosekana
+            posts.forEach(post => {
+                if (!counts[post.id]) {
+                     counts[post.id] = { likes: 0, reports: 0 };
+                }
+            });
+
+            reactionCounts = counts;
+        };
+        
+        const handleLike = async (postId) => {
+            if (!userToken) {
+                showAlert('Taarifa', 'Tafadhali ingia kwenye akaunti yako kupenda matangazo.');
+                return;
+            }
+
+            const wasLiked = likedPosts.has(postId);
+            const currentLikes = reactionCounts[postId]?.likes || 0;
+            
+            // Sasisho la matumaini (Optimistic update)
+            likedPosts = new Set(likedPosts);
+            if (wasLiked) {
+                likedPosts.delete(postId);
+                reactionCounts[postId].likes = Math.max(currentLikes - 1, 0);
+            } else {
+                likedPosts.add(postId);
+                reactionCounts[postId].likes = currentLikes + 1;
+            }
+            renderMatangazo(false); // Render upya bila kuonyesha upakiaji mkuu
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/reactions/like`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userToken}`,
+                        'ngrok-skip-browser-warning': 'true',
+                    },
+                    body: JSON.stringify({ matangazo_id: postId }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Hakikisha idadi ni sahihi kutoka kwa seva
+                    if (result.like_count !== undefined) {
+                        reactionCounts[postId].likes = result.like_count;
+                    }
+                } else {
+                    // Rejesha sasisho la matumaini ikiwa kuna kosa
+                    likedPosts = new Set(likedPosts);
+                    if (wasLiked) {
+                        likedPosts.add(postId);
+                    } else {
+                        likedPosts.delete(postId);
+                    }
+                    reactionCounts[postId].likes = currentLikes;
+                    showAlert('Kosa', result.error || 'Imeshindwa kupenda tangazo.');
+                }
+            } catch (error) {
+                console.error('Kosa la kupenda:', error);
+                // Rejesha sasisho la matumaini kwa kosa la mtandao
+                likedPosts = new Set(likedPosts);
+                if (wasLiked) {
+                    likedPosts.add(postId);
+                } else {
+                    likedPosts.delete(postId);
+                }
+                reactionCounts[postId].likes = currentLikes;
+                showAlert('Kosa', 'Imeshindwa kupenda tangazo. Tafadhali angalia muunganisho wako.');
+            }
+            renderMatangazo(false); // Render upya baada ya majibu ya seva
+        };
+
+        const handleReport = async (post) => {
+            if (!userToken) {
+                showAlert('Taarifa', 'Tafadhali ingia kwenye akaunti yako kuripoti matangazo.');
+                return;
+            }
+
+            if (!confirm(`Una hakika unataka kuripoti "${post.business_name}"?`)) {
+                return;
+            }
+
+            const currentReports = reactionCounts[post.id]?.reports || 0;
+            
+            try {
+                // Sasisho la matumaini
+                reactionCounts[post.id].reports = currentReports + 1;
+                renderMatangazo(false);
+
+                const response = await fetch(`${API_BASE_URL}/api/reactions/report`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userToken}`,
+                        'ngrok-skip-browser-warning': 'true',
+                    },
+                    body: JSON.stringify({ matangazo_id: post.id }),
+                });
+
+                if (response.ok) {
+                    showAlert('Asante', 'Tangazo limeripotiwa.');
+                } else {
+                    // Rejesha sasisho la matumaini kwa kosa
+                    reactionCounts[post.id].reports = currentReports;
+                    const errorData = await response.json();
+                    showAlert('Kosa', errorData.error || 'Imeshindwa kuwasilisha ripoti.');
+                }
+            } catch (error) {
+                console.error('Kosa la kuripoti:', error);
+                // Rejesha sasisho la matumaini kwa kosa la mtandao
+                reactionCounts[post.id].reports = currentReports;
+                showAlert('Kosa', 'Imeshindwa kuwasilisha ripoti. Tafadhali jaribu tena.');
+            }
+            renderMatangazo(false); // Render upya baada ya majibu ya seva
+        };
+
+        const handleOrder = (post) => {
+            if (!post.phone || post.phone === 'Hakuna namba ya simu') {
+                showAlert('Taarifa', 'Hakuna namba ya simu inayopatikana kwa muuzaji huyu.');
+                return;
+            }
+
+            const cleanPhone = post.phone.replace(/[\s\-\(\)]/g, '');
+            
+            if (confirm(`Chagua njia ya kuwasiliana na ${post.business_name}:\n\nBonyeza Sawa kwa Kupiga Simu, au Ghairi kwa kutuma Ujumbe.`)) {
+                makePhoneCall(cleanPhone);
+            } else {
+                sendSMS(cleanPhone, post.business_name);
+            }
+        };
+
+        const makePhoneCall = (phoneNumber) => {
+            window.location.href = `tel:${phoneNumber}`;
+        };
+
+        const sendSMS = (phoneNumber, businessName) => {
+            const body = encodeURIComponent(`Habari ${businessName}, naomba kufahamu zaidi kuhusu bidhaa yako.`);
+            let smsURL = `sms:${phoneNumber}`;
+            
+            // Jukwaa la wavuti haliwezi kutofautisha kati ya iOS/Android, lakini muundo huu unashughulikia wote wawili
+            smsURL += `?body=${body}`; 
+            
+            window.location.href = smsURL;
+        };
+
+        // --- Media Utilities ---
+        const isVideo = (path) => {
+            return path && path.toLowerCase().match(/\.(mp4|mov|avi|wmv|flv|mkv|m4v|3gp)$/);
+        };
+
+        const isImage = (path) => {
+            return path && path.toLowerCase().match(/\.(jpg|jpeg|png|gif|bmp|webp)$/);
+        };
+        
+        // --- Video Playback (IntersectionObserver Equivalent) ---
+        const handleVideoPlayback = async (postId, videoElement) => {
+            // Ikiwa kuna video inayocheza, izimishe
+            if (currentPlayingVideo && currentPlayingVideo !== postId) {
+                const previousVideoElement = videoRefs[currentPlayingVideo];
+                if (previousVideoElement) {
+                    previousVideoElement.pause();
+                    document.getElementById(`overlay-${currentPlayingVideo}`).style.display = 'flex';
+                }
+            }
+
+            // Weka video mpya kucheza
+            currentPlayingVideo = postId;
+            
+            // Cheza video ya sasa
+            if (videoElement && videoElement.paused) {
+                try {
+                    await videoElement.play();
+                    document.getElementById(`overlay-${postId}`).style.display = 'none';
+                } catch (error) {
+                    console.error('Kosa la kucheza video:', error);
+                    // Hii inashughulikia tatizo la uchezaji wa video moja kwa moja kwenye vivinjari
+                }
+            }
+        };
+
+        const setupIntersectionObserver = () => {
+            // Acha kufanya kazi kwa uchunguzi wa zamani
+            if (observer) {
+                observer.disconnect();
+            }
+            
+            const options = {
+                root: null, // viewport
+                rootMargin: '0px',
+                threshold: 0.5, // 50% ya video inapoonekana
+            };
+
+            observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    const postId = entry.target.dataset.postId;
+                    const videoElement = videoRefs[postId];
+
+                    if (videoElement && isVideo(videoElement.src)) {
+                        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                            // Video inayoonekana 50% au zaidi
+                            handleVideoPlayback(postId, videoElement);
+                        } else if (currentPlayingVideo === postId) {
+                            // Video inaanza kuacha kuonekana, izimishe
+                            videoElement.pause();
+                            document.getElementById(`overlay-${postId}`).style.display = 'flex';
+                            currentPlayingVideo = null;
+                        }
+                    }
+                });
+            }, options);
+        };
+        
+        // --- UI Rendering ---
+
+        const renderMedia = (item) => {
+            const url = item.path || '';
+            const isVid = isVideo(url);
+
+            if (!url) {
+                return `<div class="media unknown-media">
+                            <span class="unknown-text">Hakuna media</span>
+                        </div>`;
+            }
+
+            if (isVid) {
+                // Tumia video ya HTML na IntersectionObserver
+                const id = item.id;
+                return `
+                    <div class="video-container">
+                        <video 
+                            id="video-${id}"
+                            class="media"
+                            data-post-id="${id}"
+                            src="${url}"
+                            loop
+                            muted 
+                            playsinline
+                            onloadeddata="videoRefs[${id}] = this; observer.observe(this);"
+                            onclick="if(this.paused){handleVideoPlayback(${id}, this);}else{this.pause(); currentPlayingVideo = null; document.getElementById('overlay-${id}').style.display = 'flex';}"
+                        ></video>
+                        <div id="overlay-${id}" class="video-overlay">
+                             <div class="play-button-overlay">
+                                <span class="play-button">▶</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (isImage(url)) {
+                return `<img src="${url}" class="media" alt="Tangazo la ${item.business_name}" />`;
+            } else {
+                return `<div class="media unknown-media">
+                            <span class="unknown-text">Aina ya faili haitambuliki</span>
+                        </div>`;
+            }
+        };
+
+        const createPostElement = (item) => {
+            const counts = reactionCounts[item.id] || { likes: 0, reports: 0 };
+            const isLiked = likedPosts.has(item.id);
+            const avatarInitial = item.business_name?.charAt(0) || 'B';
+            const timestamp = item.created_at ? new Date(item.created_at).toLocaleDateString('sw-TZ') : 'Haipatikani';
+            const phone = item.phone || 'Hakuna namba ya simu';
+
+            const postHtml = `
+                <div class="post-container">
+                    <div class="header">
+                        <div class="business-info">
+                            <div class="avatar">
+                                <span class="avatar-text">${avatarInitial}</span>
+                            </div>
+                            <div class="business-details">
+                                <span class="business-name">${item.business_name || 'Biashara'}</span>
+                                <span class="owner-name">${item.full_name || 'Mmiliki wa Biashara'}</span>
+                            </div>
+                        </div>
+                        <button 
+                            class="order-button"
+                            onclick="handleOrder({phone: '${phone}', business_name: '${item.business_name}'})"
+                        >
+                            <span class="order-button-text">Agiza</span>
+                        </button>
+                    </div>
+
+                    ${renderMedia(item)}
+
+                    <div class="actions">
+                        <button 
+                            class="action-button ${isLiked ? 'liked-button' : ''}"
+                            onclick="handleLike(${item.id})"
+                        >
+                            <span class="action-text ${isLiked ? 'liked-text' : ''}">
+                                ${isLiked ? '❤️' : '🤍'} Penda (${counts.likes})
+                            </span>
+                        </button>
+                        
+                        <button 
+                            class="action-button"
+                            onclick="handleReport({id: ${item.id}, business_name: '${item.business_name}'})"
+                        >
+                            <span class="action-text">
+                                ⚠️ Ripoti (${counts.reports})
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="description-container">
+                        <p class="description">
+                            <span class="business-name-text">${item.business_name || 'Biashara'}:</span> ${item.description}
+                        </p>
+                    </div>
+
+                    <div class="contact-container">
+                        <p class="contact-title">📞 Wasiliana Nasi:</p>
+                        <p class="phone">${phone}</p>
+                        <p class="business-contact">
+                            Biashara: ${item.business_name || 'Hakuna jina la biashara'}
+                        </p>
+                    </div>
+
+                    <div class="footer">
+                        <span class="timestamp">
+                            Imechapishwa: ${timestamp}
+                        </span>
+                    </div>
+                </div>
+            `;
+            const div = document.createElement('div');
+            div.innerHTML = postHtml;
+            return div.firstChild;
+        };
+
+        const renderMatangazo = (showLoadingScreen = true) => {
+            if (showLoadingScreen) showLoading(true);
+            
+            postsContainer.innerHTML = ''; // Futa yaliyomo
+
+            if (matangazo.length === 0) {
+                emptyState.style.display = 'block';
+                screenSubtitle.innerHTML = (userName ? `Karibu, ${userName}! ` : '') + 'Gundua bidhaa na huduma mpya kutoka kwa biashara mbalimbali.';
+            } else {
+                emptyState.style.display = 'none';
+                screenSubtitle.innerHTML = (userName ? `Karibu, ${userName}! ` : '') + `Gundua bidhaa na huduma mpya kutoka kwa biashara mbalimbali (${matangazo.length}).`;
+
+                matangazo.forEach(item => {
+                    const postElement = createPostElement(item);
+                    postsContainer.appendChild(postElement);
+                });
+            }
+
+            if (showLoadingScreen) showLoading(false);
+        };
+        
+        const onRefresh = () => {
+            loadUserData();
+        };
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setupIntersectionObserver();
+            loadUserData();
+        });
+    </script>
+</body>
+</html>

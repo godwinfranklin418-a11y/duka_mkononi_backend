@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ripoti Kamili - Dukamkononi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        /* Colors matching React Native styles */
+        :root {
+            --primary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+            --light-gray: #95a5a6;
+            --bg: #f8f9fa;
+        }
+
+        body {
+            background-color: var(--bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 16px;
+            padding-bottom: 70px; /* Space for bottom buttons */
+            min-height: 100vh;
+        }
+
+        /* Vitufe vipya chini kabisa */
+        .bottom-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            background-color: var(--primary);
+            z-index: 1001;
+            padding: 0 10px;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bottom-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50px;
+            padding: 0 15px;
+            border-radius: 10px;
+            background-color: white;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 14px;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bottom-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .bottom-button.left {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .bottom-button.right {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        /* React Native-like styling */
+        .center-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        .role-badge {
+            font-size: 12px;
+            color: var(--primary);
+            margin-top: 2px;
+            font-weight: bold;
+        }
+
+        .adjustment-note {
+            font-size: 11px;
+            color: var(--success);
+            margin-top: 2px;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        .business-header {
+            background-color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .business-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .business-location {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        .report-period {
+            font-size: 12px;
+            color: var(--light-gray);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .sellers-count {
+            font-size: 12px;
+            color: var(--primary);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .report-nav {
+            display: flex;
+            background-color: white;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-button {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 8px;
+            border-radius: 8px;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-button.active {
+            background-color: var(--primary);
+        }
+
+        .nav-button-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .nav-button.active .nav-button-text,
+        .nav-button.active i {
+            color: white !important;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 16px;
+        }
+
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .stat-card {
+            width: calc(50% - 6px);
+            background-color: white;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .stat-number {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+            text-align: center;
+            margin-bottom: 2px;
+        }
+
+        .extra-stats {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        .extra-stat {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .extra-stat-text {
+            font-size: 13px;
+            color: var(--dark);
+            margin-left: 8px;
+        }
+
+        .sale-item, .report-item, .customer-item {
+            background-color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .sale-info, .report-item-main, .customer-info {
+            flex: 1;
+            margin-right: 12px;
+        }
+
+        .sale-product, .report-item-title, .customer-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .sale-date, .report-item-subtitle {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        .sale-meta, .report-item-meta {
+            font-size: 12px;
+            color: var(--light-gray);
+            margin-top: 4px;
+        }
+
+        .seller-name {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .sale-amount, .report-item-side, .customer-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            min-width: 100px;
+        }
+
+        .sale-total, .report-item-amount, .customer-total {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--success);
+            margin-top: 4px;
+        }
+
+        .profit-text {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .report-item-cost {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .report-item-seller {
+            font-size: 11px;
+            color: var(--primary);
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        .report-item-margin {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 2px;
+        }
+
+        .report-item-quantity {
+            font-size: 11px;
+            color: var(--light-gray);
+            margin-top: 2px;
+        }
+
+        .customer-item {
+            align-items: center;
+            border: 1px solid #ecf0f1;
+        }
+
+        .customer-avatar {
+            margin-right: 12px;
+        }
+
+        .customer-contact {
+            margin-bottom: 8px;
+        }
+
+        .contact-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .contact-text {
+            font-size: 13px;
+            color: var(--gray);
+            margin-left: 6px;
+        }
+
+        .customer-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .customer-meta-text {
+            font-size: 12px;
+            color: var(--light-gray);
+        }
+
+        .customer-label {
+            font-size: 11px;
+            color: var(--light-gray);
+        }
+
+        .customer-note {
+            font-size: 10px;
+            color: var(--success);
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        .no-data {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: 12px;
+            margin: 8px 0;
+        }
+
+        .no-data-text {
+            font-size: 16px;
+            color: var(--light-gray);
+            margin-top: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .no-data-subtext {
+            font-size: 14px;
+            color: #bdc3c7;
+            margin-top: 8px;
+            text-align: center;
+            line-height: 20px;
+        }
+
+        .export-options {
+            display: flex;
+            justify-content: space-around;
+            gap: 12px;
+        }
+
+        .export-button {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .export-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .export-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .export-button-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .status-card {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-text {
+            flex: 1;
+            font-size: 14px;
+            color: var(--dark);
+            margin-left: 12px;
+            font-weight: 500;
+        }
+
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .refresh-control {
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Pull to refresh animation */
+        .refresh-indicator {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            right: 0;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading State -->
+        <div id="loadingState" class="center-container" style="display: none;">
+            <div class="loading-spinner" style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%;"></div>
+            <p id="loadingText" class="loading-text" style="margin-top: 10px; font-size: 16px; color: #666; text-align: center;">
+                Inapakua ripoti kamili...
+            </p>
+            <p id="fallbackText" class="fallback-text" style="margin-top: 8px; font-size: 14px; color: var(--warning); text-align: center; font-style: italic;"></p>
+        </div>
+
+        <!-- Main Content -->
+        <div id="mainContent">
+            <!-- Header -->
+            <div class="header">
+                <div>
+                    <h1 class="title">Ripoti Kamili</h1>
+                    <p id="userEmail" class="user-email"></p>
+                    <div id="roleBadge" class="role-badge"></div>
+                    <div id="adjustmentNote" class="adjustment-note" style="display: none;">
+                        📊 Jumla ya kununua ya wateja imeongezwa kwa usahihi
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Navigation Tabs -->
+            <div class="report-nav">
+                <div class="nav-button active" onclick="setActiveReport('overview')" id="nav-overview">
+                    <i class="fas fa-th" style="font-size: 16px; color: #666;"></i>
+                    <span class="nav-button-text">Mapitio</span>
+                </div>
+                <div class="nav-button" onclick="setActiveReport('sales')" id="nav-sales">
+                    <i class="fas fa-receipt" style="font-size: 16px; color: #666;"></i>
+                    <span class="nav-button-text">Mauzo (<span id="salesCount">0</span>)</span>
+                </div>
+                <div class="nav-button" onclick="setActiveReport('products')" id="nav-products">
+                    <i class="fas fa-cube" style="font-size: 16px; color: #666;"></i>
+                    <span class="nav-button-text">Bidhaa (<span id="productsCount">0</span>)</span>
+                </div>
+                <div class="nav-button" onclick="setActiveReport('customers')" id="nav-customers">
+                    <i class="fas fa-users" style="font-size: 16px; color: #666;"></i>
+                    <span class="nav-button-text">Wateja (<span id="customersCount">0</span>)</span>
+                </div>
+            </div>
+
+            <!-- Report Content Area -->
+            <div id="reportContent" class="report-content">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+
+            <!-- Export Options -->
+            <div class="section">
+                <h2 class="section-title">Toa Ripoti</h2>
+                <div class="export-options">
+                    <div class="export-button" onclick="handlePrintPDF()">
+                        <div class="export-icon" style="background-color: #e74c3c20;">
+                            <i class="fas fa-file-pdf" style="color: var(--danger);"></i>
+                        </div>
+                        <span class="export-button-text">PDF</span>
+                    </div>
+                    <div class="export-button" onclick="handleExportExcel()">
+                        <div class="export-icon" style="background-color: #27ae6020;">
+                            <i class="fas fa-file-excel" style="color: var(--success);"></i>
+                        </div>
+                        <span class="export-button-text">Excel</span>
+                    </div>
+                    <div class="export-button" onclick="handlePrint()">
+                        <div class="export-icon" style="background-color: #3498db20;">
+                            <i class="fas fa-print" style="color: var(--primary);"></i>
+                        </div>
+                        <span class="export-button-text">Print</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Status Card -->
+            <div id="adminStatusCard" class="status-card" style="display: none;">
+                <i id="statusIcon" class="fas fa-shield-check" style="font-size: 24px; color: var(--success);"></i>
+                <span id="statusText" class="status-text"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vitufe vipya chini kabisa -->
+    <div class="bottom-buttons">
+        <!-- Kitufe cha kushoto - Profaili -->
+        <div class="bottom-button left" onclick="goToProfaili()">
+            <i class="fas fa-user-circle"></i>
+            <span>PROFAILI</span>
+        </div>
+        
+        <!-- Kitufe cha kulia - Rejea -->
+        <div class="bottom-button right" onclick="openRejea()">
+            <i class="fas fa-undo"></i>
+            <span>REJEA</span>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://dukamkononi.com';
+        let appState = {
+            userData: {
+                id: '',
+                email: '',
+                businessName: '',
+                businessLocation: '',
+                role: ''
+            },
+            businessStats: null,
+            products: [],
+            customers: [],
+            sales: [],
+            sellers: [],
+            loading: true,
+            refreshing: false,
+            activeReport: 'overview',
+            userToken: null,
+            dataSource: 'seller'
+        };
+
+        // Functions for new buttons
+        function goToProfaili() {
+            window.location.href = 'profaili3.html';
+        }
+
+        function openRejea() {
+            window.open('preview.html', '_blank');
+        }
+
+        // DOM Content Loaded
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadUserData();
+            setupEventListeners();
+            
+            // Add refresh button
+            const header = document.querySelector('.header');
+            const refreshBtn = document.createElement('button');
+            refreshBtn.className = 'flex items-center gap-2 p-2 bg-blue-50 rounded-xl text-[var(--primary)] font-semibold hover:bg-blue-100 transition-colors';
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt text-lg"></i><span class="text-sm">Sasisha</span>';
+            refreshBtn.onclick = refreshData;
+            refreshBtn.style.cssText = 'display: flex; align-items: center; gap: 8px; padding: 8px 12px; background-color: #e3f2fd; border-radius: 12px; color: var(--primary); font-weight: 600; cursor: pointer; border: none; transition: background-color 0.3s;';
+            refreshBtn.onmouseover = function() { this.style.backgroundColor = '#bbdefb'; };
+            refreshBtn.onmouseout = function() { this.style.backgroundColor = '#e3f2fd'; };
+            header.appendChild(refreshBtn);
+        });
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Pull to refresh simulation
+            let startY = 0;
+            let currentY = 0;
+            let pulling = false;
+            
+            document.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].clientY;
+            });
+            
+            document.addEventListener('touchmove', (e) => {
+                currentY = e.touches[0].clientY;
+                const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                
+                if (scrollTop === 0 && currentY > startY && !pulling) {
+                    pulling = true;
+                    refreshData();
+                }
+            });
+            
+            document.addEventListener('touchend', () => {
+                pulling = false;
+            });
+        }
+
+        // Load user data from localStorage
+        async function loadUserData() {
+            try {
+                showLoading('Inapakua ripoti kamili...');
+                
+                const token = localStorage.getItem('userToken');
+                const userDataStr = localStorage.getItem('userData');
+                
+                if (token && userDataStr) {
+                    appState.userToken = token;
+                    const user = JSON.parse(userDataStr);
+                    appState.userData = {
+                        id: user.id || user.userId || '',
+                        email: user.email || '',
+                        businessName: user.businessName || user.business_name || 'Biashara Yangu',
+                        businessLocation: user.businessLocation || user.business_location || 'Eneo haijajazwa',
+                        role: user.role || ''
+                    };
+                    
+                    // Update UI with user data
+                    document.getElementById('userEmail').textContent = appState.userData.email;
+                    document.getElementById('roleBadge').textContent = 
+                        `${appState.userData.role === 'admin' ? '👑 Admin' : '👤 Seller'} • ${appState.dataSource === 'admin' ? 'Data ya Biashara Nzima' : 'Data ya Seller'}`;
+                    
+                    // Show adjustment note
+                    document.getElementById('adjustmentNote').style.display = 'block';
+                    
+                    await fetchAllReports(token, user);
+                } else {
+                    alert('Tafadhali ingia tena kwenye akaunti yako');
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                alert('Imeshindikana kupakua taarifa za mtumiaji');
+            }
+        }
+
+        // ✅ FUNGSHIONI YA KU-GAWANYA JUMLA YA KUNUNUA KWA 2
+        function adjustCustomerPurchases(customer) {
+            // Gawanya jumla ya kununua kwa 2
+            const adjustedPurchases = customer.total_purchases / 2;
+            const adjustedCount = Math.round(customer.purchases_count / 2);
+            
+            console.log(`📊 Mteja: ${customer.name}`);
+            console.log(`- Jumla ya kununua (kabla): ${customer.total_purchases}`);
+            console.log(`- Jumla ya kununua (baada): ${adjustedPurchases}`);
+            console.log(`- Idadi ya mauzo (kabla): ${customer.purchases_count}`);
+            console.log(`- Idadi ya mauzo (baada): ${adjustedCount}`);
+            
+            return {
+                ...customer,
+                total_purchases: adjustedPurchases, // ✅ IME GAWANYWA KWA 2
+                purchases_count: adjustedCount, // ✅ IME GAWANYWA KWA 2
+                actual_purchases: adjustedPurchases, // ✅ TUNASTORE KAMA ACTUAL
+                actual_purchase_count: adjustedCount // ✅ TUNASTORE KAMA ACTUAL
+            };
+        }
+
+        // Fetch all reports
+        async function fetchAllReports(token, user) {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'ngrok-skip-browser-warning': 'true'
+                };
+
+                if (user.role === 'admin') {
+                    await fetchBusinessData(headers, user.business_name || user.businessName);
+                    appState.dataSource = 'admin';
+                } else {
+                    await fetchSellerData(headers);
+                    appState.dataSource = 'seller';
+                }
+                
+                updateCounts();
+                updateUI();
+                hideLoading();
+                
+            } catch (error) {
+                console.error('Hitilafu wakati wa kupakua ripoti:', error);
+                alert('Imeshindikana kupakua ripoti. Tafadhali jaribu tena.');
+                
+                // Reset state
+                appState.businessStats = null;
+                appState.products = [];
+                appState.customers = [];
+                appState.sales = [];
+                appState.sellers = [];
+                
+                updateCounts();
+                updateUI();
+                hideLoading();
+            }
+        }
+
+        async function fetchBusinessData(headers, businessName) {
+            try {
+                console.log('🏢 Inapakua data ya biashara:', businessName);
+
+                // 1. Pata wauzaji wote wa biashara
+                const sellersResponse = await axios.get(`${API_BASE_URL}/api/admin/users`, { headers });
+                let allSellers = [];
+                if (sellersResponse.data) {
+                    allSellers = sellersResponse.data.filter(user => 
+                        user.business_name === businessName && 
+                        user.status === 'approved'
+                    );
+                    appState.sellers = allSellers;
+                    console.log('👥 Wauzaji walipatikana:', allSellers.length);
+                }
+
+                // 2. Pata bidhaa zote za biashara
+                const productsResponse = await axios.get(`${API_BASE_URL}/api/admin/products`, { headers });
+                let allProducts = [];
+                if (productsResponse.data) {
+                    allProducts = productsResponse.data.filter(product => {
+                        const productSeller = allSellers.find(s => s.id === product.seller_id);
+                        return productSeller && productSeller.business_name === businessName;
+                    });
+                    appState.products = allProducts;
+                    console.log('📦 Bidhaa za biashara:', allProducts.length);
+                }
+
+                // 3. Pata mauzo yote ya biashara
+                const salesResponse = await axios.get(`${API_BASE_URL}/api/admin/sales`, { headers });
+                let allSales = [];
+                if (salesResponse.data) {
+                    salesResponse.data.forEach(sale => {
+                        const saleSeller = allSellers.find(s => s.id === sale.seller_id);
+                        if (saleSeller && saleSeller.business_name === businessName) {
+                            // Tafuta mteja
+                            let customerName = 'Mteja';
+                            let customerId = null;
+                            if (sale.customers) {
+                                customerName = sale.customers.name;
+                                customerId = sale.customers.id;
+                            }
+                            
+                            // Tafuta seller info
+                            let sellerName = saleSeller.full_name || saleSeller.email;
+                            
+                            // Process sale_items
+                            if (sale.sale_items && sale.sale_items.length > 0) {
+                                sale.sale_items.forEach(item => {
+                                    const product = allProducts.find(p => p.id === item.product_id);
+                                    const costPrice = product?.cost_price || product?.price || 0;
+                                    
+                                    const unitPrice = item.unit_price || 0;
+                                    const quantity = item.quantity || 1;
+                                    const totalAmount = item.total_price || unitPrice * quantity;
+                                    
+                                    const profitPerUnit = unitPrice - costPrice;
+                                    const itemProfit = profitPerUnit * quantity;
+                                    const profitMargin = costPrice > 0 ? (profitPerUnit / costPrice) * 100 : 0;
+                                    
+                                    allSales.push({
+                                        id: sale.id,
+                                        product_id: item.product_id || 0,
+                                        product_name: product?.name || item.products?.name || 'Bidhaa',
+                                        quantity: quantity,
+                                        unit_price: unitPrice,
+                                        total_amount: totalAmount,
+                                        sale_date: sale.sale_date || new Date().toISOString().split('T')[0],
+                                        customer_id: customerId,
+                                        customer_name: customerName,
+                                        seller_name: sellerName,
+                                        business_name: businessName,
+                                        user_id: sale.seller_id,
+                                        invoice_number: sale.invoice_number,
+                                        cost_price: costPrice,
+                                        profit: Math.max(0, itemProfit),
+                                        profit_margin: profitMargin
+                                    });
+                                });
+                            }
+                        }
+                    });
+                    
+                    console.log('💰 Mauzo ya biashara:', allSales.length);
+                    appState.sales = allSales;
+                }
+
+                // 4. Pata wateja wote wa biashara
+                const customersResponse = await axios.get(`${API_BASE_URL}/api/admin/customers`, { headers });
+                let allCustomers = [];
+                if (customersResponse.data) {
+                    allCustomers = customersResponse.data.filter(customer => {
+                        const customerSeller = allSellers.find(s => s.id === customer.seller_id);
+                        return customerSeller && customerSeller.business_name === businessName;
+                    }).map(customer => ({
+                        ...customer,
+                        seller_name: allSellers.find(s => s.id === customer.seller_id)?.full_name || 
+                                    allSellers.find(s => s.id === customer.seller_id)?.email || 
+                                    'Hajulikani'
+                    }));
+                    
+                    // ✅ GAWANYA JUMLA YA KUNUNUA YA WATEJA KWA 2
+                    allCustomers = allCustomers.map(customer => adjustCustomerPurchases(customer));
+                    
+                    appState.customers = allCustomers;
+                    console.log('👥 Wateja wa biashara (IME GAWANYWA KWA 2):', allCustomers.length);
+                }
+
+                // 5. Hesabu takwimu za biashara
+                if (allSales.length > 0) {
+                    const totalSalesAmount = allSales.reduce((sum, sale) => sum + sale.total_amount, 0);
+                    const totalProfit = allSales.reduce((sum, sale) => sum + (sale.profit || 0), 0);
+                    const today = new Date().toISOString().split('T')[0];
+                    const todaySales = allSales.filter(s => s.sale_date === today);
+                    const todaySalesAmount = todaySales.reduce((sum, sale) => sum + sale.total_amount, 0);
+                    const todayProfit = todaySales.reduce((sum, sale) => sum + (sale.profit || 0), 0);
+                    
+                    const totalCost = allSales.reduce((sum, sale) => {
+                        const cost = sale.cost_price || 0;
+                        const quantity = sale.quantity || 0;
+                        return sum + (cost * quantity);
+                    }, 0);
+                    const averageProfitMargin = totalCost > 0 ? (totalProfit / totalCost) * 100 : 0;
+
+                    appState.businessStats = {
+                        totalSales: totalSalesAmount,
+                        totalCustomers: allCustomers.length,
+                        totalProducts: allProducts.length,
+                        totalSellers: allSellers.length,
+                        todaySales: todaySalesAmount,
+                        todayProfit: todayProfit,
+                        totalProfit: totalProfit,
+                        averageProfitMargin: averageProfitMargin
+                    };
+                }
+
+            } catch (error) {
+                console.error('Error fetching business data:', error);
+                throw error;
+            }
+        }
+
+        async function fetchSellerData(headers) {
+            try {
+                // 1. Pata bidhaa za seller
+                const productsResponse = await axios.get(`${API_BASE_URL}/api/products/my`, { headers });
+                let sellerProducts = [];
+                if (productsResponse.data) {
+                    sellerProducts = productsResponse.data;
+                    appState.products = sellerProducts;
+                    console.log('📦 Bidhaa za seller:', sellerProducts.length);
+                }
+
+                // 2. Pata mauzo ya seller
+                const salesResponse = await axios.get(`${API_BASE_URL}/api/sales/my`, { headers });
+                let sellerSales = [];
+                if (salesResponse.data) {
+                    salesResponse.data.forEach(sale => {
+                        // Tafuta mteja
+                        let customerName = 'Mteja';
+                        let customerId = null;
+                        if (sale.customers) {
+                            customerName = sale.customers.name;
+                            customerId = sale.customers.id;
+                        }
+                        
+                        // Tafuta seller info
+                        let sellerName = appState.userData.businessName;
+                        
+                        // Process sale_items
+                        if (sale.sale_items && sale.sale_items.length > 0) {
+                            sale.sale_items.forEach(item => {
+                                const product = sellerProducts.find(p => p.id === item.product_id);
+                                const costPrice = product?.cost_price || product?.price || 0;
+                                
+                                const unitPrice = item.unit_price || 0;
+                                const quantity = item.quantity || 1;
+                                const totalAmount = item.total_price || unitPrice * quantity;
+                                
+                                const profitPerUnit = unitPrice - costPrice;
+                                const itemProfit = profitPerUnit * quantity;
+                                const profitMargin = costPrice > 0 ? (profitPerUnit / costPrice) * 100 : 0;
+                                
+                                sellerSales.push({
+                                    id: sale.id,
+                                    product_id: item.product_id || 0,
+                                    product_name: product?.name || item.products?.name || 'Bidhaa',
+                                    quantity: quantity,
+                                    unit_price: unitPrice,
+                                    total_amount: totalAmount,
+                                    sale_date: sale.sale_date || new Date().toISOString().split('T')[0],
+                                    customer_id: customerId,
+                                    customer_name: customerName,
+                                    seller_name: sellerName,
+                                    business_name: appState.userData.businessName,
+                                    user_id: appState.userData.id,
+                                    invoice_number: sale.invoice_number,
+                                    cost_price: costPrice,
+                                    profit: Math.max(0, itemProfit),
+                                    profit_margin: profitMargin
+                                });
+                            });
+                        }
+                    });
+                    
+                    console.log('💰 Mauzo ya seller:', sellerSales.length);
+                    appState.sales = sellerSales;
+                }
+
+                // 3. Pata wateja wa seller
+                const customersResponse = await axios.get(`${API_BASE_URL}/api/customers/my`, { headers });
+                let sellerCustomers = [];
+                if (customersResponse.data) {
+                    sellerCustomers = customersResponse.data.map(customer => ({
+                        ...customer,
+                        seller_name: appState.userData.businessName || 'Seller'
+                    }));
+                    
+                    // ✅ GAWANYA JUMLA YA KUNUNUA YA WATEJA KWA 2
+                    sellerCustomers = sellerCustomers.map(customer => adjustCustomerPurchases(customer));
+                    
+                    appState.customers = sellerCustomers;
+                    console.log('👥 Wateja wa seller (IME GAWANYWA KWA 2):', sellerCustomers.length);
+                }
+
+                // 4. Hesabu takwimu za seller
+                if (sellerSales.length > 0) {
+                    const totalSalesAmount = sellerSales.reduce((sum, sale) => sum + sale.total_amount, 0);
+                    const totalProfit = sellerSales.reduce((sum, sale) => sum + (sale.profit || 0), 0);
+                    const today = new Date().toISOString().split('T')[0];
+                    const todaySales = sellerSales.filter(s => s.sale_date === today);
+                    const todaySalesAmount = todaySales.reduce((sum, sale) => sum + sale.total_amount, 0);
+                    const todayProfit = todaySales.reduce((sum, sale) => sum + (sale.profit || 0), 0);
+                    
+                    const totalCost = sellerSales.reduce((sum, sale) => {
+                        const cost = sale.cost_price || 0;
+                        const quantity = sale.quantity || 0;
+                        return sum + (cost * quantity);
+                    }, 0);
+                    const averageProfitMargin = totalCost > 0 ? (totalProfit / totalCost) * 100 : 0;
+
+                    appState.businessStats = {
+                        totalSales: totalSalesAmount,
+                        totalCustomers: sellerCustomers.length,
+                        totalProducts: sellerProducts.length,
+                        totalSellers: 1,
+                        todaySales: todaySalesAmount,
+                        todayProfit: todayProfit,
+                        totalProfit: totalProfit,
+                        averageProfitMargin: averageProfitMargin
+                    };
+                }
+
+            } catch (error) {
+                console.error('Error fetching seller data:', error);
+                throw error;
+            }
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            if (!amount && amount !== 0) return 'TSh 0';
+            if (isNaN(amount)) return 'TSh 0';
+            const formatted = new Intl.NumberFormat('en-TZ', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+            return `TSh ${formatted}`;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            try {
+                return new Date(dateString).toLocaleDateString('sw-TZ');
+            } catch {
+                return dateString;
+            }
+        }
+
+        // Update counts in navigation
+        function updateCounts() {
+            document.getElementById('salesCount').textContent = appState.sales.length;
+            document.getElementById('productsCount').textContent = appState.products.length;
+            document.getElementById('customersCount').textContent = appState.customers.length;
+        }
+
+        // Set active report
+        function setActiveReport(reportType) {
+            appState.activeReport = reportType;
+            
+            // Update active nav button
+            document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${reportType}`);
+            if (activeNav) {
+                activeNav.classList.add('active');
+            }
+            
+            updateUI();
+        }
+
+        // Update UI based on state
+        function updateUI() {
+            const reportContent = document.getElementById('reportContent');
+            const isAdmin = appState.userData.role === 'admin';
+            
+            // Update role badge
+            document.getElementById('roleBadge').textContent = 
+                `${isAdmin ? '👑 Admin' : '👤 Seller'} • ${appState.dataSource === 'admin' ? 'Data ya Biashara Nzima' : 'Data ya Seller'}`;
+            
+            // Update admin status card
+            if (isAdmin) {
+                const statusCard = document.getElementById('adminStatusCard');
+                const statusIcon = document.getElementById('statusIcon');
+                const statusText = document.getElementById('statusText');
+                
+                statusCard.style.display = 'flex';
+                if (appState.dataSource === 'admin') {
+                    statusIcon.className = 'fas fa-shield-check';
+                    statusIcon.style.color = 'var(--success)';
+                    statusText.textContent = `Inaonyesha data ya biashara yote (${appState.sellers.length} wauzaji, ${appState.customers.length} wateja, ${appState.products.length} bidhaa)`;
+                } else {
+                    statusIcon.className = 'fas fa-exclamation-triangle';
+                    statusIcon.style.color = 'var(--warning)';
+                    statusText.textContent = 'Inaonyesha data ya seller mmoja tu';
+                }
+            }
+            
+            // Render based on active report
+            switch(appState.activeReport) {
+                case 'overview':
+                    reportContent.innerHTML = renderOverview();
+                    break;
+                case 'sales':
+                    reportContent.innerHTML = renderSalesReport();
+                    break;
+                case 'products':
+                    reportContent.innerHTML = renderProductsReport();
+                    break;
+                case 'customers':
+                    reportContent.innerHTML = renderCustomersReport();
+                    break;
+            }
+        }
+
+        // Render Overview
+        function renderOverview() {
+            const isAdmin = appState.userData.role === 'admin';
+            
+            return `
+                <div class="business-header">
+                    <h2 class="business-name">${appState.userData.businessName}</h2>
+                    <p class="business-location">${appState.userData.businessLocation}</p>
+                    <p class="report-period">
+                        Ripoti ya ${isAdmin ? 'Biashara' : 'Binafsi'} - ${new Date().toLocaleDateString('sw-TZ')}
+                    </p>
+                    ${isAdmin ? `
+                        <p class="sellers-count">
+                            ${appState.dataSource === 'admin' 
+                                ? `👥 Wauzaji ${appState.sellers.length} waliosajiliwa` 
+                                : `📊 Inaonyesha data ya seller mmoja`}
+                        </p>
+                    ` : ''}
+                </div>
+
+                ${appState.businessStats ? `
+                    <div class="section">
+                        <h2 class="section-title">${isAdmin ? 'Takwimu za Biashara' : 'Takwimu Zako'}</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: #3498db20;">
+                                    <i class="fas fa-money-bill" style="color: var(--primary); font-size: 20px;"></i>
+                                </div>
+                                <p class="stat-number">${formatCurrency(appState.businessStats.totalSales)}</p>
+                                <p class="stat-label">${isAdmin ? 'Jumla ya Mauzo' : 'Mauzo Yote'}</p>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: #27ae6020;">
+                                    <i class="fas fa-chart-line" style="color: var(--success); font-size: 20px;"></i>
+                                </div>
+                                <p class="stat-number" style="color: var(--success);">${formatCurrency(appState.businessStats.totalProfit)}</p>
+                                <p class="stat-label">Jumla ya Faida</p>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: #2ecc7120;">
+                                    <i class="fas fa-users" style="color: #2ecc71; font-size: 20px;"></i>
+                                </div>
+                                <p class="stat-number">${appState.businessStats.totalCustomers}</p>
+                                <p class="stat-label">${isAdmin ? 'Wateja Wote' : 'Wateja Wako'}</p>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: #e74c3c20;">
+                                    <i class="fas fa-shopping-cart" style="color: var(--danger); font-size: 20px;"></i>
+                                </div>
+                                <p class="stat-number">${appState.businessStats.totalProducts}</p>
+                                <p class="stat-label">Bidhaa Zote</p>
+                            </div>
+                        </div>
+                        
+                        <div class="extra-stats">
+                            <div class="extra-stat">
+                                <i class="fas fa-calendar-day" style="color: var(--warning); font-size: 14px;"></i>
+                                <span class="extra-stat-text">Mauzo ya Leo: ${formatCurrency(appState.businessStats.todaySales)}</span>
+                            </div>
+                            <div class="extra-stat">
+                                <i class="fas fa-trending-up" style="color: var(--success); font-size: 14px;"></i>
+                                <span class="extra-stat-text">Faida ya Leo: ${formatCurrency(appState.businessStats.todayProfit)}</span>
+                            </div>
+                            <div class="extra-stat">
+                                <i class="fas fa-chart-bar" style="color: #9b59b6; font-size: 14px;"></i>
+                                <span class="extra-stat-text">Wastani wa Margin: ${appState.businessStats.averageProfitMargin.toFixed(1)}%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h2 class="section-title">
+                            ${isAdmin ? 'Mauzo ya Hivi Karibuni (Biashara)' : 'Mauzo Yako ya Hivi Karibuni'}
+                        </h2>
+                        ${appState.sales.length > 0 ? appState.sales.slice(0, 5).map(sale => {
+                            return `
+                                <div class="sale-item">
+                                    <div class="sale-info">
+                                        <p class="sale-product">${sale.product_name}</p>
+                                        <p class="sale-date">
+                                            ${formatDate(sale.sale_date)} - ${sale.customer_name}
+                                            ${isAdmin && sale.seller_name ? `
+                                                <span class="seller-name"> • ${sale.seller_name}</span>
+                                            ` : ''}
+                                        </p>
+                                        <p class="sale-meta">
+                                            ${sale.quantity} x ${formatCurrency(sale.unit_price)} • 
+                                            Jumla: ${formatCurrency(sale.total_amount)} • 
+                                            Faida: <span style="color: ${(sale.profit || 0) >= 0 ? 'var(--success)' : 'var(--danger)'}; font-weight: bold;">
+                                                ${formatCurrency(sale.profit || 0)}
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div class="sale-amount">
+                                        <p class="sale-total">${formatCurrency(sale.total_amount)}</p>
+                                        <p class="profit-text" style="color: ${(sale.profit_margin || 0) >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                                            ${(sale.profit_margin || 0).toFixed(1)}% margin
+                                        </p>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('') : `
+                            <div class="no-data">
+                                <i class="fas fa-receipt" style="font-size: 48px; color: #bdc3c7;"></i>
+                                <p class="no-data-text">
+                                    ${isAdmin ? 'Hakuna mauzo bado' : 'Hakuna mauzo bado'}
+                                </p>
+                            </div>
+                        `}
+                    </div>
+                ` : `
+                    <div class="no-data">
+                        <i class="fas fa-chart-bar" style="font-size: 48px; color: #bdc3c7;"></i>
+                        <p class="no-data-text">
+                            ${isAdmin ? 'Hakuna takwimu za biashara' : 'Hakuna takwimu bado'}
+                        </p>
+                    </div>
+                `}
+            `;
+        }
+
+        // Render Sales Report
+        function renderSalesReport() {
+            const isAdmin = appState.userData.role === 'admin';
+            
+            return `
+                <div>
+                    <h2 class="section-title">
+                        Ripoti ya Mauzo - ${isAdmin ? appState.userData.businessName : 'Yako Binafsi'}
+                        ${isAdmin && appState.dataSource === 'admin' ? ` (${appState.sellers.length} wauzaji)` : ''}
+                    </h2>
+                    ${appState.sales.length > 0 ? appState.sales.map(sale => {
+                        return `
+                            <div class="report-item">
+                                <div class="report-item-main">
+                                    <p class="report-item-title">${sale.product_name}</p>
+                                    <p class="report-item-subtitle">
+                                        ${sale.customer_name} • ${formatDate(sale.sale_date)}
+                                        ${isAdmin && sale.seller_name ? `
+                                            <span class="seller-name"> • ${sale.seller_name}</span>
+                                        ` : ''}
+                                    </p>
+                                    <p class="report-item-meta">
+                                        ${sale.quantity} x ${formatCurrency(sale.unit_price)} • 
+                                        Invoice: ${sale.invoice_number || 'N/A'}
+                                    </p>
+                                </div>
+                                <div class="report-item-side">
+                                    <p class="report-item-amount">${formatCurrency(sale.total_amount)}</p>
+                                    <p class="profit-text" style="color: ${(sale.profit || 0) >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                                        Faida: ${formatCurrency(sale.profit || 0)}
+                                    </p>
+                                    <p class="report-item-margin">
+                                        ${(sale.profit_margin || 0).toFixed(1)}% margin
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') : `
+                        <div class="no-data">
+                            <i class="fas fa-receipt" style="font-size: 48px; color: #bdc3c7;"></i>
+                            <p class="no-data-text">
+                                ${isAdmin ? 'Hakuna mauzo bado' : 'Hakuna mauzo bado'}
+                            </p>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        // Render Products Report
+        function renderProductsReport() {
+            const isAdmin = appState.userData.role === 'admin';
+            
+            // Group sales by product
+            const productSalesMap = new Map();
+            appState.sales.forEach(sale => {
+                if (!productSalesMap.has(sale.product_id)) {
+                    productSalesMap.set(sale.product_id, {
+                        product: appState.products.find(p => p.id === sale.product_id) || {
+                            id: sale.product_id,
+                            name: sale.product_name,
+                            price: sale.unit_price,
+                            category: null,
+                            stock: 0,
+                            cost_price: sale.cost_price,
+                            seller_id: sale.user_id,
+                            description: null,
+                            is_active: true,
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        },
+                        totalSold: 0,
+                        totalRevenue: 0,
+                        totalCost: 0,
+                        totalProfit: 0,
+                        sales: []
+                    });
+                }
+                
+                const productData = productSalesMap.get(sale.product_id);
+                productData.totalSold += sale.quantity || 0;
+                productData.totalRevenue += sale.total_amount || 0;
+                productData.totalCost += (sale.cost_price || 0) * (sale.quantity || 0);
+                productData.totalProfit += sale.profit || 0;
+                productData.sales.push(sale);
+            });
+
+            const productSales = Array.from(productSalesMap.values());
+            
+            return `
+                <div>
+                    <h2 class="section-title">
+                        Ripoti ya Bidhaa - ${isAdmin ? appState.userData.businessName : 'Yako Binafsi'}
+                        ${isAdmin && appState.dataSource === 'admin' ? ` (${appState.products.length} bidhaa)` : ''}
+                    </h2>
+                    ${productSales.length > 0 ? productSales.map((productData, index) => {
+                        const product = productData.product;
+                        const profitMargin = productData.totalCost > 0 ? 
+                            (productData.totalProfit / productData.totalCost) * 100 : 0;
+
+                        return `
+                            <div class="report-item">
+                                <div class="report-item-main">
+                                    <p class="report-item-title">${product.name}</p>
+                                    <p class="report-item-subtitle">${product.category || 'Hakuna kategoria'}</p>
+                                    <p class="report-item-meta">
+                                        Hisa: ${product.stock} • 
+                                        Jumla Iliouzwa: ${productData.totalSold} • 
+                                        Bei ya Ununuzi: ${formatCurrency(product.cost_price || product.price)}
+                                    </p>
+                                    <p class="report-item-cost">
+                                        Bei ya Kuuza: ${formatCurrency(product.price)}
+                                    </p>
+                                    ${isAdmin ? `
+                                        <p class="report-item-seller">
+                                            Muuzaji: ${appState.sellers.find(s => s.id === product.seller_id)?.full_name || product.seller_id}
+                                        </p>
+                                    ` : ''}
+                                </div>
+                                <div class="report-item-side">
+                                    <p class="report-item-amount">${formatCurrency(productData.totalRevenue)}</p>
+                                    <p class="profit-text" style="color: ${productData.totalProfit >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                                        Faida: ${formatCurrency(productData.totalProfit)}
+                                    </p>
+                                    <p class="report-item-margin">
+                                        ${profitMargin.toFixed(1)}% margin
+                                    </p>
+                                    <p class="report-item-quantity">
+                                        ${productData.totalSold} yameuzwa
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') : appState.products.length > 0 ? appState.products.map(product => {
+                        const profitMargin = product.cost_price ? 
+                            ((product.price - product.cost_price) / product.cost_price) * 100 : 0;
+
+                        return `
+                            <div class="report-item">
+                                <div class="report-item-main">
+                                    <p class="report-item-title">${product.name}</p>
+                                    <p class="report-item-subtitle">${product.category || 'Hakuna kategoria'}</p>
+                                    <p class="report-item-meta">
+                                        Hisa: ${product.stock} • 
+                                        Bei ya Ununuzi: ${formatCurrency(product.cost_price || product.price)}
+                                    </p>
+                                    <p class="report-item-cost">
+                                        Bei ya Kuuza: ${formatCurrency(product.price)}
+                                    </p>
+                                    ${isAdmin ? `
+                                        <p class="report-item-seller">
+                                            Muuzaji: ${appState.sellers.find(s => s.id === product.seller_id)?.full_name || product.seller_id}
+                                        </p>
+                                    ` : ''}
+                                </div>
+                                <div class="report-item-side">
+                                    <p class="profit-text" style="color: ${profitMargin >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                                        Faida ya Bidhaa: ${formatCurrency(product.price - (product.cost_price || product.price))}
+                                    </p>
+                                    <p class="report-item-margin">
+                                        ${profitMargin.toFixed(1)}% margin
+                                    </p>
+                                    <p class="report-item-revenue" style="color: var(--success); font-size: 12px; margin-top: 4px; font-weight: 500;">
+                                        Bado haijauzwa
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') : `
+                        <div class="no-data">
+                            <i class="fas fa-cube" style="font-size: 48px; color: #bdc3c7;"></i>
+                            <p class="no-data-text">
+                                ${isAdmin ? 'Hakuna bidhaa bado' : 'Hakuna bidhaa bado'}
+                            </p>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        // Render Customers Report
+        function renderCustomersReport() {
+            const isAdmin = appState.userData.role === 'admin';
+            
+            return `
+                <div>
+                    <h2 class="section-title">
+                        Ripoti ya Wateja - ${isAdmin ? appState.userData.businessName : 'Yako Binafsi'}
+                        ${isAdmin && appState.dataSource === 'admin' ? ` (${appState.customers.length} wateja)` : ''}
+                    </h2>
+                    
+                    ${appState.customers.length > 0 ? appState.customers.map(customer => {
+                        // ✅ TUMIA JUMLA YA KUNUNUA AMBAYO IMEGAWA KWA 2
+                        const actualTotal = customer.total_purchases; // Hii tayari imegawanywa kwa 2
+                        const actualCount = customer.purchases_count; // Hii tayari imegawanywa kwa 2
+                        const lastPurchase = customer.last_purchase_date ? 
+                            formatDate(customer.last_purchase_date) : 'Hajapata';
+
+                        return `
+                            <div class="customer-item">
+                                <div class="customer-avatar">
+                                    <i class="fas fa-user-circle" style="font-size: 40px; color: var(--primary);"></i>
+                                </div>
+                                
+                                <div class="customer-info">
+                                    <p class="customer-name">${customer.name}</p>
+                                    
+                                    <div class="customer-contact">
+                                        ${customer.phone ? `
+                                            <div class="contact-row">
+                                                <i class="fas fa-phone" style="font-size: 14px; color: var(--gray);"></i>
+                                                <span class="contact-text">${customer.phone}</span>
+                                            </div>
+                                        ` : ''}
+                                        
+                                        ${customer.email ? `
+                                            <div class="contact-row">
+                                                <i class="fas fa-envelope" style="font-size: 14px; color: var(--gray);"></i>
+                                                <span class="contact-text">${customer.email}</span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    <div class="customer-meta">
+                                        <span class="customer-meta-text">
+                                            <i class="fas fa-receipt" style="font-size: 12px; color: var(--light-gray);"></i> ${actualCount} mauzo
+                                        </span>
+                                        <span class="customer-meta-text">
+                                            <i class="fas fa-calendar" style="font-size: 12px; color: var(--light-gray);"></i> ${lastPurchase}
+                                        </span>
+                                        ${isAdmin && customer.seller_name ? `
+                                            <span class="customer-meta-text" style="color: var(--primary);">
+                                                <i class="fas fa-user" style="font-size: 12px; color: var(--primary);"></i> ${customer.seller_name}
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                
+                                <div class="customer-stats">
+                                    <p class="customer-total">
+                                        ${formatCurrency(actualTotal)}
+                                    </p>
+                                    <p class="customer-label">
+                                        Jumla ya Kununua
+                                    </p>
+                                    <p class="customer-note">
+                                        ✓ Imeongezwa kwa usahihi
+                                    </p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('') : `
+                        <div class="no-data">
+                            <i class="fas fa-users" style="font-size: 48px; color: #bdc3c7;"></i>
+                            <p class="no-data-text">
+                                ${isAdmin ? 'Hakuna wateja bado' : 'Hakuna wateja bado'}
+                            </p>
+                            <p class="no-data-subtext">
+                                Wateja wataonekana hapa mara tu wanapoanza kununua bidhaa zako.
+                            </p>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        // Refresh data
+        async function refreshData() {
+            if (!appState.userToken) {
+                alert('Tafadhali ingia tena kwenye akaunti yako');
+                return;
+            }
+
+            try {
+                appState.refreshing = true;
+                const userDataStr = localStorage.getItem('userData');
+                if (userDataStr) {
+                    const user = JSON.parse(userDataStr);
+                    await fetchAllReports(appState.userToken, user);
+                }
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+                alert('Imeshindikana kusasisha data');
+            } finally {
+                appState.refreshing = false;
+            }
+        }
+
+        // Export handlers
+        function handlePrintPDF() {
+            alert('Ripoti ya PDF itakuja hivi karibuni...');
+        }
+
+        function handleExportExcel() {
+            alert('Ripoti ya Excel itakuja hivi karibuni...');
+        }
+
+        function handlePrint() {
+            alert('Kuchapisha ripoti kutakuja hivi karibuni...');
+        }
+
+        // Loading helpers
+        function showLoading(text) {
+            document.getElementById('loadingState').style.display = 'flex';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('loadingText').textContent = text;
+            
+            if (appState.userData.role === 'admin') {
+                document.getElementById('fallbackText').textContent = 'Inapakua data ya biashara nzima...';
+                document.getElementById('fallbackText').style.display = 'block';
+            }
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('fallbackText').style.display = 'none';
+        }
+
+        // Refresh on page visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                refreshData();
+            }
+        });
+    </script>
+</body>
+</html>

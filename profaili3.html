@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashibodi ya Msimamizi - Duka Mkononi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS Inayotokana na index.tsx styles */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        /* UTILITY & LOADING */
+        .center {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .loading-text {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #666;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .header-info h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0 0 4px 0;
+        }
+        .header-info p {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 0;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .icon-button {
+            padding: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #3498db;
+            font-size: 20px;
+            transition: opacity 0.2s;
+        }
+        .icon-button:hover {
+            opacity: 0.8;
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        .logout-text {
+            font-size: 10px;
+            color: #e74c3c;
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        /* BUSINESS CARD */
+        .business-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        .business-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0 0 4px 0;
+        }
+        .business-location {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 0 0 4px 0;
+        }
+        .business-phone {
+            font-size: 14px;
+            color: #95a5a6;
+            margin: 0 0 8px 0;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+            padding: 8px;
+            background-color: #e8f6ef;
+            border-radius: 8px;
+            align-self: flex-start;
+            max-width: fit-content;
+        }
+        .status-text {
+            font-size: 12px;
+            color: #27ae60;
+            margin-left: 6px;
+            font-weight: 500;
+        }
+        .filter-info {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            border: 1px solid #bbdefb;
+        }
+        .filter-text {
+            font-size: 12px;
+            color: #1976d2;
+            margin-left: 6px;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        /* SELLERS SECTION */
+        .section {
+            margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 16px;
+        }
+
+        /* SELLER CARD */
+        .seller-card {
+            background-color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .seller-info {
+            flex: 1;
+        }
+        .seller-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0 0 2px 0;
+        }
+        .seller-email {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 0 0 2px 0;
+        }
+        .seller-phone {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin: 0 0 4px 0;
+        }
+        .seller-business {
+            font-size: 12px;
+            color: #95a5a6;
+            margin: 0 0 8px 0;
+        }
+        .status-container {
+            margin-top: 8px;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .approved-badge {
+            background-color: #e8f6ef;
+            color: #27ae60;
+        }
+        .pending-badge {
+            background-color: #fff4e6;
+            color: #f39c12;
+        }
+        .rejected-badge {
+            background-color: #fdedec;
+            color: #e74c3c;
+        }
+        .inactive-badge {
+            background-color: #f5f5f5;
+            color: #95a5a6;
+        }
+        .seller-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .action-button {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            min-width: 80px;
+            justify-content: center;
+            gap: 4px;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover:not(:disabled) {
+            opacity: 0.9;
+        }
+        .action-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .approve-button {
+            background-color: #27ae60;
+            color: white;
+        }
+        .reject-button {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .delete-button {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        /* NO SELLERS STATE */
+        .no-sellers {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .no-sellers-title {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+        .no-sellers-text {
+            font-size: 14px;
+            color: #95a5a6;
+            margin-top: 8px;
+            line-height: 1.5;
+            max-width: 400px;
+        }
+
+        /* EDIT PROFILE MODAL */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 24px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .input-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+            margin-top: 12px;
+        }
+        .input {
+            width: 100%;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #f8f9fa;
+            box-sizing: border-box;
+        }
+        .input-helper {
+            font-size: 11px;
+            color: #f39c12;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+            gap: 12px;
+        }
+        .modal-button {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .cancel-button {
+            background-color: #95a5a6;
+            color: white;
+        }
+        .save-button {
+            background-color: #3498db;
+            color: white;
+        }
+        .modal-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* ALERT MODAL */
+        .alert-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        .alert-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .alert-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            padding: 20px 20px 10px;
+            margin: 0;
+        }
+        .alert-message {
+            font-size: 16px;
+            color: #666;
+            padding: 0 20px 20px;
+            margin: 0;
+        }
+        .alert-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+        .alert-button {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 80px;
+        }
+        .alert-button-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+        .alert-button-destructive {
+            background-color: #dc3545;
+            color: white;
+        }
+        .alert-button-default {
+            background-color: #3498db;
+            color: white;
+        }
+
+        /* FIXED ACTION BUTTONS (Ripoti) */
+        .fixed-button-group {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 100;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            left: 25px;
+        }
+        .action-button-riporti {
+            background-color: #e67e22;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            border: none;
+        }
+        .action-button-riporti:hover {
+            background-color: #d35400;
+        }
+
+        /* SCROLL AREA */
+        .scroll-area {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+        
+        /* TOAST NOTIFICATION */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1500;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .toast {
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(-20px);
+            display: flex;
+            align-items: center;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast-success {
+            background-color: #28a745;
+        }
+        .toast-error {
+            background-color: #dc3545;
+        }
+        .toast-info {
+            background-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="toast-container"></div>
+
+    <div id="loading-state" class="center">
+        <div class="spinner"></div>
+        <p class="loading-text">Inapakua...</p>
+    </div>
+    
+    <div id="main-content" class="container" style="display: none;">
+        <div class="scroll-area">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-info">
+                    <h1>Dashibodi ya Msimamizi</h1>
+                    <p id="user-email">Inapakia...</p>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-button" onclick="handleRefresh()" title="Sasisha">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="icon-button" onclick="handleEditProfile()" title="Hariri Wasifu">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <div class="user-info" onclick="handleLogout()">
+                        <i class="fas fa-user-circle" style="font-size: 40px; color: #3498db;"></i>
+                        <span class="logout-text">Toka</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Card -->
+            <div class="business-card">
+                <h2 id="business-name" class="business-name">Biashara Kuu</h2>
+                <p id="business-location" class="business-location">Makao Makuu</p>
+                <p id="business-phone" class="business-phone">Hakuna namba</p>
+                <div class="status-indicator">
+                    <i class="fas fa-shield-check" style="color: #2ecc71; font-size: 16px;"></i>
+                    <span class="status-text">Msimamizi Mkuu</span>
+                </div>
+                <div class="filter-info">
+                    <i class="fas fa-filter" style="color: #3498db; font-size: 14px;"></i>
+                    <span id="filter-text" class="filter-text">
+                        Wauzaji wanaonyeshwa: Jina la biashara = "Biashara Kuu"
+                    </span>
+                </div>
+            </div>
+
+            <!-- Sellers List Section -->
+            <div class="section">
+                <h2 id="sellers-title" class="section-title">Wauzaji Wa Biashara Hii (0)</h2>
+                
+                <div id="sellers-list"></div>
+
+                <div id="no-sellers" class="no-sellers" style="display: none;">
+                    <i class="fas fa-users" style="font-size: 48px; color: #bdc3c7;"></i>
+                    <h3 class="no-sellers-title">Hakuna Wauzaji</h3>
+                    <p id="no-sellers-text" class="no-sellers-text">
+                        Hakuna wauzaji waliosajiliwa kwenye biashara hii bado.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-content">
+            <h2 class="modal-title">Hariri Wasifu</h2>
+            
+            <label class="input-label">Jina Kamili</label>
+            <input id="edit-name" type="text" class="input" placeholder="Jina lako kamili">
+            
+            <label class="input-label">Namba ya Simu</label>
+            <input id="edit-phone" type="tel" class="input" placeholder="Namba ya simu">
+            
+            <label class="input-label">Jina la Biashara</label>
+            <input id="edit-business-name" type="text" class="input" placeholder="Jina la biashara">
+            <p class="input-helper">
+                ⚠️ Jina hili litatumika ku-filter wauzaji wako. Wauzaji wenye jina tofauti hawaonyeshwi.
+            </p>
+            
+            <label class="input-label">Eneo la Biashara</label>
+            <input id="edit-business-location" type="text" class="input" placeholder="Eneo la biashara">
+
+            <div class="modal-buttons">
+                <button id="cancel-edit" class="modal-button cancel-button">Ghairi</button>
+                <button id="save-profile" class="modal-button save-button">
+                    <span id="save-button-text">Hifadhi</span>
+                    <div id="save-spinner" class="spinner" style="display: none; width: 16px; height: 16px; border-width: 2px; border-top-color: white; margin-left: 8px;"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fixed Action Button (Ripoti) -->
+    <div class="fixed-button-group">
+        <a href="ripoti.html" class="action-button-riporti">
+            <span>RIPOTI</span>
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://dukamkononi.com';
+        
+        // --- Global State ---
+        let userData = {
+            id: '',
+            email: '',
+            businessName: '',
+            businessLocation: '',
+            phone: '',
+            role: ''
+        };
+        let sellersData = [];
+        let loading = true;
+        let refreshing = false;
+        let updatingProfile = false;
+        let updatingSellerStatus = null;
+
+        // --- DOM Elements ---
+        const D = (id) => document.getElementById(id);
+        
+        const elements = {
+            loadingState: D('loading-state'),
+            mainContent: D('main-content'),
+            userEmail: D('user-email'),
+            businessName: D('business-name'),
+            businessLocation: D('business-location'),
+            businessPhone: D('business-phone'),
+            filterText: D('filter-text'),
+            sellersTitle: D('sellers-title'),
+            sellersList: D('sellers-list'),
+            noSellers: D('no-sellers'),
+            noSellersText: D('no-sellers-text'),
+            editModal: D('edit-modal'),
+            editName: D('edit-name'),
+            editPhone: D('edit-phone'),
+            editBusinessName: D('edit-business-name'),
+            editBusinessLocation: D('edit-business-location'),
+            cancelEdit: D('cancel-edit'),
+            saveProfile: D('save-profile'),
+            saveButtonText: D('save-button-text'),
+            saveSpinner: D('save-spinner')
+        };
+
+        // --- Alert System ---
+        const showAlert = (title, message, buttons) => {
+            const modal = document.createElement('div');
+            modal.className = 'alert-modal';
+            
+            const content = document.createElement('div');
+            content.className = 'alert-content';
+            
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'alert-title';
+            titleEl.textContent = title;
+            
+            const messageEl = document.createElement('p');
+            messageEl.className = 'alert-message';
+            messageEl.textContent = message;
+            
+            const buttonsEl = document.createElement('div');
+            buttonsEl.className = 'alert-buttons';
+            
+            if (!buttons || buttons.length === 0) {
+                buttons = [{ text: 'OK', style: 'default' }];
+            }
+            
+            buttons.forEach(button => {
+                const btn = document.createElement('button');
+                btn.className = `alert-button alert-button-${button.style || 'default'}`;
+                btn.textContent = button.text;
+                
+                btn.onclick = () => {
+                    document.body.removeChild(modal);
+                    if (button.onPress) button.onPress();
+                };
+                
+                buttonsEl.appendChild(btn);
+            });
+            
+            content.appendChild(titleEl);
+            content.appendChild(messageEl);
+            content.appendChild(buttonsEl);
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        };
+
+        // --- Toast System ---
+        const showToast = (message, type = 'info', duration = 3000) => {
+            const container = D('toast-container');
+            if (!container) return;
+
+            let icon = '';
+            let typeClass = `toast-${type}`;
+
+            switch (type) {
+                case 'success': icon = '✅'; break;
+                case 'error': icon = '❌'; break;
+                case 'info': default: icon = '💬'; break;
+            }
+
+            const toastElement = document.createElement('div');
+            toastElement.className = `toast ${typeClass}`;
+            toastElement.innerHTML = `<span style="margin-right: 10px;">${icon}</span>${message}`;
+            
+            container.appendChild(toastElement);
+
+            setTimeout(() => {
+                toastElement.classList.add('show');
+            }, 10);
+
+            setTimeout(() => {
+                toastElement.classList.remove('show');
+                setTimeout(() => {
+                    container.removeChild(toastElement);
+                }, 300);
+            }, duration);
+        };
+
+        // --- Utility Functions ---
+        const showLoading = (show) => {
+            loading = show;
+            elements.loadingState.style.display = show ? 'flex' : 'none';
+            elements.mainContent.style.display = show ? 'none' : 'block';
+        };
+
+        const updateRefreshingState = (isRefreshing) => {
+            refreshing = isRefreshing;
+            // You could add a visual indicator here
+        };
+
+        const updateSavingState = (isSaving) => {
+            updatingProfile = isSaving;
+            elements.saveButtonText.style.display = isSaving ? 'none' : 'inline';
+            elements.saveSpinner.style.display = isSaving ? 'inline-block' : 'none';
+            elements.saveProfile.disabled = isSaving;
+            elements.cancelEdit.disabled = isSaving;
+        };
+
+        // --- Data Loading Functions ---
+        const loadUserData = async () => {
+            try {
+                const userDataStr = localStorage.getItem('userData');
+                const userToken = localStorage.getItem('userToken');
+                
+                if (!userToken) {
+                    showAlert('Hitilafu', 'Tafadhali ingia tena kwenye akaunti yako');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                if (userDataStr) {
+                    const user = JSON.parse(userDataStr);
+                    const businessName = user.businessName || user.business_name || 'Biashara Kuu';
+                    const businessLocation = user.businessLocation || user.business_location || 'Makao Makuu';
+                    
+                    userData = {
+                        id: user.id || '',
+                        email: user.email || '',
+                        businessName: businessName,
+                        businessLocation: businessLocation,
+                        phone: user.phone || 'Hakuna namba',
+                        role: user.role || ''
+                    };
+
+                    // Set initial form data
+                    elements.editName.value = user.full_name || 'Joshua';
+                    elements.editPhone.value = user.phone || '';
+                    elements.editBusinessName.value = businessName;
+                    elements.editBusinessLocation.value = businessLocation;
+
+                    // Load sellers data
+                    await loadSellersData(businessName);
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                const errorMessage = error instanceof Error ? error.message : 'Imeshindikana kupakua taarifa za mtumiaji';
+                showAlert('Hitilafu', errorMessage);
+            } finally {
+                showLoading(false);
+            }
+        };
+
+        const loadSellersData = async (adminBusinessName) => {
+            try {
+                const token = localStorage.getItem('userToken');
+                if (!token) return;
+
+                console.log('📡 Inapakua data ya wauzaji kutoka:', `${API_BASE_URL}/api/admin/users`);
+                console.log('🏢 Jina la biashara la msimamizi:', adminBusinessName || userData.businessName);
+                
+                const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Accept': 'application/json'
+                    },
+                });
+
+                console.log('📊 Sellers response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('👥 Watu wote walio patikana:', data.length);
+                    
+                    const businessNameToFilter = adminBusinessName || userData.businessName;
+                    const sellers = data.filter((user) => {
+                        const isSeller = user.role === 'seller';
+                        const hasMatchingBusiness = user.business_name === businessNameToFilter;
+                        
+                        console.log(`🔍 Checking user: ${user.email}, Role: ${user.role}, Business: ${user.business_name}, Match: ${hasMatchingBusiness}`);
+                        
+                        return isSeller && hasMatchingBusiness;
+                    });
+                    
+                    console.log('🛍️ Wauzaji waliofilter (business match):', sellers.length);
+                    sellersData = sellers;
+                    renderUI();
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Error loading sellers:', errorText);
+                    showAlert('Hitilafu', 'Imeshindikana kupakua orodha ya wauzaji');
+                }
+            } catch (error) {
+                console.error('❌ Error loading sellers data:', error);
+                showAlert('Hitilafu', 'Imeshindikana kupakua data ya wauzaji. Tafadhali hakikisha muunganiko wa mtandao.');
+            }
+        };
+
+        // --- UI Rendering Functions ---
+        const renderUI = () => {
+            // Update user info
+            elements.userEmail.textContent = userData.email;
+            elements.businessName.textContent = userData.businessName;
+            elements.businessLocation.textContent = userData.businessLocation;
+            elements.businessPhone.textContent = userData.phone;
+            elements.filterText.textContent = `Wauzaji wanaonyeshwa: Jina la biashara = "${userData.businessName}"`;
+
+            // Update sellers list
+            elements.sellersTitle.textContent = `Wauzaji Wa Biashara Hii (${sellersData.length})`;
+            
+            if (sellersData.length === 0) {
+                elements.sellersList.style.display = 'none';
+                elements.noSellers.style.display = 'flex';
+                elements.noSellersText.textContent = `Hakuna wauzaji waliosajiliwa kwenye biashara "${userData.businessName}" bado.`;
+            } else {
+                elements.sellersList.style.display = 'block';
+                elements.noSellers.style.display = 'none';
+                renderSellersList();
+            }
+        };
+
+        const renderSellersList = () => {
+            elements.sellersList.innerHTML = '';
+            
+            sellersData.forEach(seller => {
+                const sellerCard = document.createElement('div');
+                sellerCard.className = 'seller-card';
+                
+                const isLiked = false; // Not used in admin screen
+                const status = seller.status || 'pending';
+                
+                // Status badge HTML
+                let statusBadgeHTML = '';
+                if (status === 'approved') {
+                    statusBadgeHTML = `
+                        <div class="status-badge approved-badge">
+                            <i class="fas fa-check-circle" style="font-size: 14px; margin-right: 4px;"></i>
+                            <span>Imethibitishwa</span>
+                        </div>
+                    `;
+                } else if (status === 'pending') {
+                    statusBadgeHTML = `
+                        <div class="status-badge pending-badge">
+                            <i class="fas fa-clock" style="font-size: 14px; margin-right: 4px;"></i>
+                            <span>Inasubiri</span>
+                        </div>
+                    `;
+                } else if (status === 'rejected') {
+                    statusBadgeHTML = `
+                        <div class="status-badge rejected-badge">
+                            <i class="fas fa-times-circle" style="font-size: 14px; margin-right: 4px;"></i>
+                            <span>Haijakubaliwa</span>
+                        </div>
+                    `;
+                } else {
+                    statusBadgeHTML = `
+                        <div class="status-badge inactive-badge">
+                            <i class="fas fa-eye-slash" style="font-size: 14px; margin-right: 4px;"></i>
+                            <span>Haifanyi kazi</span>
+                        </div>
+                    `;
+                }
+                
+                // Action buttons HTML
+                let actionsHTML = '';
+                if (status === 'approved') {
+                    actionsHTML = `
+                        <button class="action-button reject-button" onclick="handleRejectSeller('${seller.id}')" ${updatingSellerStatus === seller.id ? 'disabled' : ''}>
+                            ${updatingSellerStatus === seller.id ? '<div class="spinner" style="width: 12px; height: 12px; border-width: 2px; border-top-color: white;"></div>' : '<i class="fas fa-times-circle" style="font-size: 16px;"></i>'}
+                            <span>Batilisha</span>
+                        </button>
+                    `;
+                } else if (status === 'pending') {
+                    actionsHTML = `
+                        <button class="action-button approve-button" onclick="handleApproveSeller('${seller.id}')" ${updatingSellerStatus === seller.id ? 'disabled' : ''}>
+                            ${updatingSellerStatus === seller.id ? '<div class="spinner" style="width: 12px; height: 12px; border-width: 2px; border-top-color: white;"></div>' : '<i class="fas fa-check-circle" style="font-size: 16px;"></i>'}
+                            <span>Thibitisha</span>
+                        </button>
+                        <button class="action-button delete-button" onclick="handleDeleteSeller('${seller.id}', '${seller.full_name || seller.email}')" ${updatingSellerStatus === seller.id ? 'disabled' : ''}>
+                            <i class="fas fa-trash" style="font-size: 16px;"></i>
+                            <span>Muondoe</span>
+                        </button>
+                    `;
+                } else if (status === 'rejected') {
+                    actionsHTML = `
+                        <button class="action-button approve-button" onclick="handleApproveSeller('${seller.id}')" ${updatingSellerStatus === seller.id ? 'disabled' : ''}>
+                            ${updatingSellerStatus === seller.id ? '<div class="spinner" style="width: 12px; height: 12px; border-width: 2px; border-top-color: white;"></div>' : '<i class="fas fa-redo" style="font-size: 16px;"></i>'}
+                            <span>Rudisha</span>
+                        </button>
+                    `;
+                }
+                
+                sellerCard.innerHTML = `
+                    <div class="seller-info">
+                        <h3 class="seller-name">${seller.full_name || seller.email}</h3>
+                        <p class="seller-email">${seller.email}</p>
+                        <p class="seller-phone">${seller.phone || 'Hakuna namba'}</p>
+                        <p class="seller-business">
+                            ${seller.business_name || 'Hakuna biashara'} - ${seller.business_location || 'Hakuna eneo'}
+                        </p>
+                        <div class="status-container">
+                            ${statusBadgeHTML}
+                        </div>
+                    </div>
+                    <div class="seller-actions">
+                        ${actionsHTML}
+                    </div>
+                `;
+                
+                elements.sellersList.appendChild(sellerCard);
+            });
+        };
+
+        // --- Event Handlers ---
+        const handleRefresh = async () => {
+            updateRefreshingState(true);
+            try {
+                await loadSellersData(userData.businessName);
+                showToast('Data imesasishwa', 'success');
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+                showAlert('Hitilafu', 'Imeshindikana kusasisha data');
+            } finally {
+                updateRefreshingState(false);
+            }
+        };
+
+        const handleEditProfile = () => {
+            elements.editModal.style.display = 'flex';
+        };
+
+        const handleUpdateProfile = async () => {
+            const editFormData = {
+                name: elements.editName.value,
+                phone: elements.editPhone.value,
+                businessName: elements.editBusinessName.value,
+                businessLocation: elements.editBusinessLocation.value
+            };
+
+            if (!editFormData.businessName.trim() || !editFormData.businessLocation.trim()) {
+                showAlert('Hitilafu', 'Tafadhali jaza jina la biashara na eneo la biashara');
+                return;
+            }
+
+            updateSavingState(true);
+            try {
+                const token = localStorage.getItem('userToken');
+                if (!token) return;
+
+                console.log('📡 Updating profile to:', `${API_BASE_URL}/api/user/profile`);
+                console.log('📝 Data being sent:', editFormData);
+
+                const response = await fetch(`${API_BASE_URL}/api/user/profile`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        full_name: editFormData.name,
+                        phone: editFormData.phone,
+                        business_name: editFormData.businessName,
+                        business_location: editFormData.businessLocation
+                    }),
+                });
+
+                if (response.ok) {
+                    const updatedData = await response.json();
+                    console.log('✅ Profile update successful:', updatedData);
+                    
+                    // Update user data in state
+                    userData.businessName = editFormData.businessName;
+                    userData.businessLocation = editFormData.businessLocation;
+                    userData.phone = editFormData.phone;
+
+                    // Update localStorage
+                    const currentUserData = localStorage.getItem('userData');
+                    if (currentUserData) {
+                        const user = JSON.parse(currentUserData);
+                        const updatedUserData = {
+                            ...user,
+                            businessName: editFormData.businessName,
+                            businessLocation: editFormData.businessLocation,
+                            phone: editFormData.phone,
+                            full_name: editFormData.name
+                        };
+                        localStorage.setItem('userData', JSON.stringify(updatedUserData));
+                    }
+
+                    elements.editModal.style.display = 'none';
+                    showAlert('Mafanikio', 'Wasifu umesasishwa kikamilifu. Wauzaji wataonyeshwa kulingana na jina jipya la biashara.');
+                    
+                    // Reload sellers with new business name
+                    await loadSellersData(editFormData.businessName);
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Profile update failed:', response.status, errorText);
+                    throw new Error('Imeshindikana kusasisha wasifu');
+                }
+            } catch (error) {
+                console.error('❌ Error updating profile:', error);
+                showAlert('Hitilafu', 'Imeshindikana kusasisha wasifu. Tafadhali jaribu tena.');
+            } finally {
+                updateSavingState(false);
+            }
+        };
+
+        const handleApproveSeller = async (sellerId) => {
+            try {
+                updatingSellerStatus = sellerId;
+                const token = localStorage.getItem('userToken');
+                if (!token) {
+                    showAlert('Hitilafu', 'Hitilafu ya utambulisho. Tafadhali ingia tena.');
+                    return;
+                }
+
+                console.log('✅ Inathibitisha muuzaji:', sellerId);
+                
+                const response = await fetch(`${API_BASE_URL}/api/admin/users/${sellerId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ status: 'approved' }),
+                });
+
+                console.log('📊 Response status:', response.status);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Seller approval successful:', result);
+                    showToast('Muuzaji amethibitishwa kikamilifu', 'success');
+                    await loadSellersData(userData.businessName);
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Server error:', errorText);
+                    throw new Error('Imeshindikana kuthibitisha muuzaji');
+                }
+            } catch (error) {
+                console.error('❌ Error approving seller:', error);
+                showAlert('Hitilafu', 'Imeshindikana kuthibitisha muuzaji. Tafadhali hakikisha muunganiko wa mtandao.');
+            } finally {
+                updatingSellerStatus = null;
+                renderUI();
+            }
+        };
+
+        const handleRejectSeller = async (sellerId) => {
+            try {
+                updatingSellerStatus = sellerId;
+                const token = localStorage.getItem('userToken');
+                if (!token) {
+                    showAlert('Hitilafu', 'Hitilafu ya utambulisho. Tafadhali ingia tena.');
+                    return;
+                }
+
+                console.log('❌ Inabatilisha muuzaji:', sellerId);
+                
+                const response = await fetch(`${API_BASE_URL}/api/admin/users/${sellerId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': 'true',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ status: 'rejected' }),
+                });
+
+                console.log('📊 Response status:', response.status);
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('✅ Seller rejection successful:', result);
+                    showToast('Hali ya muuzaji imebatilishwa', 'success');
+                    await loadSellersData(userData.businessName);
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Server error:', errorText);
+                    throw new Error('Imeshindikana kubatilisha hali ya muuzaji');
+                }
+            } catch (error) {
+                console.error('❌ Error rejecting seller:', error);
+                showAlert('Hitilafu', 'Imeshindikana kubatilisha hali ya muuzaji. Tafadhali hakikisha muunganiko wa mtandao.');
+            } finally {
+                updatingSellerStatus = null;
+                renderUI();
+            }
+        };
+
+        const handleDeleteSeller = async (sellerId, sellerName) => {
+            showAlert(
+                'Thibitisha Ufutaji',
+                `Unahakika unataka kumfuta muuzaji ${sellerName}? Kitendo hiki hakiwezi kutenduliwa.`,
+                [
+                    { text: 'Ghairi', style: 'cancel' },
+                    {
+                        text: 'Futa',
+                        style: 'destructive',
+                        onPress: async () => {
+                            try {
+                                const token = localStorage.getItem('userToken');
+                                if (!token) {
+                                    showAlert('Hitilafu', 'Hitilafu ya utambulisho. Tafadhali ingia tena.');
+                                    return;
+                                }
+
+                                console.log('🗑️ Inafuta muuzaji:', sellerId);
+                                
+                                // Set status to 'inactive'
+                                const response = await fetch(`${API_BASE_URL}/api/admin/users/${sellerId}/status`, {
+                                    method: 'PUT',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`,
+                                        'Content-Type': 'application/json',
+                                        'ngrok-skip-browser-warning': 'true'
+                                    },
+                                    body: JSON.stringify({ status: 'inactive' }),
+                                });
+
+                                console.log('📊 Delete response status:', response.status);
+                                
+                                if (response.ok) {
+                                    showToast('Muuzaji amefutwa kikamilifu', 'success');
+                                    await loadSellersData(userData.businessName);
+                                } else {
+                                    const errorText = await response.text();
+                                    console.error('❌ Delete server error:', errorText);
+                                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                                }
+                            } catch (error) {
+                                console.error('❌ Error deleting seller:', error);
+                                showAlert('Hitilafu', 'Imeshindikana kumfuta muuzaji. Tafadhali hakikisha muunganiko wa mtandao.');
+                            }
+                        }
+                    }
+                ]
+            );
+        };
+
+        const handleLogout = async () => {
+            showAlert(
+                'Toka',
+                'Unahakika unataka kutoka kwenye akaunti yako?',
+                [
+                    { text: 'Ghairi', style: 'cancel' },
+                    {
+                        text: 'Toka',
+                        style: 'destructive',
+                        onPress: async () => {
+                            try {
+                                localStorage.clear();
+                                window.location.href = 'login.html';
+                            } catch (error) {
+                                console.error('Error during logout:', error);
+                                showAlert('Hitilafu', 'Imeshindikana kutoka');
+                            }
+                        }
+                    }
+                ]
+            );
+        };
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            
+            // Setup modal event listeners
+            elements.cancelEdit.onclick = () => {
+                elements.editModal.style.display = 'none';
+            };
+            
+            elements.saveProfile.onclick = handleUpdateProfile;
+            
+            // Close modal when clicking outside
+            elements.editModal.onclick = (e) => {
+                if (e.target === elements.editModal) {
+                    elements.editModal.style.display = 'none';
+                }
+            };
+            
+            // Add pull-to-refresh simulation
+            let startY = 0;
+            document.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].pageY;
+            }, { passive: true });
+            
+            document.addEventListener('touchend', (e) => {
+                const endY = e.changedTouches[0].pageY;
+                if (startY - endY > 100 && window.scrollY === 0) {
+                    handleRefresh();
+                }
+            }, { passive: true });
+        });
+    </script>
+</body>
+</html>

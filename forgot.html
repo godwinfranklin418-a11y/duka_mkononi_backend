@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urejeshaji Neno Siri</title>
+    <style>
+        /* CSS Inayofanana na Muundo wa Asili */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+        }
+        .text-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .text-input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .action-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #f39c12; /* Rangi ya Kurejesha */
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+        }
+        .action-button:hover {
+            background-color: #e67e22;
+        }
+        .loading-text {
+            text-align: center;
+            color: #3498db;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #fef4f4;
+            border: 1px solid #e74c3c;
+        }
+        
+        /* Mitindo ya Hatua ya Mafanikio */
+        .success-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .success-icon {
+            font-size: 60px;
+            color: #27ae60;
+            margin-bottom: 15px;
+        }
+        .success-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            line-height: 25px;
+        }
+        .success-note {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-style: italic;
+            line-height: 20px;
+            margin-bottom: 20px;
+        }
+
+        .back-to-login-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #3498db;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: background-color 0.3s ease;
+            text-decoration: none; /* Muhimu kwa kiungo */
+            display: inline-block;
+        }
+        .back-to-login-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="step-1">
+            <h1>Rejesha Neno Siri</h1>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">Weka barua pepe yako. Tutakutumia kiungo cha kuweka neno siri jipya.</p>
+            <form id="forgot-password-form">
+                <div class="input-group">
+                    <label for="email">Barua Pepe</label>
+                    <input type="email" id="email" class="text-input" placeholder="Weka barua pepe" required>
+                </div>
+                
+                <p id="error-message" class="error-message" style="display: none;"></p>
+
+                <button type="submit" id="submit-btn" class="action-button">Tuma Barua Pepe ya Kurejesha</button>
+                <p id="loading-text" class="loading-text" style="display: none;">Inatuma barua pepe...</p>
+            </form>
+            
+            <a href="login.html" style="display: block; text-align: center; margin-top: 20px; color: #3498db; text-decoration: none; font-weight: 600;">Rudi Kwenye Kuingia</a>
+        </div>
+
+        <div id="step-2" style="display: none;">
+            <div class="success-container">
+                <div class="success-icon">📧</div>
+                <div class="success-text">Barua pepe imetumwa kwa mafanikio!</div>
+                <div class="success-note">
+                    Tafadhali angalia kikasha chako cha barua pepe (pamoja na folder la spam) ili uweze kubadili neno siri.
+                </div>
+                <a href="login.html" class="back-to-login-button">Rudi Kwenye Kuingia</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://dukamkononibackend-production.up.railway.app';
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const submitButton = document.getElementById('submit-btn');
+        const loadingText = document.getElementById('loading-text');
+        const errorMessage = document.getElementById('error-message');
+        const emailInput = document.getElementById('email');
+        const step1 = document.getElementById('step-1');
+        const step2 = document.getElementById('step-2');
+
+        // Validation na Sanitization functions
+        const validateEmail = (email) => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        };
+        const sanitizeInput = (input) => {
+            return input.trim().replace(/[<>]/g, '');
+        };
+        
+        const setLoading = (isLoading, msg = 'Inatuma barua pepe...') => {
+            submitButton.disabled = isLoading;
+            submitButton.style.opacity = isLoading ? 0.7 : 1;
+            loadingText.textContent = msg;
+            loadingText.style.display = isLoading ? 'block' : 'none';
+            errorMessage.style.display = 'none';
+        }
+
+        const setError = (message) => {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setLoading(false);
+        }
+
+        const setStep = (stepNumber) => {
+            if (stepNumber === 1) {
+                step1.style.display = 'block';
+                step2.style.display = 'none';
+            } else if (stepNumber === 2) {
+                step1.style.display = 'none';
+                step2.style.display = 'block';
+            }
+        };
+
+        // Utendakazi Mkuu wa Kurejesha Neno Siri
+        const handleForgotPassword = async (event) => {
+            event.preventDefault();
+            setLoading(true);
+
+            const email = sanitizeInput(emailInput.value);
+            
+            if (!email) {
+                return setError('Tafadhali weka barua pepe yako.');
+            }
+            if (!validateEmail(email)) {
+                return setError('Tafadhali weka barua pepe sahihi.');
+            }
+
+            try {
+                // Endpoint ya kutuma email ya kurejesha neno siri
+                const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Mafanikio: Elekeza kwa Hatua ya 2 (Ujumbe wa Mafanikio)
+                    setStep(2);
+                    setLoading(false); 
+                } else {
+                    // Kosa kutoka kwa API
+                    const message = data.msg || data.message || 'Kuna hitilafu. Barua pepe haikuweza kutumwa.';
+                    // Katika hali nyingi, mfumo haupaswi kusema wazi kama email ipo au haipo kwa sababu za kiusalama.
+                    // Tunatumia ujumbe wa jumla.
+                    setError(message); 
+                }
+
+            } catch (error) {
+                console.error('Forgot Password Error:', error);
+                setError('Kuna tatizo la mtandao. Tafadhali jaribu tena.');
+            }
+        };
+
+        forgotPasswordForm.addEventListener('submit', handleForgotPassword);
+
+        // Hakikisha inaanza kwenye hatua ya kwanza
+        setStep(1);
+    </script>
+</body>
+</html>
